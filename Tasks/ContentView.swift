@@ -58,8 +58,9 @@ struct ContentView: View {
     }
     var tasks = [
         Task(id: "1", name: "Chemistry assignment", due: Date(timeIntervalSince1970: 1586446243), done: false),
-        Task(id: "2", name: "Biology", due: Date(timeIntervalSince1970: 1586697103), done: false),
-        Task(id: "3", name: "Science or Fiction", due: Date(timeIntervalSince1970: 1589038243), done: false)
+        Task(id: "2", name: "Biology practical", due: Date(timeIntervalSince1970: 1586583043), done: false),
+        Task(id: "3", name: "Science quiz", due: Date(timeIntervalSince1970: 1589038243), done: false),
+        Task(id: "4", name: "A really long name for an quiz that is due, this is a test to see how text wraps", due: Date(timeIntervalSince1970: 1589738243), done: false)
     ]
     
     var body: some View {
@@ -70,8 +71,15 @@ struct ContentView: View {
                     List(tasks, id: \.id) { Task in
                       HStack {
                         Text(Task.name)
+                            .padding(.trailing, 30.0)
                         Spacer()
-                        Text(self.timeBetweenDates(d1: Task.due))
+                        if ["Overdue","Now"].contains (self.timeBetweenDates(d1: Task.due)) {
+                            Text(self.timeBetweenDates(d1: Task.due))
+                                .foregroundColor(.red)
+                            .bold()
+                        }else{
+                            Text(self.timeBetweenDates(d1: Task.due)).bold()
+                        }
                       }
                     }
                 }.navigationBarTitle("Tasks")
