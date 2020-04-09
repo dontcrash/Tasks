@@ -10,11 +10,10 @@
  
  https://myuni.adelaide.edu.au/feeds/calendars/user_RcoYVOeuxsNidrtJiEH0sd4fSIFLWlCchET0tDY6.ics
  
- 
- 
  */
 
 import SwiftUI
+
 
 struct ContentView: View {
     
@@ -62,7 +61,7 @@ struct ContentView: View {
         Task(id: "3", name: "Science quiz", due: Date(timeIntervalSince1970: 1589038243), done: false),
         Task(id: "4", name: "A really long name for an quiz that is due, this is a test to see how text wraps", due: Date(timeIntervalSince1970: 1589738243), done: false)
     ]
-    
+ 
     var body: some View {
 
         TabView {
@@ -81,6 +80,12 @@ struct ContentView: View {
                             Text(self.timeBetweenDates(d1: Task.due)).bold()
                         }
                       }
+                      .contextMenu {
+                          Button(action: {/* Mark as done here */}) {
+                            Text("Complete")
+                            Image(systemName: "checkmark")
+                          }
+                      }
                       .padding(.vertical, 15.0)
                     }
                 }.navigationBarTitle("Tasks")
@@ -97,7 +102,7 @@ struct ContentView: View {
            .tabItem {
                Image(systemName: "gear")
                 .font(.system(size: 25))
-            }
+           }
         }
         .accentColor(.orange)
     }
