@@ -81,6 +81,7 @@ struct ContentView: View {
                             Text(self.timeBetweenDates(d1: Task.due)).bold()
                         }
                       }
+                      .padding(.vertical, 15.0)
                     }
                 }.navigationBarTitle("Tasks")
             }
