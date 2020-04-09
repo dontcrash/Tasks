@@ -18,21 +18,68 @@ import SwiftUI
 
 struct ContentView: View {
     
-    init() {
-        UITabBar.appearance().barTintColor = UIColor.black
-        UITabBar.appearance().tintColor = UIColor.red
-        UITabBar.appearance().isTranslucent = true
+    func timeBetweenDates(d1: Date) -> String {
+        let cal = Calendar.current
+        let components = cal.dateComponents([.hour], from: Date(), to: d1)
+        let hours: Int = components.hour!
+        if hours < 24 {
+            if hours < 0 {
+                return "Overdue"
+            }
+            if hours == 0 {
+                return "Now"
+            }
+            if hours == 1 {
+                return String(hours) + " hour"
+            }
+            return String(hours) + " hours"
+        }else{
+            let days: Int = hours/24
+            if days == 1 {
+                return "1 day"
+            }
+            return String(days) + " days"
+        }
     }
     
+    let df = DateFormatter()
+    
+    init() {
+        UITabBar.appearance().barTintColor = UIColor.black
+        UITabBar.appearance().isTranslucent = true
+        df.dateFormat = "dd/M"
+    }
+    
+    struct Task: Identifiable {
+        var id: String
+        var name: String
+        var due: Date
+        var done: Bool
+    }
+    var tasks = [
+        Task(id: "1", name: "Chemistry assignment", due: Date(timeIntervalSince1970: 1586446243), done: false),
+        Task(id: "2", name: "Biology", due: Date(timeIntervalSince1970: 1586697103), done: false),
+        Task(id: "3", name: "Science or Fiction", due: Date(timeIntervalSince1970: 1589038243), done: false)
+    ]
+    
     var body: some View {
+
         TabView {
             NavigationView {
-                Text("Tasks list will be here")
-                    .navigationBarTitle("Tasks")
+                VStack {
+                    List(tasks, id: \.id) { Task in
+                      HStack {
+                        Text(Task.name)
+                        Spacer()
+                        Text(self.timeBetweenDates(d1: Task.due))
+                      }
+                    }
+                }.navigationBarTitle("Tasks")
             }
             .tabItem {
                 Image(systemName: "checkmark.square")
                     .font(.system(size: 25))
+                
            }
            NavigationView {
                Text("Settings page will be here")
@@ -40,7 +87,7 @@ struct ContentView: View {
            }
            .tabItem {
                Image(systemName: "gear")
-                   .font(.system(size: 25))
+                .font(.system(size: 25))
             }
         }
         .accentColor(.orange)
@@ -49,6 +96,8 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        //ContentView()
+        //TODO call ContentView() instead of forced dark mode for releases
+        ContentView().environment(\.colorScheme, .dark)
     }
 }
