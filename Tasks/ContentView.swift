@@ -6,32 +6,44 @@
 //  Copyright © 2020 Nick Garfitt. All rights reserved.
 //
 
+/*
+ 
+ https://myuni.adelaide.edu.au/feeds/calendars/user_RcoYVOeuxsNidrtJiEH0sd4fSIFLWlCchET0tDY6.ics
+ 
+ 
+ 
+ */
+
 import SwiftUI
 
 struct ContentView: View {
-    @State private var selection = 0
- 
+    
+    init() {
+        UITabBar.appearance().barTintColor = UIColor.black
+        UITabBar.appearance().tintColor = UIColor.red
+        UITabBar.appearance().isTranslucent = true
+    }
+    
     var body: some View {
-        TabView(selection: $selection){
-            Text("First View")
-                .font(.title)
-                .tabItem {
-                    VStack {
-                        Image("first")
-                        Text("First")
-                    }
-                }
-                .tag(0)
-            Text("Second View")
-                .font(.title)
-                .tabItem {
-                    VStack {
-                        Image("second")
-                        Text("Second")
-                    }
-                }
-                .tag(1)
+        TabView {
+            NavigationView {
+                Text("Tasks list will be here")
+                    .navigationBarTitle("Tasks")
+            }
+            .tabItem {
+                Image(systemName: "checkmark.square")
+                    .font(.system(size: 25))
+           }
+           NavigationView {
+               Text("Settings page will be here")
+                   .navigationBarTitle("Settings")
+           }
+           .tabItem {
+               Image(systemName: "gear")
+                   .font(.system(size: 25))
+            }
         }
+        .accentColor(.orange)
     }
 }
 
