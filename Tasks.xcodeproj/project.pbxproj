@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		01AC1A3D24402FFC0062B16F /* test.ics in Resources */ = {isa = PBXBuildFile; fileRef = 01AC1A3C24402FFC0062B16F /* test.ics */; };
 		01B4117D243F34A300D2FB4C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01B4117C243F34A300D2FB4C /* AppDelegate.swift */; };
 		01B4117F243F34A300D2FB4C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01B4117E243F34A300D2FB4C /* SceneDelegate.swift */; };
 		01B41181243F34A300D2FB4C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01B41180243F34A300D2FB4C /* ContentView.swift */; };
@@ -35,6 +36,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		01AC1A3C24402FFC0062B16F /* test.ics */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = test.ics; path = ../../../../Desktop/test.ics; sourceTree = "<group>"; };
 		01B41179243F34A300D2FB4C /* Tasks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tasks.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		01B4117C243F34A300D2FB4C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		01B4117E243F34A300D2FB4C /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -99,6 +101,7 @@
 		01B4117B243F34A300D2FB4C /* Tasks */ = {
 			isa = PBXGroup;
 			children = (
+				01AC1A3C24402FFC0062B16F /* test.ics */,
 				01B4117C243F34A300D2FB4C /* AppDelegate.swift */,
 				01B4117E243F34A300D2FB4C /* SceneDelegate.swift */,
 				01B41180243F34A300D2FB4C /* ContentView.swift */,
@@ -204,6 +207,7 @@
 				TargetAttributes = {
 					01B41178243F34A300D2FB4C = {
 						CreatedOnToolsVersion = 11.4;
+						LastSwiftMigration = 1140;
 					};
 					01B4118E243F34A700D2FB4C = {
 						CreatedOnToolsVersion = 11.4;
@@ -241,6 +245,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				01B41189243F34A700D2FB4C /* LaunchScreen.storyboard in Resources */,
+				01AC1A3D24402FFC0062B16F /* test.ics in Resources */,
 				01B41186243F34A700D2FB4C /* Preview Assets.xcassets in Resources */,
 				01B41183243F34A700D2FB4C /* Assets.xcassets in Resources */,
 			);
@@ -434,6 +439,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"Tasks/Preview Content\"";
@@ -447,6 +453,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.nick.Tasks;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "MXLCalendar/Tasks-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -456,6 +464,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"Tasks/Preview Content\"";
@@ -469,6 +478,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.nick.Tasks;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "MXLCalendar/Tasks-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
