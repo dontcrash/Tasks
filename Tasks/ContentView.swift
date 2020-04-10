@@ -32,21 +32,83 @@ extension Date {
 
 }
 
+struct Task: Identifiable {
+    var id: String
+    var title: String
+    var description: String
+    var due: Date
+    var done: Bool
+}
+
+struct ModalView: View {
+    
+    @Environment(\.presentationMode) var presentationMode
+    
+    var description: String = ""
+    var task: Task!
+    
+    var df = DateFormatter()
+    
+    init(_description: String, _tasks: [Task], _id: String) {
+        df.dateFormat = "EEEE, d MMM h:mm a"
+        for t in _tasks {
+            if t.id == _id {
+                task = t
+                break
+            }
+        }
+        description = task.description
+        let arr = description.split(separator: "\r\n")
+        var fullStr: String = ""
+        for str in arr {
+            if str.starts(with: " ") {
+                fullStr.append(contentsOf: str.dropFirst())
+            }else{
+                fullStr.append(contentsOf: str)
+            }
+        }
+        description = fullStr
+        description = description.replacingOccurrences(of: "\\n\\n", with: "\n\n")
+        description = description.replacingOccurrences(of: "\\n", with: "\n")
+        description = description.replacingOccurrences(of: "\\", with: "")
+        //< 3 to stop spaces counting as a description
+        if description.count < 3 {
+            description = "No description provided 😢"
+        }
+    }
+    
+    var body: some View {
+        VStack {
+            /*
+            Button(action: {
+                self.presentationMode.wrappedValue.dismiss()
+            }) {
+                Text("Dismiss")
+            }.padding(.bottom, 50)
+            */
+            List {
+                Text(df.string(from: task.due)).padding(20)
+                Text("\(description)").lineLimit(nil).padding(20)
+            }
+            
+        }
+    }
+}
+
 struct ContentView: View {
+    
+    @State private var show_modal: Bool = false
     
     func timeBetweenDates(d1: Date) -> String {
         let cal = Calendar.current
-        let components = cal.dateComponents([.hour], from: Date(), to: d1)
+        let components = cal.dateComponents([.hour], from: Date().toLocalTime(), to: d1.toLocalTime())
         let hours: Int = components.hour!
         if hours < 24 {
-            if hours < 0 {
+            if hours <= 0 {
                 return "Overdue"
             }
-            if hours == 0 {
-                return "Now"
-            }
             if hours == 1 {
-                return String(hours) + " hour"
+                return "Now"
             }
             return String(hours) + " hours"
         }else{
@@ -64,18 +126,11 @@ struct ContentView: View {
     init() {
         UITabBar.appearance().barTintColor = UIColor.black
         UITabBar.appearance().isTranslucent = true
-        df.dateFormat = "dd/M"
         tasks = parseICS()
+        //DEBUG
+        //tasks = [Task(id: "1", title: "Title", description: "Desc", due: Date().toLocalTime(), done: false)]
     }
-    
-    struct Task: Identifiable {
-        var id: String
-        var title: String
-        var description: String
-        var due: Date
-        var done: Bool
-    }
-    
+
     func matches(for regex: String, in text: String) -> [String] {
         do {
             let regex = try NSRegularExpression(pattern: regex)
@@ -134,15 +189,15 @@ struct ContentView: View {
                     dateFormatter.dateFormat = "yyyyMMdd'T'HHmmss'Z'"
                     dateFormatter.locale = Locale(identifier: "en_US_POSIX")
                     dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
-                    let properDate = dateFormatter.date(from: date)
-                    tasks.append(Task(id: id, title: title, description: description, due: (properDate?.toLocalTime())!, done: false))
+                    tasks.append(Task(id: id, title: title, description: description, due: dateFormatter.date(from: date)!, done: false))
                 }
             }
         }
-        return tasks;
+        return tasks
     }
 
- 
+    @State var currentItem: String = ""
+    
     var body: some View {
         TabView {
             NavigationView {
@@ -161,9 +216,18 @@ struct ContentView: View {
                         }
                       }
                       .contextMenu {
+                          Button(action: {
+                            self.currentItem = Task.id
+                            self.show_modal = true
+                          }) {
+                              Text("Info")
+                              Image(systemName: "info.circle")
+                          }.sheet(isPresented: self.$show_modal) {
+                            ModalView(_description: self.currentItem, _tasks: self.tasks, _id: self.currentItem)
+                          }
                           Button(action: {/* Mark as done here */}) {
-                            Text("Complete")
-                            Image(systemName: "checkmark")
+                              Text("Complete")
+                              Image(systemName: "checkmark.circle")
                           }
                       }
                       .padding(.vertical, 15.0)
@@ -171,12 +235,12 @@ struct ContentView: View {
                 }.navigationBarTitle("Tasks")
             }
             .tabItem {
-                Image(systemName: "checkmark.square")
+                Image(systemName: "list.bullet")
                     .font(.system(size: 25))
                 
            }
            NavigationView {
-               Text("Settings page will be here")
+               Text("Settings should be here one day")
                    .navigationBarTitle("Settings")
            }
            .tabItem {
