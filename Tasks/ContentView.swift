@@ -6,13 +6,23 @@
 //  Copyright © 2020 Nick Garfitt. All rights reserved.
 //
 
-/*
- 
- https://myuni.adelaide.edu.au/feeds/calendars/user_RcoYVOeuxsNidrtJiEH0sd4fSIFLWlCchET0tDY6.ics
- 
- */
-
 import SwiftUI
+import Combine
+
+class UserPrefs : ObservableObject {
+    @Published var icsURL = UserDefaults.standard.string(forKey: "icsURL") ?? ""
+    private var canc: AnyCancellable!
+
+    init() {
+        canc = $icsURL.debounce(for: 0.2, scheduler: DispatchQueue.main).sink { newText in
+            UserDefaults.standard.set(newText, forKey: "icsURL")
+        }
+    }
+
+    deinit {
+        canc.cancel()
+    }
+}
 
 extension Date {
 
@@ -126,7 +136,6 @@ struct ContentView: View {
     init() {
         UITabBar.appearance().barTintColor = UIColor.black
         UITabBar.appearance().isTranslucent = true
-        loadPrefs()
         tasks = parseICS()
         
         //DEBUG
@@ -199,15 +208,7 @@ struct ContentView: View {
     }
 
     @State var currentItem: String = ""
-    @State var icsURL: String = ""
-    
-    func loadPrefs(){
-        icsURL = UserDefaults.standard.string(forKey: "icsURL") ?? ""
-    }
-    
-    func saveICSURL(){
-        UserDefaults.standard.set(self.$icsURL, forKey: "icsURL")
-    }
+    @ObservedObject var userPrefs = UserPrefs()
     
     var body: some View {
         TabView {
@@ -256,7 +257,7 @@ struct ContentView: View {
                        .bold()
                        .navigationBarTitle("Settings")
                     .padding([.top, .leading], 24.0)
-                TextField("example.com/file.ics", text: $icsURL, onCommit: {self.saveICSURL()})
+                TextField("example.com/file.ics", text: $userPrefs.icsURL, onCommit: {})
                        .padding([.leading, .trailing], 24.0)
                        .textFieldStyle(RoundedBorderTextFieldStyle())
                        .keyboardType(/*@START_MENU_TOKEN@*/.URL/*@END_MENU_TOKEN@*/)
