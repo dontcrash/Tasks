@@ -24,6 +24,91 @@ class UserPrefs : ObservableObject {
     }
 }
 
+public class fetchTasks: ObservableObject {
+
+    @Published var tasks = [Task]()
+    
+    init(){
+        load()
+    }
+    
+    func matches(for regex: String, in text: String) -> [String] {
+        do {
+            let regex = try NSRegularExpression(pattern: regex)
+            let results = regex.matches(in: text,
+                                        range: NSRange(text.startIndex..., in: text))
+            return results.map {
+                String(text[Range($0.range, in: text)!])
+            }
+        } catch let error {
+            print("invalid regex: \(error.localizedDescription)")
+            return []
+        }
+    }
+    
+    func parseICS(data: String) -> Array<Task> {
+        var tasks = [Task]()
+        let arr = data.components(separatedBy: "BEGIN:VEVENT")
+        if arr.count == 1{
+            print("Error, is the ICS file empty?")
+        }else{
+            //Loop through array of events
+            for temp in arr {
+                //Check if the event is valid ICS
+                if temp.contains("DTSTART:") {
+                    var id: String = ""
+                    var date: String = ""
+                    var title: String = ""
+                    var description: String = ""
+                    let desc: [String] = matches(for: "DESCRIPTION:([\\s\\S]*?)SEQUENCE:", in: temp)
+                    if desc.count > 0 {
+                        description = desc[0]
+                        description = description.replacingOccurrences(of: "DESCRIPTION:", with: "")
+                        description = description.replacingOccurrences(of: "SEQUENCE:", with: "")
+                    }
+                    let parts = temp.components(separatedBy: "\r\n")
+                    for part in parts {
+                        if part.starts(with: "DTEND:") {
+                            date = String(part).replacingOccurrences(of: "DTEND:", with: "")
+                        }
+                        if part.starts(with: "SUMMARY:") {
+                            title = String(part).replacingOccurrences(of: "SUMMARY:", with: "")
+                        }
+                        if part.starts(with: "UID:") {
+                            id = String(part).replacingOccurrences(of: "UID:", with: "")
+                        }
+                    }
+                    let dateFormatter = DateFormatter()
+                    dateFormatter.dateFormat = "yyyyMMdd'T'HHmmss'Z'"
+                    dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+                    dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+                    tasks.append(Task(id: id, title: title, description: description, due: dateFormatter.date(from: date)!, done: false))
+                }
+            }
+        }
+        return tasks
+    }
+    
+    func load() {
+        //TODO
+        //change to userPrefs.icsURL
+        let url = URL(string: "https://myuni.adelaide.edu.au/feeds/calendars/user_RcoYVOeuxsNidrtJiEH0sd4fSIFLWlCchET0tDY6.ics")!
+    
+        URLSession.shared.dataTask(with: url) {(data,response,error) in
+            do {
+                if let d = data {
+                    DispatchQueue.main.async {
+                        self.tasks = self.parseICS(data: String(data: d, encoding: .utf8) ?? "")
+                    }
+                }else {
+                    print("No ICS data found")
+                }
+            }
+        }.resume()
+         
+    }
+}
+
 extension Date {
 
     // Convert local time to UTC (or GMT)
@@ -131,90 +216,47 @@ struct ContentView: View {
     }
     
     let df = DateFormatter()
-    var tasks = [Task]()
+    @ObservedObject var taskFetcher = fetchTasks()
     
     init() {
         UITabBar.appearance().barTintColor = UIColor.black
         UITabBar.appearance().isTranslucent = true
-        tasks = parseICS()
-        
         //DEBUG
         //tasks = [Task(id: "1", title: "Title", description: "Desc", due: Date().toLocalTime(), done: false)]
     }
-
-    func matches(for regex: String, in text: String) -> [String] {
-        do {
-            let regex = try NSRegularExpression(pattern: regex)
-            let results = regex.matches(in: text,
-                                        range: NSRange(text.startIndex..., in: text))
-            return results.map {
-                String(text[Range($0.range, in: text)!])
-            }
-        } catch let error {
-            print("invalid regex: \(error.localizedDescription)")
-            return []
-        }
-    }
     
-    func parseICS() -> Array<Task> {
-        var tasks = [Task]()
-        var data: String = ""
-        if let path = Bundle.main.path(forResource: "test", ofType: "ics"){
-            do {
-                data = try String(contentsOfFile: path, encoding: .utf8)
-            } catch {
-                print(error)
+    func completeItem(){
+        UserDefaults.standard.set(true, forKey: self.currentItem)
+        //TODO
+        //Refresh view/list here
+        /*
+        print("Completed item")
+        print(self.currentItem)
+        var found: Bool = false
+        var index: Int = 0
+        for task in tasks {
+            if task.id == self.currentItem {
+                index = index + 1
+                found = true
             }
         }
-        let arr = data.components(separatedBy: "BEGIN:VEVENT")
-        if arr.count == 1{
-            print("Error, is the ICS file empty?")
-        }else{
-            //Loop through array of events
-            for temp in arr {
-                //Check if the event is valid ICS
-                if temp.contains("DTSTART:") {
-                    var id: String = ""
-                    var date: String = ""
-                    var title: String = ""
-                    var description: String = ""
-                    let desc: [String] = matches(for: "DESCRIPTION:([\\s\\S]*?)SEQUENCE:", in: temp)
-                    if desc.count > 0 {
-                        description = desc[0]
-                        description = description.replacingOccurrences(of: "DESCRIPTION:", with: "")
-                        description = description.replacingOccurrences(of: "SEQUENCE:", with: "")
-                    }
-                    let parts = temp.components(separatedBy: "\r\n")
-                    for part in parts {
-                        if part.starts(with: "DTEND:") {
-                            date = String(part).replacingOccurrences(of: "DTEND:", with: "")
-                        }
-                        if part.starts(with: "SUMMARY:") {
-                            title = String(part).replacingOccurrences(of: "SUMMARY:", with: "")
-                        }
-                        if part.starts(with: "UID:") {
-                            id = String(part).replacingOccurrences(of: "UID:", with: "")
-                        }
-                    }
-                    let dateFormatter = DateFormatter()
-                    dateFormatter.dateFormat = "yyyyMMdd'T'HHmmss'Z'"
-                    dateFormatter.locale = Locale(identifier: "en_US_POSIX")
-                    dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
-                    tasks.append(Task(id: id, title: title, description: description, due: dateFormatter.date(from: date)!, done: false))
-                }
-            }
+        if found {
+            tasks.remove(at: index)
         }
-        return tasks
+        */
     }
 
     @State var currentItem: String = ""
     @ObservedObject var userPrefs = UserPrefs()
     
+    //TODO
+    //Show loading while taskFetcher is working
+    
     var body: some View {
         TabView {
             NavigationView {
                 VStack {
-                    List(tasks, id: \.id) { Task in
+                    List(taskFetcher.tasks, id: \.id) { Task in
                       HStack {
                         Text(Task.title)
                             .padding(.trailing, 30.0)
@@ -235,9 +277,12 @@ struct ContentView: View {
                               Text("Info")
                               Image(systemName: "info.circle")
                           }.sheet(isPresented: self.$show_modal) {
-                            ModalView(_description: self.currentItem, _tasks: self.tasks, _id: self.currentItem)
+                            ModalView(_description: self.currentItem, _tasks: self.taskFetcher.tasks, _id: self.currentItem)
                           }
-                          Button(action: {/* Mark as done here */}) {
+                          Button(action: {
+                            self.currentItem = Task.id
+                            self.completeItem()
+                          }) {
                               Text("Complete")
                               Image(systemName: "checkmark.circle")
                           }
