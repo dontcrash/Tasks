@@ -7,125 +7,6 @@
 //
 
 import SwiftUI
-import Combine
-
-class UserPrefs : ObservableObject {
-    @Published var icsURL = UserDefaults.standard.string(forKey: "icsURL") ?? ""
-    private var canc: AnyCancellable!
-
-    init() {
-        canc = $icsURL.debounce(for: 0.2, scheduler: DispatchQueue.main).sink { newText in
-            UserDefaults.standard.set(newText, forKey: "icsURL")
-        }
-    }
-
-    deinit {
-        canc.cancel()
-    }
-}
-
-public class fetchTasks: ObservableObject {
-
-    @Published var tasks = [Task]()
-    
-    init(){
-        load()
-    }
-    
-    func matches(for regex: String, in text: String) -> [String] {
-        do {
-            let regex = try NSRegularExpression(pattern: regex)
-            let results = regex.matches(in: text,
-                                        range: NSRange(text.startIndex..., in: text))
-            return results.map {
-                String(text[Range($0.range, in: text)!])
-            }
-        } catch let error {
-            print("invalid regex: \(error.localizedDescription)")
-            return []
-        }
-    }
-    
-    func parseICS(data: String) -> Array<Task> {
-        var tasks = [Task]()
-        let arr = data.components(separatedBy: "BEGIN:VEVENT")
-        if arr.count == 1{
-            print("Error, is the ICS file empty?")
-        }else{
-            //Loop through array of events
-            for temp in arr {
-                //Check if the event is valid ICS
-                if temp.contains("DTSTART:") {
-                    var id: String = ""
-                    var date: String = ""
-                    var title: String = ""
-                    var description: String = ""
-                    let desc: [String] = matches(for: "DESCRIPTION:([\\s\\S]*?)SEQUENCE:", in: temp)
-                    if desc.count > 0 {
-                        description = desc[0]
-                        description = description.replacingOccurrences(of: "DESCRIPTION:", with: "")
-                        description = description.replacingOccurrences(of: "SEQUENCE:", with: "")
-                    }
-                    let parts = temp.components(separatedBy: "\r\n")
-                    for part in parts {
-                        if part.starts(with: "DTEND:") {
-                            date = String(part).replacingOccurrences(of: "DTEND:", with: "")
-                        }
-                        if part.starts(with: "SUMMARY:") {
-                            title = String(part).replacingOccurrences(of: "SUMMARY:", with: "")
-                        }
-                        if part.starts(with: "UID:") {
-                            id = String(part).replacingOccurrences(of: "UID:", with: "")
-                        }
-                    }
-                    let dateFormatter = DateFormatter()
-                    dateFormatter.dateFormat = "yyyyMMdd'T'HHmmss'Z'"
-                    dateFormatter.locale = Locale(identifier: "en_US_POSIX")
-                    dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
-                    tasks.append(Task(id: id, title: title, description: description, due: dateFormatter.date(from: date)!, done: false))
-                }
-            }
-        }
-        return tasks
-    }
-    
-    func load() {
-        //TODO
-        //change to userPrefs.icsURL
-        let url = URL(string: "https://myuni.adelaide.edu.au/feeds/calendars/user_RcoYVOeuxsNidrtJiEH0sd4fSIFLWlCchET0tDY6.ics")!
-    
-        URLSession.shared.dataTask(with: url) {(data,response,error) in
-            do {
-                if let d = data {
-                    DispatchQueue.main.async {
-                        self.tasks = self.parseICS(data: String(data: d, encoding: .utf8) ?? "")
-                    }
-                }else {
-                    print("No ICS data found")
-                }
-            }
-        }.resume()
-         
-    }
-}
-
-extension Date {
-
-    // Convert local time to UTC (or GMT)
-    func toGlobalTime() -> Date {
-        let timezone = TimeZone.current
-        let seconds = -TimeInterval(timezone.secondsFromGMT(for: self))
-        return Date(timeInterval: seconds, since: self)
-    }
-
-    // Convert UTC (or GMT) to local time
-    func toLocalTime() -> Date {
-        let timezone = TimeZone.current
-        let seconds = TimeInterval(timezone.secondsFromGMT(for: self))
-        return Date(timeInterval: seconds, since: self)
-    }
-
-}
 
 struct Task: Identifiable {
     var id: String
@@ -133,61 +14,6 @@ struct Task: Identifiable {
     var description: String
     var due: Date
     var done: Bool
-}
-
-struct ModalView: View {
-    
-    @Environment(\.presentationMode) var presentationMode
-    
-    var description: String = ""
-    var task: Task!
-    
-    var df = DateFormatter()
-    
-    init(_description: String, _tasks: [Task], _id: String) {
-        df.dateFormat = "EEEE, d MMM h:mm a"
-        for t in _tasks {
-            if t.id == _id {
-                task = t
-                break
-            }
-        }
-        description = task.description
-        let arr = description.split(separator: "\r\n")
-        var fullStr: String = ""
-        for str in arr {
-            if str.starts(with: " ") {
-                fullStr.append(contentsOf: str.dropFirst())
-            }else{
-                fullStr.append(contentsOf: str)
-            }
-        }
-        description = fullStr
-        description = description.replacingOccurrences(of: "\\n\\n", with: "\n\n")
-        description = description.replacingOccurrences(of: "\\n", with: "\n")
-        description = description.replacingOccurrences(of: "\\", with: "")
-        //< 3 to stop spaces counting as a description
-        if description.count < 3 {
-            description = "No description provided 😢"
-        }
-    }
-    
-    var body: some View {
-        VStack {
-            /*
-            Button(action: {
-                self.presentationMode.wrappedValue.dismiss()
-            }) {
-                Text("Dismiss")
-            }.padding(.bottom, 50)
-            */
-            List {
-                Text(df.string(from: task.due)).padding(20)
-                Text("\(description)").lineLimit(nil).padding(20)
-            }
-            
-        }
-    }
 }
 
 struct ContentView: View {
@@ -317,6 +143,7 @@ struct ContentView: View {
         .accentColor(.orange)
     }
 }
+
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {

@@ -7,7 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		01AC1A3D24402FFC0062B16F /* test.ics in Resources */ = {isa = PBXBuildFile; fileRef = 01AC1A3C24402FFC0062B16F /* test.ics */; };
+		010CA8B32441D68200BE993E /* fetchTasks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010CA8B22441D68200BE993E /* fetchTasks.swift */; };
+		010CA8B52441D6C100BE993E /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010CA8B42441D6C100BE993E /* Extensions.swift */; };
+		010CA8B72441D6FB00BE993E /* UserPrefs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010CA8B62441D6FB00BE993E /* UserPrefs.swift */; };
+		010CA8B92441D73D00BE993E /* ModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010CA8B82441D73D00BE993E /* ModalView.swift */; };
 		01B4117D243F34A300D2FB4C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01B4117C243F34A300D2FB4C /* AppDelegate.swift */; };
 		01B4117F243F34A300D2FB4C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01B4117E243F34A300D2FB4C /* SceneDelegate.swift */; };
 		01B41181243F34A300D2FB4C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01B41180243F34A300D2FB4C /* ContentView.swift */; };
@@ -36,7 +39,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		01AC1A3C24402FFC0062B16F /* test.ics */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = test.ics; path = ../test.ics; sourceTree = "<group>"; };
+		010CA8B22441D68200BE993E /* fetchTasks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fetchTasks.swift; sourceTree = "<group>"; };
+		010CA8B42441D6C100BE993E /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		010CA8B62441D6FB00BE993E /* UserPrefs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPrefs.swift; sourceTree = "<group>"; };
+		010CA8B82441D73D00BE993E /* ModalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalView.swift; sourceTree = "<group>"; };
 		01B41179243F34A300D2FB4C /* Tasks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tasks.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		01B4117C243F34A300D2FB4C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		01B4117E243F34A300D2FB4C /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -101,10 +107,13 @@
 		01B4117B243F34A300D2FB4C /* Tasks */ = {
 			isa = PBXGroup;
 			children = (
-				01AC1A3C24402FFC0062B16F /* test.ics */,
 				01B4117C243F34A300D2FB4C /* AppDelegate.swift */,
 				01B4117E243F34A300D2FB4C /* SceneDelegate.swift */,
 				01B41180243F34A300D2FB4C /* ContentView.swift */,
+				010CA8B82441D73D00BE993E /* ModalView.swift */,
+				010CA8B62441D6FB00BE993E /* UserPrefs.swift */,
+				010CA8B42441D6C100BE993E /* Extensions.swift */,
+				010CA8B22441D68200BE993E /* fetchTasks.swift */,
 				01B41182243F34A700D2FB4C /* Assets.xcassets */,
 				01B41187243F34A700D2FB4C /* LaunchScreen.storyboard */,
 				01B4118A243F34A700D2FB4C /* Info.plist */,
@@ -155,6 +164,8 @@
 			dependencies = (
 			);
 			name = Tasks;
+			packageProductDependencies = (
+			);
 			productName = Tasks;
 			productReference = 01B41179243F34A300D2FB4C /* Tasks.app */;
 			productType = "com.apple.product-type.application";
@@ -228,6 +239,8 @@
 				Base,
 			);
 			mainGroup = 01B41170243F34A300D2FB4C;
+			packageReferences = (
+			);
 			productRefGroup = 01B4117A243F34A300D2FB4C /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -245,7 +258,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				01B41189243F34A700D2FB4C /* LaunchScreen.storyboard in Resources */,
-				01AC1A3D24402FFC0062B16F /* test.ics in Resources */,
 				01B41186243F34A700D2FB4C /* Preview Assets.xcassets in Resources */,
 				01B41183243F34A700D2FB4C /* Assets.xcassets in Resources */,
 			);
@@ -272,8 +284,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				010CA8B52441D6C100BE993E /* Extensions.swift in Sources */,
+				010CA8B72441D6FB00BE993E /* UserPrefs.swift in Sources */,
 				01B4117D243F34A300D2FB4C /* AppDelegate.swift in Sources */,
 				01B4117F243F34A300D2FB4C /* SceneDelegate.swift in Sources */,
+				010CA8B92441D73D00BE993E /* ModalView.swift in Sources */,
+				010CA8B32441D68200BE993E /* fetchTasks.swift in Sources */,
 				01B41181243F34A300D2FB4C /* ContentView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
