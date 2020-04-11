@@ -126,7 +126,9 @@ struct ContentView: View {
     init() {
         UITabBar.appearance().barTintColor = UIColor.black
         UITabBar.appearance().isTranslucent = true
+        loadPrefs()
         tasks = parseICS()
+        
         //DEBUG
         //tasks = [Task(id: "1", title: "Title", description: "Desc", due: Date().toLocalTime(), done: false)]
     }
@@ -173,7 +175,7 @@ struct ContentView: View {
                         description = description.replacingOccurrences(of: "DESCRIPTION:", with: "")
                         description = description.replacingOccurrences(of: "SEQUENCE:", with: "")
                     }
-                    let parts = temp.split(separator: "\r\n")
+                    let parts = temp.components(separatedBy: "\r\n")
                     for part in parts {
                         if part.starts(with: "DTEND:") {
                             date = String(part).replacingOccurrences(of: "DTEND:", with: "")
@@ -197,6 +199,15 @@ struct ContentView: View {
     }
 
     @State var currentItem: String = ""
+    @State var icsURL: String = ""
+    
+    func loadPrefs(){
+        icsURL = UserDefaults.standard.string(forKey: "icsURL") ?? ""
+    }
+    
+    func saveICSURL(){
+        UserDefaults.standard.set(self.$icsURL, forKey: "icsURL")
+    }
     
     var body: some View {
         TabView {
@@ -240,8 +251,17 @@ struct ContentView: View {
                 
            }
            NavigationView {
-               Text("Settings should be here one day")
-                   .navigationBarTitle("Settings")
+               VStack(alignment: .leading) {
+                   Text("iCal/ICS URL")
+                       .bold()
+                       .navigationBarTitle("Settings")
+                    .padding([.top, .leading], 24.0)
+                TextField("example.com/file.ics", text: $icsURL, onCommit: {self.saveICSURL()})
+                       .padding([.leading, .trailing], 24.0)
+                       .textFieldStyle(RoundedBorderTextFieldStyle())
+                       .keyboardType(/*@START_MENU_TOKEN@*/.URL/*@END_MENU_TOKEN@*/)
+                   Spacer()
+               }
            }
            .tabItem {
                Image(systemName: "gear")
