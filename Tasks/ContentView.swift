@@ -8,14 +8,6 @@
 
 import SwiftUI
 
-struct Task: Identifiable {
-    var id: String
-    var title: String
-    var description: String
-    var due: Date
-    var done: Bool
-}
-
 struct ContentView: View {
     
     @State private var show_modal: Bool = false
