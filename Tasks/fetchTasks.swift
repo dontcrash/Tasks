@@ -56,6 +56,9 @@ public class fetchTasks: ObservableObject {
                     var date: String = ""
                     var title: String = ""
                     var description: String = ""
+                    //TODO
+                    //Can also be DESCRIPTION: blah blah to LOCATION:
+                    //Possibly add a regex to detect all caps letters followed by :
                     let desc: [String] = matches(for: "DESCRIPTION:([\\s\\S]*?)SEQUENCE:", in: temp)
                     if desc.count > 0 {
                         description = desc[0]
@@ -79,7 +82,13 @@ public class fetchTasks: ObservableObject {
                     dateFormatter.locale = Locale(identifier: "en_US_POSIX")
                     dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
                     let complete: Bool = UserDefaults.standard.bool(forKey: id)
-                    tasks.append(Task(id: id, title: title, description: description, due: dateFormatter.date(from: date)!, done: complete))
+                    
+                    //TODO
+                    //Write code for multiple date formats
+                    //Some ICS feeds just provide yyyymmdd etc
+                    //Universal date formatter library?
+                    
+                    tasks.append(Task(id: id, title: title, description: description, due: dateFormatter.date(from: date) ?? Date(), done: complete))
                 }
             }
         }
