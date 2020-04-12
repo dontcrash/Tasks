@@ -128,6 +128,7 @@ struct ContentView: View {
                             self.taskFetcher.load(icsURL: self.userPrefs.icsURL)
                         })
                         .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .keyboardType(/*@START_MENU_TOKEN@*/.webSearch/*@END_MENU_TOKEN@*/)
                     }
                 }
                }.navigationBarTitle("Settings")

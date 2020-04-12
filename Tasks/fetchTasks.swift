@@ -99,11 +99,9 @@ public class fetchTasks: ObservableObject {
                     let complete: Bool = UserDefaults.standard.bool(forKey: id)
                     
                     //TODO
-                    //Write code for multiple date formats
-                    //Some ICS feeds just provide yyyymmdd etc
-                    //Universal date formatter library?
+                    //Find a date detector that works with time
                     
-                    tasks.append(Task(id: id, title: title, description: description, due: dateFormatter.date(from: date) ?? Date(), done: complete))
+                    tasks.append(Task(id: id, title: title, description: description, due: (dateFormatter.date(from: date) ?? date.detectDates?.first!.toLocalTime())!, done: complete))
                 }
             }
         }
