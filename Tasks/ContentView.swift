@@ -16,7 +16,7 @@ struct ContentView: View {
         let hours: Int = components.hour!
         if hours < 24 {
             if hours <= 0 {
-                return "Overdue"
+                return "Late"
             }
             if hours == 1 {
                 return "Now"
@@ -48,6 +48,11 @@ struct ContentView: View {
         UserDefaults.standard.set(true, forKey: self.currentItem)
         taskFetcher.refreshList()
     }
+    
+    func inCompleteItem(){
+        UserDefaults.standard.removeObject(forKey: self.currentItem)
+        taskFetcher.refreshList()
+    }
 
     //TODO
     //Show loading while taskFetcher is working?
@@ -56,42 +61,51 @@ struct ContentView: View {
         TabView {
             NavigationView {
                 VStack {
-                    //TODO
-                    //Add a setting to show completed
-                    //If setting, don't use filter etc
-                    //If true show List(filter) else show List(tasks)
-                    List(taskFetcher.tasks.filter({return !$0.done}), id: \.id) { Task in
-                        HStack {
-                          Text(Task.title)
-                              .padding(.trailing, 30.0)
-                          Spacer()
-                          if ["Overdue","Now"].contains (self.timeBetweenDates(d1: Task.due)) {
-                              Text(self.timeBetweenDates(d1: Task.due))
-                                  .foregroundColor(.red)
-                              .bold()
-                          }else{
-                              Text(self.timeBetweenDates(d1: Task.due)).bold()
-                          }
-                        }
-                        .contextMenu {
-                            Button(action: {
-                              self.currentItem = Task.id
-                              self.show_modal = true
-                            }) {
-                                Text("Info")
-                                Image(systemName: "info.circle")
-                            }.sheet(isPresented: self.$show_modal) {
-                              ModalView(_description: self.currentItem, _tasks: self.taskFetcher.tasks, _id: self.currentItem)
+                    List(taskFetcher.tasks.filter({return !$0.done || self.userPrefs.showCompleted}), id: \.id) { Task in
+                            HStack {
+                              Text(Task.title)
+                                  .padding(.trailing, 30.0)
+                              Spacer()
+                                if (["Late","Now"].contains (self.timeBetweenDates(d1: Task.due)) && !Task.done) {
+                                  Text(self.timeBetweenDates(d1: Task.due))
+                                      .foregroundColor(.red)
+                                  .bold()
+                                }else if Task.done{
+                                    Text("Done").bold()
+                                    .foregroundColor(.green)
+                                }else {
+                                  Text(self.timeBetweenDates(d1: Task.due)).bold()
+                              }
                             }
-                            Button(action: {
-                              self.currentItem = Task.id
-                              self.completeItem()
-                            }) {
-                                Text("Complete")
-                                Image(systemName: "checkmark.circle")
+                            .contextMenu {
+                                Button(action: {
+                                  self.currentItem = Task.id
+                                  self.show_modal = true
+                                }) {
+                                    Text("Info")
+                                    Image(systemName: "info.circle")
+                                }.sheet(isPresented: self.$show_modal) {
+                                  ModalView(_description: self.currentItem, _tasks: self.taskFetcher.tasks, _id: self.currentItem)
+                                }
+                                if !Task.done {
+                                    Button(action: {
+                                      self.currentItem = Task.id
+                                      self.completeItem()
+                                    }) {
+                                        Text("Complete")
+                                        Image(systemName: "checkmark.circle")
+                                    }
+                                }else{
+                                    Button(action: {
+                                      self.currentItem = Task.id
+                                      self.inCompleteItem()
+                                    }) {
+                                        Text("Incomplete")
+                                        Image(systemName: "exclamationmark.circle")
+                                    }
+                                }
                             }
-                        }
-                        .padding(.vertical, 15.0)
+                            .padding(.vertical, 15.0)
                     }
                 }.navigationBarTitle("Tasks")
             }
@@ -101,19 +115,22 @@ struct ContentView: View {
                 
            }
            NavigationView {
-               VStack(alignment: .leading) {
-                   Text("iCal/ICS URL")
-                       .bold()
-                       .navigationBarTitle("Settings")
-                       .padding([.top, .leading], 24.0)
-                TextField("example.com/file.ics", text: $userPrefs.icsURL, onCommit: {
-                        self.taskFetcher.load(icsURL: self.userPrefs.icsURL)
-                    })
-                    .padding([.leading, .trailing], 24.0)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .keyboardType(/*@START_MENU_TOKEN@*/.URL/*@END_MENU_TOKEN@*/)
-                Spacer()
-               }
+               Form {
+                Section(header: Text("General")) {
+                    Toggle(isOn: $userPrefs.showCompleted) {
+                        Text("Show Completed")
+                    }
+                }
+                Section(header: Text("Configuration")) {
+                    HStack() {
+                        Text("ICS URL")
+                        TextField("example.com/file.ics", text: $userPrefs.icsURL, onCommit: {
+                            self.taskFetcher.load(icsURL: self.userPrefs.icsURL)
+                        })
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                    }
+                }
+               }.navigationBarTitle("Settings")
            }
            .tabItem {
                Image(systemName: "gear")
