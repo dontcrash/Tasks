@@ -56,15 +56,30 @@ public class fetchTasks: ObservableObject {
                     var date: String = ""
                     var title: String = ""
                     var description: String = ""
-                    //TODO
-                    //Can also be DESCRIPTION: blah blah to LOCATION:
-                    //Possibly add a regex to detect all caps letters followed by :
-                    let desc: [String] = matches(for: "DESCRIPTION:([\\s\\S]*?)SEQUENCE:", in: temp)
-                    if desc.count > 0 {
-                        description = desc[0]
-                        description = description.replacingOccurrences(of: "DESCRIPTION:", with: "")
-                        description = description.replacingOccurrences(of: "SEQUENCE:", with: "")
+                    var foundDesc: Bool = false
+                    for line in temp.components(separatedBy: "\r\n") {
+                        if line.starts(with: "DESCRIPTION") {
+                            description.append(line)
+                            foundDesc = true
+                            continue
+                        }
+                        if foundDesc {
+                            if line.starts(with: " "){
+                                var tempLine = line
+                                tempLine.remove(at: tempLine.startIndex)
+                                description.append(tempLine)
+                            }else{
+                                foundDesc = false
+                            }
+                        }
                     }
+                    if description.count > 0 {
+                        description.removeFirst(12)
+                        description = description.replacingOccurrences(of: "\\n\\n", with: "\n\n")
+                        description = description.replacingOccurrences(of: "\\n", with: "\n")
+                        description = description.replacingOccurrences(of: "\\", with: "")
+                    }
+                    
                     let parts = temp.components(separatedBy: "\r\n")
                     for part in parts {
                         if part.starts(with: "DTEND:") {
