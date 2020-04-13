@@ -14,22 +14,19 @@ struct ContentView: View {
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
-    @FetchRequest(entity: Task.entity(), sortDescriptors: []) var allTasks: FetchedResults<Task>
+    @State var lastTask: Task = Task()
+    
+    @FetchRequest(
+          entity: Task.entity(),
+          sortDescriptors: [NSSortDescriptor(keyPath: \Task.due, ascending: true)]
+    ) var allTasks: FetchedResults<Task>
     
     @FetchRequest(
            entity: Task.entity(),
-           sortDescriptors: [NSSortDescriptor(keyPath: \Task.due, ascending: false)],
+           sortDescriptors: [NSSortDescriptor(keyPath: \Task.due, ascending: true)],
            predicate: NSPredicate(format: "done == %@", NSNumber(value: false))
     ) var incompleteTasks: FetchedResults<Task>
      
-    /*
-     @FetchRequest(
-         entity: Task.entity(),
-         sortDescriptors: [NSSortDescriptor(keyPath: \Task.due, ascending: false)]
-     ) var Tasks: FetchedResults<Task>
-     
-    */
-    
     let df = DateFormatter()
     
     @State private var show_modal: Bool = false
@@ -41,7 +38,8 @@ struct ContentView: View {
     init() {
         UITabBar.appearance().barTintColor = UIColor.black
         UITabBar.appearance().isTranslucent = true
-        //loadData(icsURL: userPrefs.icsURL)
+        //clearCoreData()
+        loadData(icsURL: userPrefs.icsURL)
     }
     
     func timeBetweenDates(d1: Date) -> String {
@@ -66,6 +64,18 @@ struct ContentView: View {
     }
     
     func clearCoreData(){
+        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Task")
+        var results: [NSManagedObject] = []
+        do {
+            results = try context.fetch(fetchRequest)
+            for object in results {
+                context.delete(object)
+            }
+            try context.save()
+        }
+        catch {
+            print("error executing fetch request: \(error)")
+        }
     }
     
     func parseICS(data: String) {
@@ -122,15 +132,18 @@ struct ContentView: View {
                     dateFormatter.dateFormat = "yyyyMMdd'T'HHmmss'Z'"
                     dateFormatter.locale = Locale(identifier: "en_US_POSIX")
                     dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
-                    //TODO
-                    //Find a date detector that works with time
                     
                     //TODO
-                    //If the task already exists, update the data if needed
-                    if !taskExists(id: id) {
+                    // 1) Find a date detector that works with time
+                    // 2) Update entry instead of skipping
+                    
+                    if taskExists(id: id) {
+                        updateTask(id: id, due: (dateFormatter.date(from: date) ?? date.detectDates?.first!.toLocalTime())!, title: title, desc: description)
+                        print("Task exists, updating " + title + "\n\n")
+                    }else{
                         self.addTask(id: id, title: title, description: description, due: (dateFormatter.date(from: date) ?? date.detectDates?.first!.toLocalTime())!)
+                        print("New task " + title + "\n\n")
                     }
-                    
                 }
             }
         }
@@ -151,7 +164,7 @@ struct ContentView: View {
         }
     }
     
-    func updateTask(task: Task, done: Bool){
+    func changeTaskStatus(task: Task, done: Bool){
         let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Task")
         fetchRequest.predicate = NSPredicate(format: "id == %@", task.id as CVarArg)
         fetchRequest.fetchLimit = 1
@@ -162,11 +175,26 @@ struct ContentView: View {
         } catch let error as NSError {
             print(error.localizedDescription)
         }
-     }
+    }
+    
+    func updateTask(id: String, due: Date, title: String, desc: String){
+        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Task")
+        fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+        fetchRequest.fetchLimit = 1
+        do {
+            let test = try self.context.fetch(fetchRequest)
+            let taskUpdate = test[0] as! NSManagedObject
+            taskUpdate.setValue(due, forKey: "due")
+            taskUpdate.setValue(title, forKey: "title")
+            taskUpdate.setValue(desc, forKey: "summary")
+        } catch let error as NSError {
+            print(error.localizedDescription)
+        }
+    }
     
     func taskExists(id: String) -> Bool {
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Task")
-        fetchRequest.predicate = NSPredicate(format: "id = %d", id)
+        fetchRequest.predicate = NSPredicate(format: "id == %@", id)
         var results: [NSManagedObject] = []
         do {
             results = try context.fetch(fetchRequest)
@@ -227,27 +255,27 @@ struct ContentView: View {
                             }
                             .contextMenu {
                                 Button(action: {
-                                  self.show_modal = true
+                                    self.show_modal = true
+                                    self.lastTask = task
                                 }) {
                                     Text("Info")
                                     Image(systemName: "info.circle")
                                 }.sheet(isPresented: self.$show_modal) {
-                                    ModalView(task, context: self.context)
-                                    //ModalView(_description: self.currentItem, _tasks: self.taskFetcher.tasks, _id: self.currentItem)
+                                    ModalView(self.lastTask, context: self.context)
                                 }
                                 if !task.done {
                                     Button(action: {
-                                        self.updateTask(task: task, done: true)
+                                        self.changeTaskStatus(task: task, done: true)
                                     }) {
                                         Text("Complete")
                                         Image(systemName: "checkmark.circle")
                                     }
                                 }else{
                                     Button(action: {
-                                        self.updateTask(task: task, done: false)
+                                        self.changeTaskStatus(task: task, done: false)
                                     }) {
                                         Text("Incomplete")
-                                        Image(systemName: "exclamationmark.circle")
+                                        Image(systemName: "arrow.uturn.left.circle")
                                     }
                                 }
                             }
