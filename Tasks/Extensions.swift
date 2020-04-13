@@ -40,3 +40,4 @@ extension Collection where Iterator.Element == String {
         return compactMap{$0.detectDates}.flatMap{$0}
     }
 }
+

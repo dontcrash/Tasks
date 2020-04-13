@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CoreData
 import SwiftUI
 
 struct ModalView: View {
@@ -14,36 +15,18 @@ struct ModalView: View {
     @Environment(\.presentationMode) var presentationMode
     
     var description: String = ""
-    var task: Task!
+    var due: Date
     
     var df = DateFormatter()
     
-    init(_description: String, _tasks: [Task], _id: String) {
+    init(_ task: Task, context: NSManagedObjectContext) {
         df.dateFormat = "EEEE, d MMM h:mm a"
-        for t in _tasks {
-            if t.id == _id {
-                task = t
-                break
-            }
-        }
-        description = task.description
-        let arr = description.split(separator: "\r\n")
-        var fullStr: String = ""
-        for str in arr {
-            if str.starts(with: " ") {
-                fullStr.append(contentsOf: str.dropFirst())
-            }else{
-                fullStr.append(contentsOf: str)
-            }
-        }
-        description = fullStr
-        description = description.replacingOccurrences(of: "\\n\\n", with: "\n\n")
-        description = description.replacingOccurrences(of: "\\n", with: "\n")
-        description = description.replacingOccurrences(of: "\\", with: "")
+        description = task.summary
         //< 3 to stop spaces counting as a description
         if description.count < 3 {
             description = "No description provided 😢"
         }
+        due = task.due
     }
     
     var body: some View {
@@ -56,7 +39,7 @@ struct ModalView: View {
             }.padding(.bottom, 50)
             */
             List {
-                Text(df.string(from: task.due)).padding(20)
+                Text(df.string(from: due)).padding(20)
                 Text("\(description)").lineLimit(nil).padding(20)
             }
             
