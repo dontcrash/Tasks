@@ -63,7 +63,9 @@ struct ContentView: View {
             }
             return String(hours) + " hours"
         }else{
-            let days: Int = hours/24
+            var daysFloat: Float = Float(hours)/24.0
+            daysFloat.round()
+            let days: Int = Int(daysFloat)
             if days == 1 {
                 return String(hours) + " hours"
                 //return "1 day"
@@ -250,63 +252,61 @@ struct ContentView: View {
     var body: some View {
         TabView {
             NavigationView {
-                VStack {
-                    List((userPrefs.showCompleted == true ? allTasks : incompleteTasks), id: \.id) { task in
-                            HStack {
-                                Text(task.title)
-                                  .padding(.trailing, 30.0)
-                              Spacer()
-                                if (["Late","Now"].contains (self.timeBetweenDates(d1: task.due)) && !task.done) {
-                                    Text(self.timeBetweenDates(d1: task.due))
-                                      .foregroundColor(.red)
-                                  .bold()
-                                }else if task.done{
-                                    Text("Done").bold()
-                                    .foregroundColor(.green)
-                                }else {
-                                    Text(self.timeBetweenDates(d1: task.due)).bold()
-                              }
+                List((userPrefs.showCompleted == true ? allTasks : incompleteTasks), id: \.id) { task in
+                        HStack {
+                            Text(task.title)
+                              .padding(.trailing, 30.0)
+                          Spacer()
+                            if (["Late","Now"].contains (self.timeBetweenDates(d1: task.due)) && !task.done) {
+                                Text(self.timeBetweenDates(d1: task.due))
+                                  .foregroundColor(.red)
+                              .bold()
+                            }else if task.done{
+                                Text("Done").bold()
+                                .foregroundColor(.green)
+                            }else {
+                                Text(self.timeBetweenDates(d1: task.due)).bold()
+                          }
+                        }
+                        .contextMenu {
+                            Button(action: {
+                                self.show_modal = true
+                                self.lastTask = task
+                            }) {
+                                Text("Info")
+                                Image(systemName: "info.circle")
+                            }.sheet(isPresented: self.$show_modal) {
+                                ModalView(self.lastTask, context: self.context)
                             }
-                            .contextMenu {
+                            if !task.done {
                                 Button(action: {
-                                    self.show_modal = true
-                                    self.lastTask = task
+                                    self.changeTaskStatus(task: task, done: true)
                                 }) {
-                                    Text("Info")
-                                    Image(systemName: "info.circle")
-                                }.sheet(isPresented: self.$show_modal) {
-                                    ModalView(self.lastTask, context: self.context)
+                                    Text("Complete")
+                                    Image(systemName: "checkmark.circle")
                                 }
-                                if !task.done {
-                                    Button(action: {
-                                        self.changeTaskStatus(task: task, done: true)
-                                    }) {
-                                        Text("Complete")
-                                        Image(systemName: "checkmark.circle")
-                                    }
-                                }else{
-                                    Button(action: {
-                                        self.changeTaskStatus(task: task, done: false)
-                                    }) {
-                                        Text("Incomplete")
-                                        Image(systemName: "arrow.uturn.left.circle")
-                                    }
+                            }else{
+                                Button(action: {
+                                    self.changeTaskStatus(task: task, done: false)
+                                }) {
+                                    Text("Incomplete")
+                                    Image(systemName: "arrow.uturn.left.circle")
                                 }
-                            }
-                            .padding(.vertical, 15.0)
-                    }
-                    .onPull(perform: {
-                        print("ICS: " + self.userPrefs.icsURL)
-                        if self.userPrefs.icsURL.count > 0 {
-                            self.loadData(icsURL: self.userPrefs.icsURL)
-                        }else{
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                                self.isLoading = false
-                                self.showConfigAlert = true
                             }
                         }
-                    }, isLoading: isLoading)
+                        .padding(.vertical, 15.0)
                 }
+                .onPull(perform: {
+                    print("ICS: " + self.userPrefs.icsURL)
+                    if self.userPrefs.icsURL.count > 0 {
+                        self.loadData(icsURL: self.userPrefs.icsURL)
+                    }else{
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                            self.isLoading = false
+                            self.showConfigAlert = true
+                        }
+                    }
+                }, isLoading: isLoading)
                 .alert(isPresented: $showConfigAlert){
                     Alert(title: Text("Please configure an ICS URL in settings"))
                 }
