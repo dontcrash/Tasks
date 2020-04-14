@@ -11,7 +11,12 @@ import Combine
 
 class UserPrefs : ObservableObject {
     
-    @Published var icsURL = UserDefaults.standard.string(forKey: "icsURL") ?? ""
+    @Published var icsURL = UserDefaults.standard.string(forKey: "icsURL") ?? "" {
+        didSet {
+            //print("ICS URL: " + icsURL)
+        }
+    }
+    
     @Published var showCompleted = UserDefaults.standard.bool(forKey: "showCompleted")
     
     private var canc: AnyCancellable!

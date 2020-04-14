@@ -14,7 +14,15 @@ struct ContentView: View {
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
+    @State private var showDeleteAlert = false
+    
+    @State private var showConfigAlert = false
+    
+    @State var showICSSettings = false
+    
     @State var lastTask: Task = Task()
+    
+    @State var isLoading: Bool = false
     
     @FetchRequest(
           entity: Task.entity(),
@@ -39,7 +47,7 @@ struct ContentView: View {
         UITabBar.appearance().barTintColor = UIColor.black
         UITabBar.appearance().isTranslucent = true
         //clearCoreData()
-        loadData(icsURL: userPrefs.icsURL)
+        //loadData(icsURL: userPrefs.icsURL)
     }
     
     func timeBetweenDates(d1: Date) -> String {
@@ -57,7 +65,8 @@ struct ContentView: View {
         }else{
             let days: Int = hours/24
             if days == 1 {
-                return "1 day"
+                return String(hours) + " hours"
+                //return "1 day"
             }
             return String(days) + " days"
         }
@@ -82,7 +91,10 @@ struct ContentView: View {
         let arr = data.components(separatedBy: "BEGIN:VEVENT")
         if arr.count == 1{
             print("Error, is the ICS file empty?")
-            self.invalidURL = true
+            //Small delay to not glitch loading UI
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                self.invalidURL = true
+            }
         }else{
             //Loop through array of events
             for temp in arr {
@@ -139,10 +151,10 @@ struct ContentView: View {
                     
                     if taskExists(id: id) {
                         updateTask(id: id, due: (dateFormatter.date(from: date) ?? date.detectDates?.first!.toLocalTime())!, title: title, desc: description)
-                        print("Task exists, updating " + title + "\n\n")
+                        //print("Task exists, updating " + title + "\n\n")
                     }else{
                         self.addTask(id: id, title: title, description: description, due: (dateFormatter.date(from: date) ?? date.detectDates?.first!.toLocalTime())!)
-                        print("New task " + title + "\n\n")
+                        //print("New task " + title + "\n\n")
                     }
                 }
             }
@@ -172,6 +184,7 @@ struct ContentView: View {
             let test = try self.context.fetch(fetchRequest)
             let taskUpdate = test[0] as! NSManagedObject
             taskUpdate.setValue(done, forKey: "done")
+            try self.context.save()
         } catch let error as NSError {
             print(error.localizedDescription)
         }
@@ -187,6 +200,7 @@ struct ContentView: View {
             taskUpdate.setValue(due, forKey: "due")
             taskUpdate.setValue(title, forKey: "title")
             taskUpdate.setValue(desc, forKey: "summary")
+            try self.context.save()
         } catch let error as NSError {
             print(error.localizedDescription)
         }
@@ -222,16 +236,16 @@ struct ContentView: View {
                     }
                 }else {
                     //Invalid url
-                    self.invalidURL = true
+                    //Small delay to not glitch loading UI
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                        self.invalidURL = true
+                    }
                     print("No ICS data found")
                 }
             }
         }.resume()
          
     }
-
-    //TODO
-    //Show loading while loading data?
     
     var body: some View {
         TabView {
@@ -281,7 +295,31 @@ struct ContentView: View {
                             }
                             .padding(.vertical, 15.0)
                     }
-                }.navigationBarTitle("Tasks")
+                    .onPull(perform: {
+                        print("ICS: " + self.userPrefs.icsURL)
+                        if self.userPrefs.icsURL.count > 0 {
+                            self.loadData(icsURL: self.userPrefs.icsURL)
+                        }else{
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                                self.isLoading = false
+                                self.showConfigAlert = true
+                            }
+                        }
+                    }, isLoading: isLoading)
+                }
+                .alert(isPresented: $showConfigAlert){
+                    Alert(title: Text("Please configure an ICS URL in settings"))
+                }
+                .navigationBarTitle("Tasks")
+                /*
+                .navigationBarItems(
+                    trailing: Button(action: {
+                        self.loadData(icsURL: self.userPrefs.icsURL)
+                    }, label: {
+                        Text("Refresh")
+                    })
+                )
+                */
             }
             .tabItem {
                 Image(systemName: "list.bullet")
@@ -290,21 +328,28 @@ struct ContentView: View {
            }
            NavigationView {
                Form {
-                Section(header: Text("General")) {
-                    Toggle(isOn: $userPrefs.showCompleted) {
-                        Text("Show Completed")
-                    }
-                }
-                Section(header: Text("Configuration")) {
-                    HStack() {
-                        Text("ICS URL")
-                        TextField("example.com/file.ics", text: $userPrefs.icsURL, onCommit: {
-                            self.loadData(icsURL: self.userPrefs.icsURL)
-                        })
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .keyboardType(/*@START_MENU_TOKEN@*/.webSearch/*@END_MENU_TOKEN@*/)
-                    }
-                }
+                   Section(header: Text("General")) {
+                       Toggle(isOn: $userPrefs.showCompleted) {
+                           Text("Show Completed")
+                       }
+                   }
+                   Section(header: Text("Configuration")) {
+                       NavigationLink(destination: icsURLView(delegate: self, showSelf: $showICSSettings), isActive: $showICSSettings) {
+                           VStack(alignment: .leading){
+                               Text("ICS URL")
+                           }
+                       }
+                   }
+                   Button(action: {
+                       self.showDeleteAlert = true
+                   }){
+                       Text("Delete all cached data")
+                   }
+                   .alert(isPresented: self.$showDeleteAlert) {
+                       Alert(title: Text("Are you sure?"), message: Text("This will clear all cached tasks"), primaryButton: .destructive(Text("Delete")) {
+                           self.clearCoreData()
+                       }, secondaryButton: .cancel())
+                   }
                }.navigationBarTitle("Settings")
            }
            .tabItem {
@@ -314,18 +359,41 @@ struct ContentView: View {
         }
         .accentColor(.orange)
         .alert(isPresented: $invalidURL){
-            Alert(title: Text("Error getting data from the server"))
+            Alert(title: Text("Error getting data from the server, please ensure you entered a valid ICS feed URL"))
         }
     }
 }
 
+struct icsURLView: View {
+    
+    var delegate: ContentView
+    
+    @Binding var showSelf: Bool
+    @ObservedObject var userPrefs = UserPrefs()
+    
+    var body: some View {
+        Form {
+            Section {
+                TextField("website.com/file.ics", text: $userPrefs.icsURL, onCommit: {
+                    self.delegate.userPrefs.icsURL = self.userPrefs.icsURL
+                    //self.delegate.loadData(icsURL: self.userPrefs.icsURL)
+                    self.showSelf = false
+                })
+                 .textFieldStyle(RoundedBorderTextFieldStyle())
+            }
+            Section {
+                Text("Please paste your iCalendar/ICS feed URL above, this will be the URL that the app updates your task list from")
+            }
+        }
+        .navigationBarTitle(Text("ICS URL"), displayMode: .inline)
+    }
+}
 
 struct ContentView_Previews: PreviewProvider {
+    
     static var previews: some View {
-        
         let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-        
         return ContentView().environment(\.managedObjectContext, context)
-        
     }
+    
 }
