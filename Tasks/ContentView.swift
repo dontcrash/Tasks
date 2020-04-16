@@ -46,14 +46,17 @@ struct ContentView: View {
     init() {
         UITabBar.appearance().barTintColor = UIColor.black
         UITabBar.appearance().isTranslucent = true
-        //clearCoreData()
-        //loadData(icsURL: userPrefs.icsURL)
+        
+        let lastRefresh = UserDefaults.standard.object(forKey: "lastRefresh") as? Date ?? Date()
+        //If the data is > 24 hours old, refresh automatically
+        if self.hoursBetweenDates(d1: lastRefresh) > 24 {
+            loadData(icsURL: self.userPrefs.icsURL)
+        }
+        
     }
     
     func timeBetweenDates(d1: Date) -> String {
-        let cal = Calendar.current
-        let components = cal.dateComponents([.hour], from: Date().toLocalTime(), to: d1.toLocalTime())
-        let hours: Int = components.hour!
+        let hours: Int = hoursBetweenDates(d1: d1)
         if hours < 24 {
             if hours <= 0 {
                 return "Late"
@@ -72,6 +75,12 @@ struct ContentView: View {
             }
             return String(days) + " days"
         }
+    }
+    
+    func hoursBetweenDates(d1: Date) -> Int {
+        let cal = Calendar.current
+        let components = cal.dateComponents([.hour], from: Date().toLocalTime(), to: d1.toLocalTime())
+        return components.hour!
     }
     
     func clearCoreData(){
@@ -222,6 +231,8 @@ struct ContentView: View {
     }
     
     func loadData(icsURL: String) {
+        //Save last updated time as date
+        UserDefaults.standard.set(Date(), forKey: "lastRefresh")
         if icsURL == "" {
             //no config yet
             print("No URL configured")

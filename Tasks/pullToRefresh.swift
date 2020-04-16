@@ -6,15 +6,16 @@
 //  Copyright © 2020 Nick Garfitt. All rights reserved.
 //
 
-import Foundation
 import UIKit
 import SwiftUI
+import Foundation
 
 public struct Token: Identifiable {
     public let id: Int
 }
 
 public extension List {
+    
     func onPull(perform: @escaping () -> Void, isLoading: Bool) -> some View {
         onPull(perform: perform, isLoading: isLoading, token: Token(id: 1))
     }
