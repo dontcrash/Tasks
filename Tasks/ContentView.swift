@@ -291,14 +291,18 @@ struct ContentView: View {
                             }
                             if !task.done {
                                 Button(action: {
-                                    self.changeTaskStatus(task: task, done: true)
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) {
+                                        self.changeTaskStatus(task: task, done: true)
+                                    }
                                 }) {
                                     Text("Complete")
                                     Image(systemName: "checkmark.circle")
                                 }
                             }else{
                                 Button(action: {
-                                    self.changeTaskStatus(task: task, done: false)
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) {
+                                        self.changeTaskStatus(task: task, done: false)
+                                    }
                                 }) {
                                     Text("Incomplete")
                                     Image(systemName: "arrow.uturn.left.circle")
