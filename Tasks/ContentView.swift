@@ -36,7 +36,7 @@ struct ContentView: View {
            sortDescriptors: [NSSortDescriptor(keyPath: \Task.due, ascending: true)],
            predicate: NSPredicate(format: "done == %@", NSNumber(value: false))
     ) var incompleteTasks: FetchedResults<Task>
-     
+    
     let df = DateFormatter()
     
     @State private var show_modal: Bool = false
@@ -51,10 +51,9 @@ struct ContentView: View {
         
         let lastRefresh = UserDefaults.standard.object(forKey: "lastRefresh") as? Date ?? Date()
         //If the data is > 24 hours old, refresh automatically
-        if self.hoursBetweenDates(d1: lastRefresh) > 24 {
+        if self.hoursBetweenDates(d1: lastRefresh) >= 24 {
             loadData(icsURL: self.userPrefs.icsURL)
         }
-        
     }
 
     func timeBetweenDates(d1: Date) -> String {
@@ -83,6 +82,12 @@ struct ContentView: View {
         let cal = Calendar.current
         let components = cal.dateComponents([.hour], from: Date().toLocalTime(), to: d1.toLocalTime())
         return components.hour!
+    }
+    
+    func secondsBetweenDates(d1: Date) -> Int {
+        let cal = Calendar.current
+        let components = cal.dateComponents([.second], from: Date().toLocalTime(), to: d1.toLocalTime())
+        return components.second!
     }
     
     func clearCoreData(){
@@ -178,6 +183,7 @@ struct ContentView: View {
                 }
             }
         }
+        setNextTask()
     }
     
     func addTask(id: String, title: String, description: String, due: Date){
@@ -223,6 +229,21 @@ struct ContentView: View {
         } catch let error as NSError {
             print(error.localizedDescription)
         }
+    }
+    
+    func setNextTask(){
+        var nextTask: String = ""
+        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Task")
+        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Task.due, ascending: true)]
+        fetchRequest.fetchLimit = 1
+        do {
+            let test = try self.context.fetch(fetchRequest)
+            let taskUpdate = test[0] as! NSManagedObject
+            nextTask = taskUpdate.value(forKey: "title") as! String
+        } catch let error as NSError {
+            print(error.localizedDescription)
+        }
+        UserDefaults.standard.set(nextTask, forKey: "nextTask")
     }
     
     func taskExists(id: String) -> Bool {
@@ -370,8 +391,8 @@ struct ContentView: View {
                 .font(.system(size: 25))
            }
         }.onReceive(foregroundPublisher) { notification in
-            print("foreground")
-            
+            self.userPrefs.showCompleted = !self.userPrefs.showCompleted
+            self.userPrefs.showCompleted = !self.userPrefs.showCompleted
         }
         .accentColor(.orange)
         .alert(isPresented: $invalidURL){

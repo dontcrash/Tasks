@@ -42,6 +42,29 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		012E4B57244B255E00B5C554 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		012E4B88244B2A4600B5C554 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		010CA8B42441D6C100BE993E /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		010CA8B62441D6FB00BE993E /* UserPrefs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPrefs.swift; sourceTree = "<group>"; };
@@ -51,6 +74,7 @@
 		010CA93E2444512000BE993E /* Task+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Task+CoreDataClass.swift"; sourceTree = "<group>"; };
 		010CA94424457A6B00BE993E /* pullToRefresh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = pullToRefresh.swift; sourceTree = "<group>"; };
 		010CA94624457AB600BE993E /* uiScope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = uiScope.swift; sourceTree = "<group>"; };
+		012E4B3C244B1D0C00B5C554 /* NotificationCenter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NotificationCenter.framework; path = System/Library/Frameworks/NotificationCenter.framework; sourceTree = SDKROOT; };
 		01B41179243F34A300D2FB4C /* Tasks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tasks.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		01B4117C243F34A300D2FB4C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		01B4117E243F34A300D2FB4C /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -95,6 +119,7 @@
 		010CA8DB244421CD00BE993E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				012E4B3C244B1D0C00B5C554 /* NotificationCenter.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -178,6 +203,8 @@
 				01B41175243F34A300D2FB4C /* Sources */,
 				01B41176243F34A300D2FB4C /* Frameworks */,
 				01B41177243F34A300D2FB4C /* Resources */,
+				012E4B57244B255E00B5C554 /* Embed App Extensions */,
+				012E4B88244B2A4600B5C554 /* Embed Watch Content */,
 			);
 			buildRules = (
 			);

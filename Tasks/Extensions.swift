@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CoreData
 
 extension Date {
 
@@ -41,3 +42,32 @@ extension Collection where Iterator.Element == String {
     }
 }
 
+extension NSFetchRequest {
+    @objc func andPredicate(predicate: NSPredicate) {
+    guard let currentPredicate = self.predicate else {
+        self.predicate = predicate
+        return
+    }
+    self.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [currentPredicate, predicate])
+  }
+}
+
+extension Task {
+    
+    static var defaultSortDescriptors: [NSSortDescriptor] {
+        return [NSSortDescriptor(keyPath: \Task.due, ascending: true)]
+    }
+    
+    static var sortedFetchRequest: NSFetchRequest<Task> {
+        let request: NSFetchRequest<Task> = Task.fetchRequest() as! NSFetchRequest<Task>
+        request.sortDescriptors = Task.defaultSortDescriptors
+        return request
+    }
+    
+    static var completedTasksRequest: NSFetchRequest<Task> {
+      let request = Task.sortedFetchRequest
+      request.predicate = NSPredicate(format: "done == true")
+      return request
+    }
+    
+}
