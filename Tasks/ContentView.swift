@@ -24,6 +24,8 @@ struct ContentView: View {
     
     @State var isLoading: Bool = false
     
+    private let foregroundPublisher = NotificationCenter.default.publisher(for: UIScene.willEnterForegroundNotification)
+    
     @FetchRequest(
           entity: Task.entity(),
           sortDescriptors: [NSSortDescriptor(keyPath: \Task.due, ascending: true)]
@@ -54,7 +56,7 @@ struct ContentView: View {
         }
         
     }
-    
+
     func timeBetweenDates(d1: Date) -> String {
         let hours: Int = hoursBetweenDates(d1: d1)
         if hours < 24 {
@@ -89,12 +91,18 @@ struct ContentView: View {
         do {
             results = try context.fetch(fetchRequest)
             for object in results {
-                context.delete(object)
+                self.context.delete(object)
             }
-            try context.save()
         }
         catch {
             print("error executing fetch request: \(error)")
+        }
+        do {
+            try self.context.save()
+            
+        } catch {
+            print(error)
+            print(error.localizedDescription)
         }
     }
     
@@ -312,7 +320,6 @@ struct ContentView: View {
                         .padding(.vertical, 15.0)
                 }
                 .onPull(perform: {
-                    print("ICS: " + self.userPrefs.icsURL)
                     if self.userPrefs.icsURL.count > 0 {
                         self.loadData(icsURL: self.userPrefs.icsURL)
                     }else{
@@ -326,15 +333,6 @@ struct ContentView: View {
                     Alert(title: Text("Please configure an ICS URL in settings"))
                 }
                 .navigationBarTitle("Tasks")
-                /*
-                .navigationBarItems(
-                    trailing: Button(action: {
-                        self.loadData(icsURL: self.userPrefs.icsURL)
-                    }, label: {
-                        Text("Refresh")
-                    })
-                )
-                */
             }
             .tabItem {
                 Image(systemName: "list.bullet")
@@ -371,6 +369,9 @@ struct ContentView: View {
                Image(systemName: "gear")
                 .font(.system(size: 25))
            }
+        }.onReceive(foregroundPublisher) { notification in
+            print("foreground")
+            
         }
         .accentColor(.orange)
         .alert(isPresented: $invalidURL){
@@ -389,11 +390,9 @@ struct icsURLView: View {
     var body: some View {
         Form {
             Section {
-                TextField("website.com/file.ics", text: $userPrefs.icsURL, onCommit: {
+                TextField("website.com/file.ics", text: $userPrefs.icsURL, onEditingChanged: {_ in
                     self.delegate.userPrefs.icsURL = self.userPrefs.icsURL
-                    //self.delegate.loadData(icsURL: self.userPrefs.icsURL)
-                    self.showSelf = false
-                })
+                }, onCommit: { self.showSelf = false })
                  .textFieldStyle(RoundedBorderTextFieldStyle())
             }
             Section {
@@ -401,6 +400,7 @@ struct icsURLView: View {
             }
         }
         .navigationBarTitle(Text("ICS URL"), displayMode: .inline)
+        .onDisappear(perform: { self.delegate.loadData(icsURL: self.delegate.userPrefs.icsURL) })
     }
 }
 
