@@ -49,4 +49,25 @@ class Helper {
         }
     }
     
+    func clearCoreData(ctx: NSManagedObjectContext){
+        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Task")
+        var results: [NSManagedObject] = []
+        do {
+            results = try ctx.fetch(fetchRequest)
+            for object in results {
+                ctx.delete(object)
+            }
+        }
+        catch {
+            print("error executing fetch request: \(error)")
+        }
+        do {
+            try ctx.save()
+            
+        } catch {
+            print(error)
+            print(error.localizedDescription)
+        }
+    }
+    
 }

@@ -56,27 +56,6 @@ struct ContentView: View {
         }
     }
     
-    func clearCoreData(){
-        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Task")
-        var results: [NSManagedObject] = []
-        do {
-            results = try context.fetch(fetchRequest)
-            for object in results {
-                self.context.delete(object)
-            }
-        }
-        catch {
-            print("error executing fetch request: \(error)")
-        }
-        do {
-            try self.context.save()
-            
-        } catch {
-            print(error)
-            print(error.localizedDescription)
-        }
-    }
-    
     func parseICS(data: String) {
         let arr = data.components(separatedBy: "BEGIN:VEVENT")
         if arr.count == 1{
@@ -259,7 +238,6 @@ struct ContentView: View {
                 }
             }
         }.resume()
-         
     }
     
     var body: some View {
@@ -354,7 +332,7 @@ struct ContentView: View {
                    }
                    .alert(isPresented: self.$showDeleteAlert) {
                        Alert(title: Text("Are you sure?"), message: Text("This will clear all cached tasks"), primaryButton: .destructive(Text("Delete")) {
-                           self.clearCoreData()
+                           Helper.shared.clearCoreData(ctx: self.context)
                        }, secondaryButton: .cancel())
                    }
                }.navigationBarTitle("Settings")
