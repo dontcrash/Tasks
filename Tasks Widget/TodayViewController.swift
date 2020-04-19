@@ -17,6 +17,7 @@ class TodayViewController: UIViewController, NCWidgetProviding {
     @IBOutlet weak var Due: UILabel!
     
     var unopenedString: String = "Please open the Tasks app"
+    var allCompleted: String = "No tasks due"
     var lastString: String = ""
     var lastUpdate: Date = Date()
     
@@ -30,13 +31,15 @@ class TodayViewController: UIViewController, NCWidgetProviding {
     
     func refreshText(){
         self.Label.text = lastString
-        if lastString != unopenedString {
+        if lastString != unopenedString && lastString != allCompleted{
             self.Due.text = getDueTime()
             if ["Late", "Now"].contains(self.Due.text) {
                 self.Due.textColor = .red
             }else{
                 self.Due.textColor = .none
             }
+        }else{
+            self.Due.text = ""
         }
     }
     
