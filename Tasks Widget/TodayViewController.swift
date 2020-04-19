@@ -39,7 +39,7 @@ class TodayViewController: UIViewController, NCWidgetProviding {
                 self.Due.textColor = .none
             }
         }else{
-            self.Due.text = ""
+            self.Due.text = "😃"
         }
     }
     

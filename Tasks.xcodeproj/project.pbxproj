@@ -505,7 +505,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Tasks Widget/Tasks Widget.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 11;
+				CURRENT_PROJECT_VERSION = 12;
 				DEVELOPMENT_TEAM = 9DQQ9A7A6S;
 				INFOPLIST_FILE = "Tasks Widget/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -528,7 +528,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Tasks Widget/Tasks Widget.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 11;
+				CURRENT_PROJECT_VERSION = 12;
 				DEVELOPMENT_TEAM = 9DQQ9A7A6S;
 				INFOPLIST_FILE = "Tasks Widget/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -668,7 +668,7 @@
 				CODE_SIGN_ENTITLEMENTS = Tasks/Tasks.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 11;
+				CURRENT_PROJECT_VERSION = 12;
 				DEVELOPMENT_ASSET_PATHS = "\"Tasks/Preview Content\"";
 				DEVELOPMENT_TEAM = 9DQQ9A7A6S;
 				ENABLE_PREVIEWS = YES;
@@ -698,7 +698,7 @@
 				CODE_SIGN_ENTITLEMENTS = Tasks/Tasks.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 11;
+				CURRENT_PROJECT_VERSION = 12;
 				DEVELOPMENT_ASSET_PATHS = "\"Tasks/Preview Content\"";
 				DEVELOPMENT_TEAM = 9DQQ9A7A6S;
 				ENABLE_PREVIEWS = YES;

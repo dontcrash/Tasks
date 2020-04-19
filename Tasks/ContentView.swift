@@ -54,6 +54,7 @@ struct ContentView: View {
         if Helper.shared.hoursBetweenDates(d1: lastRefresh) >= 24 {
             loadData(icsURL: self.userPrefs.icsURL)
         }
+        Helper.shared.setNextTask(ctx: self.context)
     }
     
     func parseICS(data: String) {
@@ -128,7 +129,8 @@ struct ContentView: View {
                 }
             }
         }
-        setNextTask()
+        Helper.shared.setNextTask(ctx: self.context)
+        Helper.shared.refreshControl?.endRefreshing()
     }
     
     func addTask(id: String, title: String, description: String, due: Date){
@@ -158,7 +160,7 @@ struct ContentView: View {
         } catch let error as NSError {
             print(error.localizedDescription)
         }
-        setNextTask()
+        Helper.shared.setNextTask(ctx: self.context)
     }
     
     func updateTask(id: String, due: Date, title: String, desc: String){
@@ -175,27 +177,7 @@ struct ContentView: View {
         } catch let error as NSError {
             print(error.localizedDescription)
         }
-        setNextTask()
-    }
-    
-    func setNextTask(){
-        var nextTask: String = ""
-        var nextDue: Date = Date()
-        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Task")
-        fetchRequest.predicate = NSPredicate(format: "done == %@", NSNumber(value: false))
-        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Task.due, ascending: true)]
-        fetchRequest.fetchLimit = 1
-        do {
-            let test = try self.context.fetch(fetchRequest)
-            let taskUpdate = test[0] as! NSManagedObject
-            nextTask = taskUpdate.value(forKey: "title") as! String
-            nextDue = taskUpdate.value(forKey: "due") as! Date
-        } catch let error as NSError {
-            print(error.localizedDescription)
-        }
-        print("Set next task " + nextTask)
-        SharedData.shared.saveData(value: nextTask, key: "nextTask")
-        SharedData.shared.saveData(value: nextDue, key: "nextDue")
+        Helper.shared.setNextTask(ctx: self.context)
     }
     
     func taskExists(id: String) -> Bool {
@@ -232,6 +214,7 @@ struct ContentView: View {
                     //Invalid url
                     //Small delay to not glitch loading UI
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                        self.isLoading = false
                         self.invalidURL = true
                     }
                     print("No ICS data found")
@@ -271,7 +254,7 @@ struct ContentView: View {
                             }
                             if !task.done {
                                 Button(action: {
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) {
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
                                         self.changeTaskStatus(task: task, done: true)
                                     }
                                 }) {
@@ -280,7 +263,7 @@ struct ContentView: View {
                                 }
                             }else{
                                 Button(action: {
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) {
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
                                         self.changeTaskStatus(task: task, done: false)
                                     }
                                 }) {
@@ -300,7 +283,7 @@ struct ContentView: View {
                             self.showConfigAlert = true
                         }
                     }
-                }, isLoading: isLoading)
+                }, isLoading: self.isLoading)
                 .alert(isPresented: $showConfigAlert){
                     Alert(title: Text("Please configure an ICS URL in settings"))
                 }
@@ -319,7 +302,7 @@ struct ContentView: View {
                        }
                    }
                    Section(header: Text("Configuration")) {
-                       NavigationLink(destination: icsURLView(delegate: self, showSelf: $showICSSettings), isActive: $showICSSettings) {
+                    NavigationLink(destination: icsURLView(delegate: self, showSelf: $showICSSettings), isActive: $showICSSettings) {
                            VStack(alignment: .leading){
                                Text("ICS URL")
                            }
@@ -355,6 +338,7 @@ struct ContentView: View {
 struct icsURLView: View {
     
     var delegate: ContentView
+    @State var changed: Bool = false
     
     @Binding var showSelf: Bool
     @ObservedObject var userPrefs = UserPrefs()
@@ -364,7 +348,11 @@ struct icsURLView: View {
             Section {
                 TextField("website.com/file.ics", text: $userPrefs.icsURL, onEditingChanged: {_ in
                     self.delegate.userPrefs.icsURL = self.userPrefs.icsURL
-                }, onCommit: { self.showSelf = false })
+                    self.changed = true
+                }, onCommit: {
+                    self.showSelf = false
+                    
+                })
                  .textFieldStyle(RoundedBorderTextFieldStyle())
             }
             Section {
@@ -372,7 +360,12 @@ struct icsURLView: View {
             }
         }
         .navigationBarTitle(Text("ICS URL"), displayMode: .inline)
-        .onDisappear(perform: { self.delegate.loadData(icsURL: self.delegate.userPrefs.icsURL) })
+        .onDisappear(perform: {
+            if self.changed {
+                Helper.shared.clearCoreData(ctx: self.delegate.context)
+                self.delegate.loadData(icsURL: self.delegate.userPrefs.icsURL)
+            }
+        })
     }
 }
 

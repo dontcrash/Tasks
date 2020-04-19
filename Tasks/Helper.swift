@@ -14,6 +14,11 @@ import Foundation
 class Helper {
     
     static let shared = Helper()
+    
+    static let unopenedString: String = "Please open the Tasks app"
+    static let allCompleted: String = "No tasks due"
+    var allTasksComplete: Bool = false
+    var refreshControl: UIRefreshControl?
   
     func hoursBetweenDates(d1: Date) -> Int {
         let cal = Calendar.current
@@ -68,6 +73,30 @@ class Helper {
             print(error)
             print(error.localizedDescription)
         }
+        setNextTask(ctx: ctx)
+    }
+    
+    func setNextTask(ctx: NSManagedObjectContext){
+        var nextTask: String = ""
+        var nextDue: Date = Date()
+        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Task")
+        fetchRequest.predicate = NSPredicate(format: "done == %@", NSNumber(value: false))
+        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Task.due, ascending: true)]
+        fetchRequest.fetchLimit = 1
+        do {
+            let list = try ctx.fetch(fetchRequest)
+            if list.count > 0 {
+                let taskUpdate = list[0] as! NSManagedObject
+                nextTask = taskUpdate.value(forKey: "title") as! String
+                nextDue = taskUpdate.value(forKey: "due") as! Date
+            }else{
+                nextTask = Helper.allCompleted
+            }
+        } catch let error as NSError {
+            print(error.localizedDescription)
+        }
+        SharedData.shared.saveData(value: nextTask, key: "nextTask")
+        SharedData.shared.saveData(value: nextDue, key: "nextDue")
     }
     
 }

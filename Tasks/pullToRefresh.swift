@@ -63,6 +63,7 @@ internal class PullToRefreshHandler: NSObject {
         self.id = id
         super.init()
         self.refreshControl = refreshControl
+        Helper.shared.refreshControl = refreshControl
         let nc = NotificationCenter.default
         nc.addObserver(self, selector: #selector(PullToRefreshHandler.beginRefreshing), name: .beginRefreshing, object: nil)
         nc.addObserver(self, selector: #selector(PullToRefreshHandler.endRefreshing), name: .endRefreshing, object: nil)
