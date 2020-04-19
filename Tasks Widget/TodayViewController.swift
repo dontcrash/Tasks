@@ -14,16 +14,30 @@ class TodayViewController: UIViewController, NCWidgetProviding {
     //let NC = NotificationCenter.default
         
     @IBOutlet weak var Label: UILabel!
+    @IBOutlet weak var Due: UILabel!
+    
+    var unopenedString: String = "Please open the Tasks app"
     var lastString: String = ""
     var lastUpdate: Date = Date()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        //self.NC.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: nil, using: self.taskListUpdate(_:))
-        lastString = SharedData.shared.retrieveData(key: "nextTask") as? String ?? "Please open the Tasks app"
+        lastString = SharedData.shared.retrieveData(key: "nextTask") as? String ?? unopenedString
         lastUpdate = Date()
-        self.Label.text = lastString + " - " + getDueTime()
+        refreshText()
+    }
+    
+    func refreshText(){
+        self.Label.text = lastString
+        if lastString != unopenedString {
+            self.Due.text = getDueTime()
+            if ["Late", "Now"].contains(self.Due.text) {
+                self.Due.textColor = .red
+            }else{
+                self.Due.textColor = .none
+            }
+        }
     }
     
     func getDueTime() -> String {
@@ -37,7 +51,7 @@ class TodayViewController: UIViewController, NCWidgetProviding {
         // If there's no update required, use NCUpdateResult.NoData
         // If there's an update, use NCUpdateResult.NewData
         
-        let newString: String = SharedData.shared.retrieveData(key: "nextTask") as? String ?? "Please open the Tasks app"
+        let newString: String = SharedData.shared.retrieveData(key: "nextTask") as? String ?? unopenedString
         let secondsSinceUpdate = Helper.shared.secondsBetweenDates(d1: lastUpdate)
         if lastString == newString && secondsSinceUpdate < 600 {
             lastUpdate = Date()
@@ -45,7 +59,7 @@ class TodayViewController: UIViewController, NCWidgetProviding {
         }else{
             lastUpdate = Date()
             lastString = newString
-            self.Label.text = lastString + " - " + getDueTime()
+            refreshText()
             completionHandler(NCUpdateResult.newData)
         }
     }

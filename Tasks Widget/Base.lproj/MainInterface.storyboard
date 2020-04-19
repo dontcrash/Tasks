@@ -10,35 +10,39 @@
         <!--Today View Controller-->
         <scene sceneID="cwh-vc-ff4">
             <objects>
-                <viewController id="M4Y-Lb-cyx" customClass="TodayViewController" customModule="Tasks_Widget" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="M4Y-Lb-cyx" customClass="TodayViewController" customModule="Next_Task" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" alpha="0.90000000000000002" contentMode="scaleToFill" id="EyF-QQ-Dbm">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="50"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="80"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Loading" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LWc-oy-cwB">
-                                <rect key="frame" x="16" y="-10" width="61" height="70"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Loading" lineBreakMode="wordWrap" numberOfLines="4" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LWc-oy-cwB">
+                                <rect key="frame" x="16" y="0.0" width="225" height="80"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Due" textAlignment="right" lineBreakMode="wordWrap" numberOfLines="4" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="21g-eM-RLe">
+                                <rect key="frame" x="244" y="0.0" width="60" height="80"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
-                        <constraints>
-                            <constraint firstItem="a2o-wC-aHm" firstAttribute="bottom" secondItem="LWc-oy-cwB" secondAttribute="bottom" constant="14.851382666377162" id="VEQ-6A-vgi"/>
-                            <constraint firstItem="LWc-oy-cwB" firstAttribute="centerY" secondItem="EyF-QQ-Dbm" secondAttribute="centerY" id="g50-r3-I8G"/>
-                            <constraint firstItem="LWc-oy-cwB" firstAttribute="centerX" secondItem="EyF-QQ-Dbm" secondAttribute="centerX" id="zRa-vs-EAW"/>
-                        </constraints>
                         <viewLayoutGuide key="safeArea" id="a2o-wC-aHm"/>
                     </view>
                     <extendedEdge key="edgesForExtendedLayout"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-                    <size key="freeformSize" width="320" height="50"/>
+                    <size key="freeformSize" width="320" height="80"/>
                     <connections>
+                        <outlet property="Due" destination="21g-eM-RLe" id="ux0-xZ-fwP"/>
                         <outlet property="Label" destination="LWc-oy-cwB" id="3Vm-MM-9Wj"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vXp-U4-Rya" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="139" y="138"/>
+            <point key="canvasLocation" x="197.10144927536234" y="109.15178571428571"/>
         </scene>
     </scenes>
 </document>
