@@ -80,8 +80,8 @@ class Helper {
         var nextTask: String = ""
         var nextDue: Date = Date()
         let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Task")
-        fetchRequest.predicate = NSPredicate(format: "done == %@", NSNumber(value: false))
         fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Task.due, ascending: true)]
+        fetchRequest.predicate = NSPredicate(format: "done == %@", NSNumber(value: false))
         fetchRequest.fetchLimit = 1
         do {
             let list = try ctx.fetch(fetchRequest)
