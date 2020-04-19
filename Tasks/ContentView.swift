@@ -51,43 +51,9 @@ struct ContentView: View {
         
         let lastRefresh = UserDefaults.standard.object(forKey: "lastRefresh") as? Date ?? Date()
         //If the data is > 24 hours old, refresh automatically
-        if self.hoursBetweenDates(d1: lastRefresh) >= 24 {
+        if Helper.shared.hoursBetweenDates(d1: lastRefresh) >= 24 {
             loadData(icsURL: self.userPrefs.icsURL)
         }
-    }
-
-    func timeBetweenDates(d1: Date) -> String {
-        let hours: Int = hoursBetweenDates(d1: d1)
-        if hours < 24 {
-            if hours <= 0 {
-                return "Late"
-            }
-            if hours == 1 {
-                return "Now"
-            }
-            return String(hours) + " hours"
-        }else{
-            var daysFloat: Float = Float(hours)/24.0
-            daysFloat.round()
-            let days: Int = Int(daysFloat)
-            if days == 1 {
-                return String(hours) + " hours"
-                //return "1 day"
-            }
-            return String(days) + " days"
-        }
-    }
-    
-    func hoursBetweenDates(d1: Date) -> Int {
-        let cal = Calendar.current
-        let components = cal.dateComponents([.hour], from: Date().toLocalTime(), to: d1.toLocalTime())
-        return components.hour!
-    }
-    
-    func secondsBetweenDates(d1: Date) -> Int {
-        let cal = Calendar.current
-        let components = cal.dateComponents([.second], from: Date().toLocalTime(), to: d1.toLocalTime())
-        return components.second!
     }
     
     func clearCoreData(){
@@ -213,6 +179,7 @@ struct ContentView: View {
         } catch let error as NSError {
             print(error.localizedDescription)
         }
+        setNextTask()
     }
     
     func updateTask(id: String, due: Date, title: String, desc: String){
@@ -229,21 +196,27 @@ struct ContentView: View {
         } catch let error as NSError {
             print(error.localizedDescription)
         }
+        setNextTask()
     }
     
     func setNextTask(){
         var nextTask: String = ""
+        var nextDue: Date = Date()
         let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Task")
+        fetchRequest.predicate = NSPredicate(format: "done == %@", NSNumber(value: false))
         fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Task.due, ascending: true)]
         fetchRequest.fetchLimit = 1
         do {
             let test = try self.context.fetch(fetchRequest)
             let taskUpdate = test[0] as! NSManagedObject
             nextTask = taskUpdate.value(forKey: "title") as! String
+            nextDue = taskUpdate.value(forKey: "due") as! Date
         } catch let error as NSError {
             print(error.localizedDescription)
         }
-        UserDefaults.standard.set(nextTask, forKey: "nextTask")
+        print("Set next task " + nextTask)
+        SharedData.shared.saveData(value: nextTask, key: "nextTask")
+        SharedData.shared.saveData(value: nextDue, key: "nextDue")
     }
     
     func taskExists(id: String) -> Bool {
@@ -297,15 +270,15 @@ struct ContentView: View {
                             Text(task.title)
                               .padding(.trailing, 30.0)
                           Spacer()
-                            if (["Late","Now"].contains (self.timeBetweenDates(d1: task.due)) && !task.done) {
-                                Text(self.timeBetweenDates(d1: task.due))
+                            if (["Late","Now"].contains (Helper.shared.timeBetweenDates(d1: task.due)) && !task.done) {
+                                Text(Helper.shared.timeBetweenDates(d1: task.due))
                                   .foregroundColor(.red)
                               .bold()
                             }else if task.done{
                                 Text("Done").bold()
                                 .foregroundColor(.green)
                             }else {
-                                Text(self.timeBetweenDates(d1: task.due)).bold()
+                                Text(Helper.shared.timeBetweenDates(d1: task.due)).bold()
                           }
                         }
                         .contextMenu {

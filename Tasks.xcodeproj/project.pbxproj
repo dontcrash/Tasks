@@ -18,7 +18,15 @@
 		012E4B8F244C189600B5C554 /* NotificationCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 012E4B3C244B1D0C00B5C554 /* NotificationCenter.framework */; };
 		012E4B92244C189600B5C554 /* TodayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 012E4B91244C189600B5C554 /* TodayViewController.swift */; };
 		012E4B95244C189600B5C554 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 012E4B93244C189600B5C554 /* MainInterface.storyboard */; };
-		012E4B99244C189600B5C554 /* Tasks Widget.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 012E4B8E244C189600B5C554 /* Tasks Widget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		012E4B99244C189600B5C554 /* Next Task.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 012E4B8E244C189600B5C554 /* Next Task.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		012E4B9F244C199500B5C554 /* SharedData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 012E4B9E244C199500B5C554 /* SharedData.swift */; };
+		012E4BA0244C19E800B5C554 /* SharedData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 012E4B9E244C199500B5C554 /* SharedData.swift */; };
+		012E4BA2244C2BB500B5C554 /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 012E4BA1244C2BB500B5C554 /* Helper.swift */; };
+		012E4BA3244C2BB800B5C554 /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 012E4BA1244C2BB500B5C554 /* Helper.swift */; };
+		012E4BA4244C2CB800B5C554 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010CA8B42441D6C100BE993E /* Extensions.swift */; };
+		012E4BA5244C2CE200B5C554 /* Task.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 010CA92C244424B900BE993E /* Task.xcdatamodeld */; };
+		012E4BA6244C2CE700B5C554 /* Task+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010CA93E2444512000BE993E /* Task+CoreDataClass.swift */; };
+		012E4BA7244C2CE900B5C554 /* Task+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010CA93D2444512000BE993E /* Task+CoreDataProperties.swift */; };
 		01B4117D243F34A300D2FB4C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01B4117C243F34A300D2FB4C /* AppDelegate.swift */; };
 		01B4117F243F34A300D2FB4C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01B4117E243F34A300D2FB4C /* SceneDelegate.swift */; };
 		01B41181243F34A300D2FB4C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01B41180243F34A300D2FB4C /* ContentView.swift */; };
@@ -60,7 +68,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				012E4B99244C189600B5C554 /* Tasks Widget.appex in Embed App Extensions */,
+				012E4B99244C189600B5C554 /* Next Task.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -88,11 +96,13 @@
 		010CA94624457AB600BE993E /* uiScope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = uiScope.swift; sourceTree = "<group>"; };
 		012E4B3C244B1D0C00B5C554 /* NotificationCenter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NotificationCenter.framework; path = System/Library/Frameworks/NotificationCenter.framework; sourceTree = SDKROOT; };
 		012E4B89244C17B700B5C554 /* Tasks.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Tasks.entitlements; sourceTree = "<group>"; };
-		012E4B8E244C189600B5C554 /* Tasks Widget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Tasks Widget.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		012E4B8E244C189600B5C554 /* Next Task.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Next Task.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		012E4B91244C189600B5C554 /* TodayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayViewController.swift; sourceTree = "<group>"; };
 		012E4B94244C189600B5C554 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		012E4B96244C189600B5C554 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		012E4B9D244C18A300B5C554 /* Tasks Widget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Tasks Widget.entitlements"; sourceTree = "<group>"; };
+		012E4B9E244C199500B5C554 /* SharedData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedData.swift; sourceTree = "<group>"; };
+		012E4BA1244C2BB500B5C554 /* Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
 		01B41179243F34A300D2FB4C /* Tasks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tasks.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		01B4117C243F34A300D2FB4C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		01B4117E243F34A300D2FB4C /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -179,7 +189,7 @@
 				01B41179243F34A300D2FB4C /* Tasks.app */,
 				01B4118F243F34A700D2FB4C /* TasksTests.xctest */,
 				01B4119A243F34A700D2FB4C /* TasksUITests.xctest */,
-				012E4B8E244C189600B5C554 /* Tasks Widget.appex */,
+				012E4B8E244C189600B5C554 /* Next Task.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -190,6 +200,8 @@
 				012E4B89244C17B700B5C554 /* Tasks.entitlements */,
 				01B4117C243F34A300D2FB4C /* AppDelegate.swift */,
 				01B4117E243F34A300D2FB4C /* SceneDelegate.swift */,
+				012E4B9E244C199500B5C554 /* SharedData.swift */,
+				012E4BA1244C2BB500B5C554 /* Helper.swift */,
 				01B41180243F34A300D2FB4C /* ContentView.swift */,
 				010CA94424457A6B00BE993E /* pullToRefresh.swift */,
 				010CA94624457AB600BE993E /* uiScope.swift */,
@@ -250,7 +262,7 @@
 			);
 			name = "Tasks Widget";
 			productName = "Tasks Widget";
-			productReference = 012E4B8E244C189600B5C554 /* Tasks Widget.appex */;
+			productReference = 012E4B8E244C189600B5C554 /* Next Task.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 		01B41178243F34A300D2FB4C /* Tasks */ = {
@@ -401,7 +413,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				012E4BA0244C19E800B5C554 /* SharedData.swift in Sources */,
 				012E4B92244C189600B5C554 /* TodayViewController.swift in Sources */,
+				012E4BA3244C2BB800B5C554 /* Helper.swift in Sources */,
+				012E4BA5244C2CE200B5C554 /* Task.xcdatamodeld in Sources */,
+				012E4BA7244C2CE900B5C554 /* Task+CoreDataProperties.swift in Sources */,
+				012E4BA6244C2CE700B5C554 /* Task+CoreDataClass.swift in Sources */,
+				012E4BA4244C2CB800B5C554 /* Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -409,6 +427,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				012E4B9F244C199500B5C554 /* SharedData.swift in Sources */,
 				010CA93F2444512000BE993E /* Task+CoreDataProperties.swift in Sources */,
 				010CA94724457AB600BE993E /* uiScope.swift in Sources */,
 				010CA8B52441D6C100BE993E /* Extensions.swift in Sources */,
@@ -418,6 +437,7 @@
 				01B4117F243F34A300D2FB4C /* SceneDelegate.swift in Sources */,
 				010CA8B92441D73D00BE993E /* ModalView.swift in Sources */,
 				010CA9402444512000BE993E /* Task+CoreDataClass.swift in Sources */,
+				012E4BA2244C2BB500B5C554 /* Helper.swift in Sources */,
 				01B41181243F34A300D2FB4C /* ContentView.swift in Sources */,
 				010CA94524457A6C00BE993E /* pullToRefresh.swift in Sources */,
 			);
@@ -485,6 +505,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Tasks Widget/Tasks Widget.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 10;
 				DEVELOPMENT_TEAM = 9DQQ9A7A6S;
 				INFOPLIST_FILE = "Tasks Widget/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -492,11 +513,12 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.nick.Tasks.Tasks-Widget";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				MARKETING_VERSION = 1.2;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nick.Tasks.widget;
+				PRODUCT_NAME = "Next Task";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -506,6 +528,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Tasks Widget/Tasks Widget.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 10;
 				DEVELOPMENT_TEAM = 9DQQ9A7A6S;
 				INFOPLIST_FILE = "Tasks Widget/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -513,11 +536,12 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.nick.Tasks.Tasks-Widget";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				MARKETING_VERSION = 1.2;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nick.Tasks.widget;
+				PRODUCT_NAME = "Next Task";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -644,7 +668,7 @@
 				CODE_SIGN_ENTITLEMENTS = Tasks/Tasks.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 10;
 				DEVELOPMENT_ASSET_PATHS = "\"Tasks/Preview Content\"";
 				DEVELOPMENT_TEAM = 9DQQ9A7A6S;
 				ENABLE_PREVIEWS = YES;
@@ -653,7 +677,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nick.Tasks;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -674,7 +698,7 @@
 				CODE_SIGN_ENTITLEMENTS = Tasks/Tasks.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 10;
 				DEVELOPMENT_ASSET_PATHS = "\"Tasks/Preview Content\"";
 				DEVELOPMENT_TEAM = 9DQQ9A7A6S;
 				ENABLE_PREVIEWS = YES;
@@ -683,7 +707,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nick.Tasks;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
