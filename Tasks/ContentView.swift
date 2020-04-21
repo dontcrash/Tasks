@@ -120,7 +120,7 @@ struct ContentView: View {
                     // 2) Update entry instead of skipping
                     
                     if Helper.shared.taskExists(id: id, ctx: self.context) {
-                        updateTask(id: id, due: (dateFormatter.date(from: date) ?? date.detectDates?.first!.toLocalTime())!, title: title, desc: description)
+                        Helper.shared.updateTask(id: id, due: (dateFormatter.date(from: date) ?? date.detectDates?.first!.toLocalTime())!, title: title, desc: description, ctx: self.context)
                         //print("Task exists, updating " + title + "\n\n")
                     }else{
                         self.addTask(id: id, title: title, description: description, due: (dateFormatter.date(from: date) ?? date.detectDates?.first!.toLocalTime())!)
@@ -146,38 +146,6 @@ struct ContentView: View {
             print(error)
             print(error.localizedDescription)
         }
-    }
-    
-    func changeTaskStatus(task: Task, done: Bool){
-        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Task")
-        fetchRequest.predicate = NSPredicate(format: "id == %@", task.id as CVarArg)
-        fetchRequest.fetchLimit = 1
-        do {
-            let test = try self.context.fetch(fetchRequest)
-            let taskUpdate = test[0] as! NSManagedObject
-            taskUpdate.setValue(done, forKey: "done")
-            try self.context.save()
-        } catch let error as NSError {
-            print(error.localizedDescription)
-        }
-        Helper.shared.setNextTask(ctx: self.context)
-    }
-    
-    func updateTask(id: String, due: Date, title: String, desc: String){
-        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Task")
-        fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
-        fetchRequest.fetchLimit = 1
-        do {
-            let test = try self.context.fetch(fetchRequest)
-            let taskUpdate = test[0] as! NSManagedObject
-            taskUpdate.setValue(due, forKey: "due")
-            taskUpdate.setValue(title, forKey: "title")
-            taskUpdate.setValue(desc, forKey: "summary")
-            try self.context.save()
-        } catch let error as NSError {
-            print(error.localizedDescription)
-        }
-        Helper.shared.setNextTask(ctx: self.context)
     }
     
     func loadData(icsURL: String) {
@@ -216,19 +184,20 @@ struct ContentView: View {
                 List((userPrefs.showCompleted == true ? allTasks : incompleteTasks), id: \.id) { task in
                         HStack {
                             Text(task.title)
-                              .padding(.trailing, 30.0)
-                          Spacer()
-                            if (["Late","Now"].contains (Helper.shared.timeBetweenDates(d1: task.due)) && !task.done) {
-                                Text(Helper.shared.timeBetweenDates(d1: task.due))
-                                  .foregroundColor(.red)
-                              .bold()
-                            }else if task.done{
-                                Text("Done").bold()
-                                .foregroundColor(.green)
-                            }else {
-                                Text(Helper.shared.timeBetweenDates(d1: task.due)).bold()
-                          }
+                                .padding(.trailing, 30.0)
+                            Spacer()
+                              if (["Late","Now"].contains (Helper.shared.timeBetweenDates(d1: task.due)) && !task.done) {
+                                  Text(Helper.shared.timeBetweenDates(d1: task.due))
+                                    .foregroundColor(.red)
+                                .bold()
+                              }else if task.done{
+                                  Text("Done").bold()
+                                  .foregroundColor(.green)
+                              }else {
+                                  Text(Helper.shared.timeBetweenDates(d1: task.due)).bold()
+                            }
                         }
+                        .padding(.vertical, 15.0)
                         .contextMenu {
                             Button(action: {
                                 self.show_modal = true
@@ -242,7 +211,7 @@ struct ContentView: View {
                             if !task.done {
                                 Button(action: {
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
-                                        self.changeTaskStatus(task: task, done: true)
+                                        Helper.shared.changeTaskStatus(task: task, done: true, ctx: self.context)
                                     }
                                 }) {
                                     Text("Complete")
@@ -251,7 +220,7 @@ struct ContentView: View {
                             }else{
                                 Button(action: {
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
-                                        self.changeTaskStatus(task: task, done: false)
+                                        Helper.shared.changeTaskStatus(task: task, done: false, ctx: self.context)
                                     }
                                 }) {
                                     Text("Incomplete")
@@ -259,7 +228,6 @@ struct ContentView: View {
                                 }
                             }
                         }
-                        .padding(.vertical, 15.0)
                 }
                 .onPull(perform: {
                     if self.userPrefs.icsURL.count > 0 {

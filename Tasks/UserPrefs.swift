@@ -17,7 +17,11 @@ class UserPrefs : ObservableObject {
         }
     }
     
-    @Published var showCompleted = UserDefaults.standard.bool(forKey: "showCompleted")
+    @Published var showCompleted = UserDefaults.standard.bool(forKey: "showCompleted") {
+        didSet {
+            UserDefaults.standard.set(showCompleted, forKey: "showCompleted")
+        }
+    }
     
     private var canc: AnyCancellable!
     private var canc2: AnyCancellable!

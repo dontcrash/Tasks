@@ -24,4 +24,6 @@ class SharedData {
     func removeData(key: String) {
         sharedDefaults?.removeObject(forKey: key)
     }
+    
+    
 }

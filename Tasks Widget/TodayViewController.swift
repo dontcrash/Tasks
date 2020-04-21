@@ -7,44 +7,95 @@
 //
 
 import UIKit
+import SwiftUI
 import NotificationCenter
+
+class widgetData : ObservableObject {
+
+    @Published var lastUpdate: Date = Date()
+    @Published var due: Date = Date()
+    @Published var tasks: [taskModel] = [taskModel]()
+    @Published var isExpanded: Bool = false
+    
+}
 
 class TodayViewController: UIViewController, NCWidgetProviding {
     
-    //let NC = NotificationCenter.default
-        
-    @IBOutlet weak var Label: UILabel!
-    @IBOutlet weak var Due: UILabel!
+    let shared = WidgetView()
+    var uiview: UIHostingController<TodayViewController.WidgetView>?
     
-    var unopenedString: String = "Please open the Tasks app"
-    var allCompleted: String = "No tasks due"
-    var lastString: String = ""
-    var lastUpdate: Date = Date()
+    struct WidgetView : View {
+        
+        @ObservedObject var model = widgetData()
+
+        var body: some View {
+            HStack {
+                if model.tasks.count > 0 && model.isExpanded {
+                    List(model.tasks) { task in
+                        HStack {
+                            Text(task.title)
+                            Spacer()
+                            if (["Late","Now"].contains (Helper.shared.timeBetweenDates(d1: task.due))) {
+                                  Text(Helper.shared.timeBetweenDates(d1: task.due))
+                                  .foregroundColor(.red)
+                                  .bold()
+                            }else{
+                                Text(Helper.shared.timeBetweenDates(d1: task.due))
+                                .bold()
+                            }
+                        }
+                        .padding(.vertical, 3)
+                    }
+                } else if model.tasks.count > 0 {
+                    List {
+                        HStack {
+                            Text(model.tasks[0].title)
+                            Spacer()
+                            if (["Late","Now"].contains (Helper.shared.timeBetweenDates(d1: model.tasks[0].due))) {
+                                  Text(Helper.shared.timeBetweenDates(d1: model.tasks[0].due))
+                                  .foregroundColor(.red)
+                                  .bold()
+                            }else{
+                                Text(Helper.shared.timeBetweenDates(d1: model.tasks[0].due))
+                                .bold()
+                            }
+                        }
+                        .padding(.vertical, 3)
+                    }
+                } else {
+                    Text(Helper.allCompleted)
+                }
+            }
+        }
+    }
+        
+    @IBSegueAction func addSwiftUIView(_ coder: NSCoder) -> UIViewController? {
+        uiview = UIHostingController(coder: coder, rootView: shared)!
+        uiview?.view.backgroundColor = .clear
+        return uiview
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
-        lastString = SharedData.shared.retrieveData(key: "nextTask") as? String ?? unopenedString
-        lastUpdate = Date()
-        refreshText()
+        self.extensionContext?.widgetLargestAvailableDisplayMode = .expanded
+        refreshData()
     }
     
-    func refreshText(){
-        self.Label.text = lastString
-        if lastString != unopenedString && lastString != allCompleted{
-            self.Due.text = getDueTime()
-            if ["Late", "Now"].contains(self.Due.text) {
-                self.Due.textColor = .red
-            }else{
-                self.Due.textColor = .none
+    func getTasks() -> [taskModel]? {
+        do {
+            if let data = UserDefaults(suiteName: "group.com.nick.tasks")?.value(forKey:"taskList") as? Data {
+                let decodedList = try PropertyListDecoder().decode([taskModel].self, from: data)
+                return decodedList
             }
-        }else{
-            self.Due.text = "😃"
+        } catch let error as NSError {
+            print(error.localizedDescription)
         }
+        return nil
     }
     
-    func getDueTime() -> String {
-        return Helper.shared.timeBetweenDates(d1: SharedData.shared.retrieveData(key: "nextDue") as? Date ?? Date())
+    func refreshData(){
+        shared.model.lastUpdate = Date()
+        shared.model.tasks = getTasks() ?? [taskModel]()
     }
     
     func widgetPerformUpdate(completionHandler: (@escaping (NCUpdateResult) -> Void)) {
@@ -54,16 +105,22 @@ class TodayViewController: UIViewController, NCWidgetProviding {
         // If there's no update required, use NCUpdateResult.NoData
         // If there's an update, use NCUpdateResult.NewData
         
-        let newString: String = SharedData.shared.retrieveData(key: "nextTask") as? String ?? unopenedString
-        let secondsSinceUpdate = Helper.shared.secondsBetweenDates(d1: lastUpdate)
-        if lastString == newString && secondsSinceUpdate < 600 {
-            lastUpdate = Date()
-            completionHandler(NCUpdateResult.noData)
-        }else{
-            lastUpdate = Date()
-            lastString = newString
-            refreshText()
+        let secondsSinceUpdate = Helper.shared.secondsBetweenDates(d1: shared.model.lastUpdate)
+        if secondsSinceUpdate >= 600 {
+            refreshData()
             completionHandler(NCUpdateResult.newData)
+        }else{
+             completionHandler(NCUpdateResult.noData)
+        }
+    }
+    
+    func widgetActiveDisplayModeDidChange(_ activeDisplayMode: NCWidgetDisplayMode, withMaximumSize maxSize: CGSize){
+        if activeDisplayMode == .expanded {
+            preferredContentSize = CGSize(width: 0.0, height: 250.0)
+            shared.model.isExpanded = true
+        } else {
+            preferredContentSize = maxSize
+            shared.model.isExpanded = false
         }
     }
     
