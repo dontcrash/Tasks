@@ -119,7 +119,7 @@ struct ContentView: View {
                     // 1) Find a date detector that works with time
                     // 2) Update entry instead of skipping
                     
-                    if taskExists(id: id) {
+                    if Helper.shared.taskExists(id: id, ctx: self.context) {
                         updateTask(id: id, due: (dateFormatter.date(from: date) ?? date.detectDates?.first!.toLocalTime())!, title: title, desc: description)
                         //print("Task exists, updating " + title + "\n\n")
                     }else{
@@ -178,19 +178,6 @@ struct ContentView: View {
             print(error.localizedDescription)
         }
         Helper.shared.setNextTask(ctx: self.context)
-    }
-    
-    func taskExists(id: String) -> Bool {
-        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Task")
-        fetchRequest.predicate = NSPredicate(format: "id == %@", id)
-        var results: [NSManagedObject] = []
-        do {
-            results = try context.fetch(fetchRequest)
-        }
-        catch {
-            print("error executing fetch request: \(error)")
-        }
-        return results.count > 0
     }
     
     func loadData(icsURL: String) {

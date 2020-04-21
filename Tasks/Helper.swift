@@ -76,6 +76,19 @@ class Helper {
         setNextTask(ctx: ctx)
     }
     
+    func taskExists(id: String, ctx: NSManagedObjectContext) -> Bool {
+        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Task")
+        fetchRequest.predicate = NSPredicate(format: "id == %@", id)
+        var results: [NSManagedObject] = []
+        do {
+            results = try ctx.fetch(fetchRequest)
+        }
+        catch {
+            print("error executing fetch request: \(error)")
+        }
+        return results.count > 0
+    }
+    
     func setNextTask(ctx: NSManagedObjectContext){
         var nextTask: String = ""
         var nextDue: Date = Date()
