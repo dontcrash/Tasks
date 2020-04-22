@@ -24,6 +24,8 @@ struct ContentView: View {
     
     @State var isLoading: Bool = false
     
+    @State private var show_tutorial: Bool = false
+    
     private let foregroundPublisher = NotificationCenter.default.publisher(for: UIScene.willEnterForegroundNotification)
     
     @FetchRequest(
@@ -263,6 +265,15 @@ struct ContentView: View {
                            }
                        }
                    }
+                   Section(){
+                      Button(action: {
+                          self.show_tutorial = true
+                      }){
+                          Text("Help")
+                      }.sheet(isPresented: self.$show_tutorial) {
+                          TutorialView()
+                      }
+                   }
                    Button(action: {
                        self.showDeleteAlert = true
                    }){
@@ -274,6 +285,8 @@ struct ContentView: View {
                        }, secondaryButton: .cancel())
                    }
                }.navigationBarTitle("Settings")
+           }.sheet(isPresented: self.$show_tutorial) {
+               TutorialView()
            }
            .tabItem {
                Image(systemName: "gear")
