@@ -12,5 +12,6 @@ class taskModel: Codable, Identifiable {
     
     var title: String = ""
     var due: Date = Date()
+    var done: Bool = false
 
 }

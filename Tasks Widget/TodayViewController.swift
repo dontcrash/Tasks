@@ -10,7 +10,7 @@ import UIKit
 import SwiftUI
 import NotificationCenter
 
-class widgetData : ObservableObject {
+class widgetData : UIViewController, ObservableObject {
 
     @Published var lastUpdate: Date = Date()
     @Published var due: Date = Date()
@@ -21,6 +21,11 @@ class widgetData : ObservableObject {
 
 class TodayViewController: UIViewController, NCWidgetProviding {
     
+    func openMainApp(){
+        print("method worked")
+        extensionContext?.open(URL(string: "tasksics://")!)
+    }
+    
     let shared = WidgetView()
     var uiview: UIHostingController<TodayViewController.WidgetView>?
     
@@ -30,37 +35,29 @@ class TodayViewController: UIViewController, NCWidgetProviding {
 
         var body: some View {
             HStack {
-                if model.tasks.count > 0 && model.isExpanded {
+                if model.tasks.count > 0 {
                     List(model.tasks) { task in
                         HStack {
+                            //Image(systemName: task.done ? "checkmark.square" : "square")
+                            //.padding(.trailing, 15)
                             Text(task.title)
+                            .padding(.trailing, 15)
+                            .truncationMode(.tail)
+                            .lineLimit(1)
                             Spacer()
-                            if (["Late","Now"].contains (Helper.shared.timeBetweenDates(d1: task.due))) {
-                                  Text(Helper.shared.timeBetweenDates(d1: task.due))
-                                  .foregroundColor(.red)
-                                  .bold()
-                            }else{
-                                Text(Helper.shared.timeBetweenDates(d1: task.due))
+                            if task.done {
+                                Text(Helper.shared.timeBetweenDates(d1: task.due).0)
+                                .foregroundColor(.green)
                                 .bold()
+                                .font(.system(size: 14))
+                            }else{
+                                Text(Helper.shared.timeBetweenDates(d1: task.due).0)
+                                .foregroundColor((Helper.shared.timeBetweenDates(d1: task.due).1) ? .red : .blue)
+                                .bold()
+                                .font(.system(size: 14))
                             }
                         }
-                        .padding(.vertical, 3)
-                    }
-                } else if model.tasks.count > 0 {
-                    List {
-                        HStack {
-                            Text(model.tasks[0].title)
-                            Spacer()
-                            if (["Late","Now"].contains (Helper.shared.timeBetweenDates(d1: model.tasks[0].due))) {
-                                  Text(Helper.shared.timeBetweenDates(d1: model.tasks[0].due))
-                                  .foregroundColor(.red)
-                                  .bold()
-                            }else{
-                                Text(Helper.shared.timeBetweenDates(d1: model.tasks[0].due))
-                                .bold()
-                            }
-                        }
-                        .padding(.vertical, 3)
+                        .padding(.vertical, 8)
                     }
                 } else {
                     Text(Helper.allCompleted)
@@ -72,12 +69,16 @@ class TodayViewController: UIViewController, NCWidgetProviding {
     @IBSegueAction func addSwiftUIView(_ coder: NSCoder) -> UIViewController? {
         uiview = UIHostingController(coder: coder, rootView: shared)!
         uiview?.view.backgroundColor = .clear
+        shared.body.onTapGesture {
+            self.openMainApp()
+        }
         return uiview
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.extensionContext?.widgetLargestAvailableDisplayMode = .expanded
+        UITableView.appearance().separatorStyle = .none
         refreshData()
     }
     

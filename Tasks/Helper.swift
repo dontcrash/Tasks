@@ -32,30 +32,58 @@ class Helper {
         return components.second!
     }
     
-    func timeBetweenDates(d1: Date) -> String {
-        let hours: Int = hoursBetweenDates(d1: d1)
+    func minutesBetweenDates(d1: Date) -> Int {
+        let cal = Calendar.current
+        let components = cal.dateComponents([.minute], from: Date().toLocalTime(), to: d1.toLocalTime())
+        return components.minute!
+    }
+    
+    func timeBetweenDates(d1: Date) -> (String, Bool) {
+        var minutes: Int = minutesBetweenDates(d1: d1)
+        var hours: Int = minutes/60
+        let late: Bool = (minutes < 0)
+        if late {
+            minutes = -minutes
+            hours = -hours
+        }
+        if minutes < 60 {
+            return (String(minutes) + " M", late)
+        }
         if hours < 24 {
-            if hours <= 0 {
-                return "Late"
-            }
-            if hours == 1 {
-                return "Now"
-            }
-            return String(hours) + " hours"
+            return (String(hours) + " H", late)
         }else{
             var daysFloat: Float = Float(hours)/24.0
             daysFloat.round()
             let days: Int = Int(daysFloat)
-            if days == 1 {
-                return String(hours) + " hours"
-                //return "1 day"
-            }
-            return String(days) + " days"
+            return (String(days) + " D", late)
         }
     }
     
     func clearCoreData(ctx: NSManagedObjectContext){
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Task")
+        var results: [NSManagedObject] = []
+        do {
+            results = try ctx.fetch(fetchRequest)
+            for object in results {
+                ctx.delete(object)
+            }
+        }
+        catch {
+            print("error executing fetch request: \(error)")
+        }
+        do {
+            try ctx.save()
+            
+        } catch {
+            print(error)
+            print(error.localizedDescription)
+        }
+        setNextTask(ctx: ctx)
+    }
+    
+    func deleteTask(id: String, ctx: NSManagedObjectContext) {
+        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Task")
+        fetchRequest.predicate = NSPredicate(format: "id == %@", id)
         var results: [NSManagedObject] = []
         do {
             results = try ctx.fetch(fetchRequest)
@@ -93,7 +121,7 @@ class Helper {
         let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Task")
         fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Task.due, ascending: true)]
         fetchRequest.predicate = NSPredicate(format: "done == %@", NSNumber(value: false))
-        fetchRequest.fetchLimit = 3
+        fetchRequest.fetchLimit = 5
         var arr: [taskModel] = [taskModel]()
         do {
             let list = try ctx.fetch(fetchRequest)
@@ -101,6 +129,7 @@ class Helper {
                 let t: taskModel = taskModel()
                 t.title = task.value(forKey: "title") as! String
                 t.due = task.value(forKey: "due") as! Date
+                t.done = task.value(forKey: "done") as! Bool
                 arr.append(t)
             }
             UserDefaults(suiteName: "group.com.nick.tasks")?.set(try? PropertyListEncoder().encode(arr), forKey: "taskList")

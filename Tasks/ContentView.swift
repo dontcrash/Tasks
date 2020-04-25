@@ -47,9 +47,12 @@ struct ContentView: View {
     
     @ObservedObject var userPrefs = UserPrefs()
     
+    @Environment (\.colorScheme) var colorScheme: ColorScheme
+    
     init() {
         UITabBar.appearance().barTintColor = UIColor.black
         UITabBar.appearance().isTranslucent = true
+        //UITableView.appearance().separatorStyle = .none
         
         let lastRefresh = UserDefaults.standard.object(forKey: "lastRefresh") as? Date ?? Date()
         //If the data is > 24 hours old, refresh automatically
@@ -61,6 +64,7 @@ struct ContentView: View {
     
     func parseICS(data: String) {
         let arr = data.components(separatedBy: "BEGIN:VEVENT")
+        print(arr.count)
         if arr.count == 1{
             print("Error, is the ICS file empty?")
             //Small delay to not glitch loading UI
@@ -71,7 +75,7 @@ struct ContentView: View {
             //Loop through array of events
             for temp in arr {
                 //Check if the event is valid ICS
-                if temp.contains("DTSTART:") {
+                if temp.contains("DTEND") && temp.contains("SUMMARY:") {
                     var id: String = ""
                     var date: String = ""
                     var title: String = ""
@@ -105,6 +109,12 @@ struct ContentView: View {
                         if part.starts(with: "DTEND:") {
                             date = String(part).replacingOccurrences(of: "DTEND:", with: "")
                         }
+                        if part.starts(with: "DTEND;TZID=") {
+                            date = String(part).replacingOccurrences(of: "DTEND;TZID=", with: "")
+                        }
+                        if part.starts(with: "DTEND;VALUE=DATE:") {
+                            date = String(part).replacingOccurrences(of: "DTEND;VALUE=DATE:", with: "")
+                        }
                         if part.starts(with: "SUMMARY:") {
                             title = String(part).replacingOccurrences(of: "SUMMARY:", with: "")
                         }
@@ -121,12 +131,18 @@ struct ContentView: View {
                     // 1) Find a date detector that works with time
                     // 2) Update entry instead of skipping
                     
-                    if Helper.shared.taskExists(id: id, ctx: self.context) {
-                        Helper.shared.updateTask(id: id, due: (dateFormatter.date(from: date) ?? date.detectDates?.first!.toLocalTime())!, title: title, desc: description, ctx: self.context)
-                        //print("Task exists, updating " + title + "\n\n")
+                    if title.count > 0 {
+                        if Helper.shared.taskExists(id: id, ctx: self.context) {
+                            Helper.shared.updateTask(id: id, due: (dateFormatter.date(from: date) ?? date.detectDates?.first!.toLocalTime())!, title: title, desc: description, ctx: self.context)
+                            //print("Task exists, updating " + title + "\n\n")
+                        }else{
+                            self.addTask(id: id, title: title, description: description, due: (dateFormatter.date(from: date) ?? date.detectDates?.first!.toLocalTime())!)
+                            //print("New task " + title + "\n\n")
+                        }
                     }else{
-                        self.addTask(id: id, title: title, description: description, due: (dateFormatter.date(from: date) ?? date.detectDates?.first!.toLocalTime())!)
-                        //print("New task " + title + "\n\n")
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                            self.invalidURL = true
+                        }
                     }
                 }
             }
@@ -183,53 +199,45 @@ struct ContentView: View {
     var body: some View {
         TabView {
             NavigationView {
-                List((userPrefs.showCompleted == true ? allTasks : incompleteTasks), id: \.id) { task in
+                List {
+                    ForEach((userPrefs.showCompleted == true ? allTasks : incompleteTasks), id: \.id) { task in
                         HStack {
-                            Text(task.title)
-                                .padding(.trailing, 30.0)
-                            Spacer()
-                              if (["Late","Now"].contains (Helper.shared.timeBetweenDates(d1: task.due)) && !task.done) {
-                                  Text(Helper.shared.timeBetweenDates(d1: task.due))
-                                    .foregroundColor(.red)
-                                .bold()
-                              }else if task.done{
-                                  Text("Done").bold()
-                                  .foregroundColor(.green)
-                              }else {
-                                  Text(Helper.shared.timeBetweenDates(d1: task.due)).bold()
+                            Image(systemName: task.done ? "checkmark.square" : "square")
+                            .onTapGesture {
+                                Helper.shared.changeTaskStatus(task: task, done: !task.done, ctx: self.context)
                             }
-                        }
-                        .padding(.vertical, 15.0)
-                        .contextMenu {
-                            Button(action: {
-                                self.show_modal = true
-                                self.lastTask = task
-                            }) {
-                                Text("Info")
-                                Image(systemName: "info.circle")
+                            .padding(.trailing, 15)
+                            HStack {
+                                Text(task.title)
+                                    .padding(.trailing, 15)
+                                    .truncationMode(.tail)
+                                    .lineLimit(1)
+                                Spacer()
+                                if task.done {
+                                    Text(Helper.shared.timeBetweenDates(d1: task.due).0)
+                                    .foregroundColor(.green)
+                                    .bold()
+                                    .font(.system(size: 14))
+                                }else{
+                                    Text(Helper.shared.timeBetweenDates(d1: task.due).0)
+                                    .foregroundColor((Helper.shared.timeBetweenDates(d1: task.due).1) ? .red : .blue)
+                                    .bold()
+                                    .font(.system(size: 14))
+                                }
                             }.sheet(isPresented: self.$show_modal) {
                                 ModalView(self.lastTask, context: self.context)
                             }
-                            if !task.done {
-                                Button(action: {
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
-                                        Helper.shared.changeTaskStatus(task: task, done: true, ctx: self.context)
-                                    }
-                                }) {
-                                    Text("Complete")
-                                    Image(systemName: "checkmark.circle")
-                                }
-                            }else{
-                                Button(action: {
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
-                                        Helper.shared.changeTaskStatus(task: task, done: false, ctx: self.context)
-                                    }
-                                }) {
-                                    Text("Incomplete")
-                                    Image(systemName: "arrow.uturn.left.circle")
-                                }
+                            .onTapGesture {
+                                self.lastTask = task
+                                self.show_modal = true
                             }
                         }
+                        .padding(.vertical, 14)
+                    }
+                    .onDelete { indexSet in
+                        let deleteItem = (self.userPrefs.showCompleted == true ? self.allTasks : self.incompleteTasks)[indexSet.first!]
+                        Helper.shared.deleteTask(id: deleteItem.id, ctx: self.context)
+                    }
                 }
                 .onPull(perform: {
                     if self.userPrefs.icsURL.count > 0 {
@@ -245,6 +253,7 @@ struct ContentView: View {
                     Alert(title: Text("Please configure an ICS URL in settings"))
                 }
                 .navigationBarTitle("Tasks")
+                .environment(\.horizontalSizeClass, .regular)
             }
             .tabItem {
                 Image(systemName: "list.bullet")
@@ -293,13 +302,17 @@ struct ContentView: View {
                 .font(.system(size: 25))
            }
         }.onReceive(foregroundPublisher) { notification in
+            //TODO
+            //Find a non hackish way to refresh the list view
             self.userPrefs.showCompleted = !self.userPrefs.showCompleted
             self.userPrefs.showCompleted = !self.userPrefs.showCompleted
         }
-        .accentColor(.orange)
+        .accentColor(.blue)
         .alert(isPresented: $invalidURL){
             Alert(title: Text("Error getting data from the server, please ensure you entered a valid ICS feed URL"))
         }
+        //TODO
+        //.background((self.colorScheme == .dark ? Color(hex: 3289650) : Color.white))
     }
 }
 
