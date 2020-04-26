@@ -47,6 +47,9 @@ class Helper {
             hours = -hours
         }
         if minutes < 60 {
+            if minutes == 0 {
+                return ("Now", late)
+            }
             return (String(minutes) + " M", late)
         }
         if hours < 24 {
@@ -117,6 +120,7 @@ class Helper {
             print(error)
             print(error.localizedDescription)
         }
+        setNextTask(ctx: ctx)
     }
     
     func taskExists(id: String, ctx: NSManagedObjectContext) -> Bool {
