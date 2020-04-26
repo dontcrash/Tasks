@@ -64,6 +64,7 @@ class TodayViewController: UIViewController, NCWidgetProviding {
                 }
             }
         }
+        
     }
         
     @IBSegueAction func addSwiftUIView(_ coder: NSCoder) -> UIViewController? {

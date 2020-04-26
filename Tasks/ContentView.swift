@@ -134,10 +134,8 @@ struct ContentView: View {
                     if title.count > 0 {
                         if Helper.shared.taskExists(id: id, ctx: self.context) {
                             Helper.shared.updateTask(id: id, due: (dateFormatter.date(from: date) ?? date.detectDates?.first!.toLocalTime())!, title: title, desc: description, ctx: self.context)
-                            //print("Task exists, updating " + title + "\n\n")
                         }else{
-                            self.addTask(id: id, title: title, description: description, due: (dateFormatter.date(from: date) ?? date.detectDates?.first!.toLocalTime())!)
-                            //print("New task " + title + "\n\n")
+                            Helper.shared.addTask(id: id, title: title, description: description, due: (dateFormatter.date(from: date) ?? date.detectDates?.first!.toLocalTime())!, ctx: self.context)
                         }
                     }else{
                         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
@@ -149,21 +147,6 @@ struct ContentView: View {
         }
         Helper.shared.setNextTask(ctx: self.context)
         Helper.shared.refreshControl?.endRefreshing()
-    }
-    
-    func addTask(id: String, title: String, description: String, due: Date){
-        let newTask = Task(context: self.context)
-        newTask.id = id
-        newTask.title = title
-        newTask.summary = description
-        newTask.due = due
-        newTask.done = false
-        do {
-            try self.context.save()
-        } catch {
-            print(error)
-            print(error.localizedDescription)
-        }
     }
     
     func loadData(icsURL: String) {
@@ -199,61 +182,86 @@ struct ContentView: View {
     var body: some View {
         TabView {
             NavigationView {
-                List {
-                    ForEach((userPrefs.showCompleted == true ? allTasks : incompleteTasks), id: \.id) { task in
-                        HStack {
-                            Image(systemName: task.done ? "checkmark.square" : "square")
-                            .onTapGesture {
-                                Helper.shared.changeTaskStatus(task: task, done: !task.done, ctx: self.context)
-                            }
-                            .padding(.trailing, 15)
+                ZStack {
+                    List {
+                        ForEach((userPrefs.showCompleted == true ? allTasks : incompleteTasks), id: \.id) { task in
                             HStack {
-                                Text(task.title)
-                                    .padding(.trailing, 15)
-                                    .truncationMode(.tail)
-                                    .lineLimit(1)
-                                Spacer()
-                                if task.done {
-                                    Text(Helper.shared.timeBetweenDates(d1: task.due).0)
-                                    .foregroundColor(.green)
-                                    .bold()
-                                    .font(.system(size: 14))
-                                }else{
-                                    Text(Helper.shared.timeBetweenDates(d1: task.due).0)
-                                    .foregroundColor((Helper.shared.timeBetweenDates(d1: task.due).1) ? .red : .blue)
-                                    .bold()
-                                    .font(.system(size: 14))
+                                Image(systemName: task.done ? "checkmark.square" : "square")
+                                .onTapGesture {
+                                    Helper.shared.changeTaskStatus(task: task, done: !task.done, ctx: self.context)
                                 }
-                            }.sheet(isPresented: self.$show_modal) {
-                                ModalView(self.lastTask, context: self.context)
+                                .padding(.trailing, 15)
+                                HStack {
+                                    Text(task.title)
+                                        .padding(.trailing, 15)
+                                        .truncationMode(.tail)
+                                        .lineLimit(1)
+                                    Spacer()
+                                    if task.done {
+                                        Text(Helper.shared.timeBetweenDates(d1: task.due).0)
+                                        .foregroundColor(.green)
+                                        .bold()
+                                        .font(.system(size: 14))
+                                    }else{
+                                        Text(Helper.shared.timeBetweenDates(d1: task.due).0)
+                                        .foregroundColor((Helper.shared.timeBetweenDates(d1: task.due).1) ? .red : .blue)
+                                        .bold()
+                                        .font(.system(size: 14))
+                                    }
+                                }.sheet(isPresented: self.$show_modal) {
+                                    ModalView(self.lastTask, context: self.context)
+                                }
+                                .onTapGesture {
+                                    self.lastTask = task
+                                    self.show_modal = true
+                                }
                             }
-                            .onTapGesture {
-                                self.lastTask = task
-                                self.show_modal = true
+                            .padding(.vertical, 14)
+                        }
+                        .onDelete { indexSet in
+                            let deleteItem = (self.userPrefs.showCompleted == true ? self.allTasks : self.incompleteTasks)[indexSet.first!]
+                            Helper.shared.deleteTask(id: deleteItem.id, ctx: self.context)
+                        }
+                    }
+                    .onPull(perform: {
+                        if self.userPrefs.icsURL.count > 0 {
+                            self.loadData(icsURL: self.userPrefs.icsURL)
+                        }else{
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                                self.isLoading = false
+                                self.showConfigAlert = true
                             }
                         }
-                        .padding(.vertical, 14)
+                    }, isLoading: self.isLoading)
+                    .alert(isPresented: $showConfigAlert){
+                        Alert(title: Text("Please configure an ICS URL in settings"))
                     }
-                    .onDelete { indexSet in
-                        let deleteItem = (self.userPrefs.showCompleted == true ? self.allTasks : self.incompleteTasks)[indexSet.first!]
-                        Helper.shared.deleteTask(id: deleteItem.id, ctx: self.context)
-                    }
-                }
-                .onPull(perform: {
-                    if self.userPrefs.icsURL.count > 0 {
-                        self.loadData(icsURL: self.userPrefs.icsURL)
-                    }else{
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                            self.isLoading = false
-                            self.showConfigAlert = true
+                    .navigationBarTitle("Tasks", displayMode: .inline)
+                    .environment(\.horizontalSizeClass, .regular)
+                    VStack {
+                        Spacer()
+                        HStack {
+                            Spacer()
+                            Button(action: {
+                                print("Add")
+                                Helper.shared.addTask(id:
+                                    String(Date().toLocalTime().timeIntervalSince1970), title: "Test", description: "Description", due: Date().toLocalTime(), ctx: self.context)
+                            }, label: {
+                                Text("+")
+                                .font(.system(size: 45))
+                                .frame(width: 65, height: 60)
+                                .foregroundColor(Color.white)
+                                .padding(.bottom, 5)
+                            })
+                            .background(Color.blue)
+                            .cornerRadius(40)
+                            .padding(10)
+                            .shadow(color: Color.black.opacity(0.3),
+                                    radius: 3, x: 3, y: 3)
                         }
                     }
-                }, isLoading: self.isLoading)
-                .alert(isPresented: $showConfigAlert){
-                    Alert(title: Text("Please configure an ICS URL in settings"))
+
                 }
-                .navigationBarTitle("Tasks")
-                .environment(\.horizontalSizeClass, .regular)
             }
             .tabItem {
                 Image(systemName: "list.bullet")
@@ -293,7 +301,7 @@ struct ContentView: View {
                            Helper.shared.clearCoreData(ctx: self.context)
                        }, secondaryButton: .cancel())
                    }
-               }.navigationBarTitle("Settings")
+               }.navigationBarTitle("Settings", displayMode: .inline)
            }.sheet(isPresented: self.$show_tutorial) {
                TutorialView()
            }

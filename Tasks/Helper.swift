@@ -104,6 +104,21 @@ class Helper {
         setNextTask(ctx: ctx)
     }
     
+    func addTask(id: String, title: String, description: String, due: Date, ctx: NSManagedObjectContext){
+        let newTask = Task(context: ctx)
+        newTask.id = id
+        newTask.title = title
+        newTask.summary = description
+        newTask.due = due
+        newTask.done = false
+        do {
+            try ctx.save()
+        } catch {
+            print(error)
+            print(error.localizedDescription)
+        }
+    }
+    
     func taskExists(id: String, ctx: NSManagedObjectContext) -> Bool {
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Task")
         fetchRequest.predicate = NSPredicate(format: "id == %@", id)
