@@ -245,7 +245,7 @@ struct ContentView: View {
                             Button(action: {
                                 print("Add")
                                 Helper.shared.addTask(id:
-                                    String(Date().toLocalTime().timeIntervalSince1970), title: "Test", description: "Description", due: Date().toLocalTime(), ctx: self.context)
+                                    String(Date().timeIntervalSince1970), title: "Test", description: "Description", due: Date(), ctx: self.context)
                             }, label: {
                                 Text("+")
                                 .font(.system(size: 45))
