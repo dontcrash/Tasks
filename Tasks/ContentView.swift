@@ -39,11 +39,12 @@ struct ContentView: View {
            predicate: NSPredicate(format: "done == %@", NSNumber(value: false))
     ) var incompleteTasks: FetchedResults<Task>
     
-    let df = DateFormatter()
+    var df = DateFormatter()
     
     @State private var show_modal: Bool = false
     @State var currentItem: String = ""
     @State var invalidURL = false
+    @State var showMenu = false
     
     @ObservedObject var userPrefs = UserPrefs()
     
@@ -60,6 +61,7 @@ struct ContentView: View {
             loadData(icsURL: self.userPrefs.icsURL)
         }
         Helper.shared.setNextTask(ctx: self.context)
+        df.dateFormat = "EEEE, d MMM h:mm a"
     }
     
     func parseICS(data: String) {
@@ -106,14 +108,14 @@ struct ContentView: View {
                     
                     let parts = temp.components(separatedBy: "\r\n")
                     for part in parts {
-                        if part.starts(with: "DTEND:") {
-                            date = String(part).replacingOccurrences(of: "DTEND:", with: "")
+                        if part.starts(with: "DTSTART:") {
+                            date = String(part).replacingOccurrences(of: "DTSTART:", with: "")
                         }
-                        if part.starts(with: "DTEND;TZID=") {
-                            date = String(part).replacingOccurrences(of: "DTEND;TZID=", with: "")
+                        if part.starts(with: "DTSTART;TZID=") {
+                            date = String(part).replacingOccurrences(of: "DTSTART;TZID=", with: "")
                         }
-                        if part.starts(with: "DTEND;VALUE=DATE:") {
-                            date = String(part).replacingOccurrences(of: "DTEND;VALUE=DATE:", with: "")
+                        if part.starts(with: "DTSTART;VALUE=DATE:") {
+                            date = String(part).replacingOccurrences(of: "DTSTART;VALUE=DATE:", with: "")
                         }
                         if part.starts(with: "SUMMARY:") {
                             title = String(part).replacingOccurrences(of: "SUMMARY:", with: "")
@@ -129,7 +131,6 @@ struct ContentView: View {
                     
                     //TODO
                     // 1) Find a date detector that works with time
-                    // 2) Update entry instead of skipping
                     
                     if title.count > 0 {
                         if Helper.shared.taskExists(id: id, ctx: self.context) {
@@ -180,6 +181,16 @@ struct ContentView: View {
     }
     
     var body: some View {
+        
+        let drag = DragGesture()
+        .onEnded {
+            if $0.translation.width < -100 {
+                withAnimation {
+                    self.showMenu = false
+                }
+            }
+        }
+        
         TabView {
             NavigationView {
                 ZStack {
@@ -187,34 +198,58 @@ struct ContentView: View {
                         ForEach((userPrefs.showCompleted == true ? allTasks : incompleteTasks), id: \.id) { task in
                             HStack {
                                 Image(systemName: task.done ? "checkmark.square" : "square")
+                                    .resizable()
+                                    .frame(width: 20, height: 20)
                                 .onTapGesture {
                                     Helper.shared.changeTaskStatus(task: task, done: !task.done, ctx: self.context)
                                 }
                                 .padding(.trailing, 15)
-                                HStack {
-                                    Text(task.title)
-                                        .padding(.trailing, 15)
-                                        .truncationMode(.tail)
-                                        .lineLimit(1)
-                                    Spacer()
-                                    if task.done {
-                                        Text(Helper.shared.timeBetweenDates(d1: task.due).0)
-                                        .foregroundColor(.green)
-                                        .bold()
-                                        .font(.system(size: 14))
-                                    }else{
-                                        Text(Helper.shared.timeBetweenDates(d1: task.due).0)
-                                        .foregroundColor((Helper.shared.timeBetweenDates(d1: task.due).1) ? .red : .blue)
-                                        .bold()
-                                        .font(.system(size: 14))
+                                NavigationLink(destination:
+                                    List {
+                                        Text("✏ Title")
+                                            .foregroundColor(Color.gray)
+                                            .padding(.top, 50)
+                                            .padding(.horizontal, 20.0)
+                                        Text(task.title)
+                                            .padding([.leading, .trailing], 20)
+                                        Divider()
+                                        Text("🗓️ Date")
+                                            .foregroundColor(Color.gray)
+                                            .padding(.top, 20)
+                                            .padding(.horizontal, 20.0)
+                                        Text(self.df.string(from: task.due))
+                                            .padding([.leading, .trailing], 20)
+                                        Divider()
+                                        Text("📖 Notes")
+                                            .foregroundColor(Color.gray)
+                                            .padding(.top, 20)
+                                            .padding(.horizontal, 20.0)
+                                        Text((task.summary.count > 0 ? task.summary : Helper.noDesc))
+                                            .padding([.leading, .trailing], 20)
                                     }
-                                }.sheet(isPresented: self.$show_modal) {
-                                    ModalView(self.lastTask, context: self.context)
+                                    .onAppear { UITableView.appearance().separatorStyle = .none }
+                                    .navigationBarTitle(Text("Details"))
+                                ) {
+                                    HStack {
+                                        Text(task.title)
+                                            .padding(.trailing, 15)
+                                            .truncationMode(.tail)
+                                            .lineLimit(1)
+                                        Spacer()
+                                        if task.done {
+                                            Text(Helper.shared.timeBetweenDates(d1: task.due).0)
+                                            .foregroundColor(.green)
+                                            .bold()
+                                            .font(.system(size: 14))
+                                        }else{
+                                            Text(Helper.shared.timeBetweenDates(d1: task.due).0)
+                                            .foregroundColor((Helper.shared.timeBetweenDates(d1: task.due).1) ? .red : .blue)
+                                            .bold()
+                                            .font(.system(size: 14))
+                                        }
+                                    }
                                 }
-                                .onTapGesture {
-                                    self.lastTask = task
-                                    self.show_modal = true
-                                }
+                                .onDisappear { UITableView.appearance().separatorStyle = .singleLine }
                             }
                             .padding(.vertical, 14)
                         }
@@ -237,7 +272,12 @@ struct ContentView: View {
                         Alert(title: Text("Please configure an ICS URL in settings"))
                     }
                     .navigationBarTitle("Tasks", displayMode: .inline)
-                    .environment(\.horizontalSizeClass, .regular)
+                    //.environment(\.horizontalSizeClass, .regular)
+                    
+                    
+                    //TODO
+                    //Implement code for adding new tasks
+                    /*
                     VStack {
                         Spacer()
                         HStack {
@@ -259,7 +299,7 @@ struct ContentView: View {
                             .shadow(color: Color.black.opacity(0.3),
                                     radius: 3, x: 3, y: 3)
                         }
-                    }
+                    }*/
 
                 }
             }
@@ -276,7 +316,7 @@ struct ContentView: View {
                        }
                    }
                    Section(header: Text("Configuration")) {
-                    NavigationLink(destination: icsURLView(delegate: self, showSelf: $showICSSettings), isActive: $showICSSettings) {
+                       NavigationLink(destination: icsURLView(delegate: self, showSelf: $showICSSettings), isActive: $showICSSettings){
                            VStack(alignment: .leading){
                                Text("ICS URL")
                            }

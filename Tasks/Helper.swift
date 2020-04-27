@@ -17,6 +17,8 @@ class Helper {
     
     static let unopenedString: String = "Please open the Tasks app"
     static let allCompleted: String = "No tasks due 😊"
+    static let noDesc: String = "No description provided 😢"
+    
     var allTasksComplete: Bool = false
     var refreshControl: UIRefreshControl?
   

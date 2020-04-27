@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		010CA8B52441D6C100BE993E /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010CA8B42441D6C100BE993E /* Extensions.swift */; };
 		010CA8B72441D6FB00BE993E /* UserPrefs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010CA8B62441D6FB00BE993E /* UserPrefs.swift */; };
-		010CA8B92441D73D00BE993E /* ModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010CA8B82441D73D00BE993E /* ModalView.swift */; };
+		010CA8B92441D73D00BE993E /* MenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010CA8B82441D73D00BE993E /* MenuView.swift */; };
 		010CA92E244424B900BE993E /* Task.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 010CA92C244424B900BE993E /* Task.xcdatamodeld */; };
 		010CA93F2444512000BE993E /* Task+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010CA93D2444512000BE993E /* Task+CoreDataProperties.swift */; };
 		010CA9402444512000BE993E /* Task+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010CA93E2444512000BE993E /* Task+CoreDataClass.swift */; };
@@ -27,6 +27,7 @@
 		012E4BA5244C2CE200B5C554 /* Task.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 010CA92C244424B900BE993E /* Task.xcdatamodeld */; };
 		012E4BA6244C2CE700B5C554 /* Task+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010CA93E2444512000BE993E /* Task+CoreDataClass.swift */; };
 		012E4BA7244C2CE900B5C554 /* Task+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010CA93D2444512000BE993E /* Task+CoreDataProperties.swift */; };
+		017670ED2456A51A00974ACF /* addTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 017670EC2456A51A00974ACF /* addTaskView.swift */; };
 		01A95B15244F06DB00171995 /* taskModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01A95B14244F06DB00171995 /* taskModel.swift */; };
 		01A95B16244F06DF00171995 /* taskModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01A95B14244F06DB00171995 /* taskModel.swift */; };
 		01A95B4924504D2300171995 /* TutorialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01A95B4824504D2300171995 /* TutorialView.swift */; };
@@ -91,7 +92,7 @@
 /* Begin PBXFileReference section */
 		010CA8B42441D6C100BE993E /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		010CA8B62441D6FB00BE993E /* UserPrefs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPrefs.swift; sourceTree = "<group>"; };
-		010CA8B82441D73D00BE993E /* ModalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalView.swift; sourceTree = "<group>"; };
+		010CA8B82441D73D00BE993E /* MenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuView.swift; sourceTree = "<group>"; };
 		010CA92D244424B900BE993E /* TaskModel.xcdatamodel */ = {isa = PBXFileReference; explicitFileType = wrapper.xcdatamodel; path = TaskModel.xcdatamodel; sourceTree = "<group>"; };
 		010CA93D2444512000BE993E /* Task+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Task+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		010CA93E2444512000BE993E /* Task+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Task+CoreDataClass.swift"; sourceTree = "<group>"; };
@@ -106,6 +107,7 @@
 		012E4B9D244C18A300B5C554 /* Tasks Widget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Tasks Widget.entitlements"; sourceTree = "<group>"; };
 		012E4B9E244C199500B5C554 /* SharedData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedData.swift; sourceTree = "<group>"; };
 		012E4BA1244C2BB500B5C554 /* Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
+		017670EC2456A51A00974ACF /* addTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = addTaskView.swift; sourceTree = "<group>"; };
 		01A95B14244F06DB00171995 /* taskModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = taskModel.swift; sourceTree = "<group>"; };
 		01A95B4824504D2300171995 /* TutorialView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TutorialView.swift; sourceTree = "<group>"; };
 		01B41179243F34A300D2FB4C /* Tasks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tasks.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -212,8 +214,9 @@
 				010CA94424457A6B00BE993E /* pullToRefresh.swift */,
 				010CA94624457AB600BE993E /* uiScope.swift */,
 				010CA92C244424B900BE993E /* Task.xcdatamodeld */,
-				010CA8B82441D73D00BE993E /* ModalView.swift */,
+				010CA8B82441D73D00BE993E /* MenuView.swift */,
 				01A95B4824504D2300171995 /* TutorialView.swift */,
+				017670EC2456A51A00974ACF /* addTaskView.swift */,
 				010CA8B62441D6FB00BE993E /* UserPrefs.swift */,
 				010CA8B42441D6C100BE993E /* Extensions.swift */,
 				01B41182243F34A700D2FB4C /* Assets.xcassets */,
@@ -438,13 +441,14 @@
 				012E4B9F244C199500B5C554 /* SharedData.swift in Sources */,
 				010CA93F2444512000BE993E /* Task+CoreDataProperties.swift in Sources */,
 				010CA94724457AB600BE993E /* uiScope.swift in Sources */,
+				017670ED2456A51A00974ACF /* addTaskView.swift in Sources */,
 				010CA8B52441D6C100BE993E /* Extensions.swift in Sources */,
 				010CA92E244424B900BE993E /* Task.xcdatamodeld in Sources */,
 				010CA8B72441D6FB00BE993E /* UserPrefs.swift in Sources */,
 				01B4117D243F34A300D2FB4C /* AppDelegate.swift in Sources */,
 				01B4117F243F34A300D2FB4C /* SceneDelegate.swift in Sources */,
 				01A95B4924504D2300171995 /* TutorialView.swift in Sources */,
-				010CA8B92441D73D00BE993E /* ModalView.swift in Sources */,
+				010CA8B92441D73D00BE993E /* MenuView.swift in Sources */,
 				010CA9402444512000BE993E /* Task+CoreDataClass.swift in Sources */,
 				012E4BA2244C2BB500B5C554 /* Helper.swift in Sources */,
 				01B41181243F34A300D2FB4C /* ContentView.swift in Sources */,
