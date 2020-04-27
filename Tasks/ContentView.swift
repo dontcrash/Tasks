@@ -9,7 +9,6 @@
 import UIKit
 import SwiftUI
 import CoreData
-import PartialSheet
 
 struct ContentView: View {
     
@@ -25,9 +24,7 @@ struct ContentView: View {
     
     @State var isLoading: Bool = false
     
-    @State private var show_tutorial: Bool = false
-    
-    @State var showMenu: Bool = false
+    @State var showConfigMenu: Bool = false
     
     private let foregroundPublisher = NotificationCenter.default.publisher(for: UIScene.willEnterForegroundNotification)
     
@@ -44,19 +41,17 @@ struct ContentView: View {
     
     var df = DateFormatter()
     
-    @State private var show_modal: Bool = false
     @State var currentItem: String = ""
     @State var invalidURL = false
     
     @ObservedObject var userPrefs = UserPrefs()
     
-    @Environment (\.colorScheme) var colorScheme: ColorScheme
+    @State var ICSTextColor: Color = Color.blue
     
     init() {
         UITabBar.appearance().barTintColor = UIColor.black
         UITabBar.appearance().isTranslucent = true
         //UITableView.appearance().separatorStyle = .none
-        
         let lastRefresh = UserDefaults.standard.object(forKey: "lastRefresh") as? Date ?? Date()
         //If the data is > 24 hours old, refresh automatically
         if Helper.shared.hoursBetweenDates(d1: lastRefresh) >= 24 {
@@ -184,7 +179,12 @@ struct ContentView: View {
     
     var body: some View {
         
-        NavigationView {
+        var foreverAnimation: Animation {
+               Animation.linear(duration: 0.7)
+               .repeatForever()
+        }
+        
+        return NavigationView {
             VStack {
                 List {
                     ForEach((userPrefs.showCompleted == true ? allTasks : incompleteTasks), id: \.id) { task in
@@ -263,7 +263,7 @@ struct ContentView: View {
                 .alert(isPresented: $showConfigAlert){
                     Alert(title: Text("Please configure an ICS URL in settings"))
                 }
-                .sheet(isPresented: self.$showMenu) {
+                .sheet(isPresented: self.$showConfigMenu) {
                     ZStack {
                         NavigationView {
                             VStack(alignment: .leading) {
@@ -274,7 +274,14 @@ struct ContentView: View {
                                                 self.showICSSettings = true
                                             }){
                                                 Text("Configure ICS URL")
-                                                .foregroundColor(Color.blue)
+                                                    .foregroundColor((self.userPrefs.icsURL.count > 0 ? Color.blue : Color.white))
+                                                    .colorMultiply(self.ICSTextColor)
+                                                    .animation(foreverAnimation)
+                                                    .onAppear(){
+                                                        if self.userPrefs.icsURL.count < 1 {
+                                                            self.ICSTextColor = Color.white
+                                                        }
+                                                    }
                                             }
                                              
                                          }
@@ -321,7 +328,7 @@ struct ContentView: View {
                 .navigationBarTitle("Tasks", displayMode: .inline)
                 .navigationBarItems(trailing: (
                     Button(action: {
-                        self.showMenu = true
+                        self.showConfigMenu = true
                     }) {
                         ZStack {
                             Rectangle()
