@@ -12,9 +12,12 @@ import SwiftUI
 struct MenuView: View {
     
     @ObservedObject var userPrefs: UserPrefs
+    var incompleteTasks: FetchedResults<Task>
+    var allTasks: FetchedResults<Task>
     
     var body: some View {
         VStack(alignment: .leading) {
+            /*
             HStack {
                 Image(systemName: "list.bullet")
                     .foregroundColor(.gray)
@@ -24,35 +27,36 @@ struct MenuView: View {
                     .font(.headline)
             }
             .padding(.top, 100)
+            */
             HStack {
                 Image(systemName: "gear")
-                    .foregroundColor(.gray)
+                    //.foregroundColor(.gray)
                     .imageScale(.large)
                 Text("Settings")
-                    .foregroundColor(.gray)
+                    //.foregroundColor(.gray)
                     .font(.headline)
             }
-            .padding(.top, 30)
+            .padding(.top, 100)
             Divider()
-        .padding(.top, 30)
+           .padding(.top, 30)
             HStack {
                 Toggle(isOn: self.$userPrefs.showCompleted) {
-                    Text("Show Completed")
+                    Text("Show completed")
                 }
             }
             .padding(.top, 30)
+            Divider()
+            .padding(.top, 30)
+            Text("Total " + (self.userPrefs.showCompleted ? String(allTasks.count) : String(incompleteTasks.count)))
+                .foregroundColor(Color.gray)
+                .padding(.bottom, 50)
+                .padding(.top, 30)
             Spacer()
         }
-            .padding()
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Color(red: 32/255, green: 32/255, blue: 32/255))
-            .edgesIgnoringSafeArea(.all)
+        .padding()
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color(red: 32/255, green: 32/255, blue: 32/255))
+        .edgesIgnoringSafeArea(.all)
     }
     
-}
-
-struct MenuView_Previews: PreviewProvider {
-    static var previews: some View {
-        MenuView(userPrefs: UserPrefs())
-    }
 }
