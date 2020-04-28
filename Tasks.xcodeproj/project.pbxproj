@@ -14,6 +14,7 @@
 		010CA9402444512000BE993E /* Task+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010CA93E2444512000BE993E /* Task+CoreDataClass.swift */; };
 		010CA94524457A6C00BE993E /* pullToRefresh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010CA94424457A6B00BE993E /* pullToRefresh.swift */; };
 		010CA94724457AB600BE993E /* uiScope.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010CA94624457AB600BE993E /* uiScope.swift */; };
+		011A43AD2458548000749442 /* ModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 011A43AC2458548000749442 /* ModalView.swift */; };
 		012E4B8F244C189600B5C554 /* NotificationCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 012E4B3C244B1D0C00B5C554 /* NotificationCenter.framework */; };
 		012E4B92244C189600B5C554 /* TodayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 012E4B91244C189600B5C554 /* TodayViewController.swift */; };
 		012E4B95244C189600B5C554 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 012E4B93244C189600B5C554 /* MainInterface.storyboard */; };
@@ -94,6 +95,7 @@
 		010CA93E2444512000BE993E /* Task+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Task+CoreDataClass.swift"; sourceTree = "<group>"; };
 		010CA94424457A6B00BE993E /* pullToRefresh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = pullToRefresh.swift; sourceTree = "<group>"; };
 		010CA94624457AB600BE993E /* uiScope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = uiScope.swift; sourceTree = "<group>"; };
+		011A43AC2458548000749442 /* ModalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalView.swift; sourceTree = "<group>"; };
 		012E4B3C244B1D0C00B5C554 /* NotificationCenter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NotificationCenter.framework; path = System/Library/Frameworks/NotificationCenter.framework; sourceTree = SDKROOT; };
 		012E4B89244C17B700B5C554 /* Tasks.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Tasks.entitlements; sourceTree = "<group>"; };
 		012E4B8E244C189600B5C554 /* Next Tasks.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Next Tasks.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -205,6 +207,7 @@
 				012E4BA1244C2BB500B5C554 /* Helper.swift */,
 				01A95B14244F06DB00171995 /* taskModel.swift */,
 				01B41180243F34A300D2FB4C /* ContentView.swift */,
+				011A43AC2458548000749442 /* ModalView.swift */,
 				010CA94424457A6B00BE993E /* pullToRefresh.swift */,
 				010CA94624457AB600BE993E /* uiScope.swift */,
 				010CA92C244424B900BE993E /* Task.xcdatamodeld */,
@@ -433,6 +436,7 @@
 				010CA93F2444512000BE993E /* Task+CoreDataProperties.swift in Sources */,
 				010CA94724457AB600BE993E /* uiScope.swift in Sources */,
 				010CA8B52441D6C100BE993E /* Extensions.swift in Sources */,
+				011A43AD2458548000749442 /* ModalView.swift in Sources */,
 				010CA92E244424B900BE993E /* Task.xcdatamodeld in Sources */,
 				010CA8B72441D6FB00BE993E /* UserPrefs.swift in Sources */,
 				01B4117D243F34A300D2FB4C /* AppDelegate.swift in Sources */,

@@ -185,161 +185,176 @@ struct ContentView: View {
         }
         
         return NavigationView {
-            VStack {
-                List {
-                    ForEach((userPrefs.showCompleted == true ? allTasks : incompleteTasks), id: \.id) { task in
-                        HStack {
-                            Image(systemName: task.done ? "checkmark.square" : "square")
-                                .resizable()
-                                .frame(width: 20, height: 20)
-                            .onTapGesture {
-                                Helper.shared.changeTaskStatus(task: task, done: !task.done, ctx: self.context)
-                            }
-                            .padding(.trailing, 15)
-                            NavigationLink(destination:
-                                List {
-                                    Text("✏ Title")
-                                        .foregroundColor(Color.gray)
-                                        .padding(.top, 50)
-                                        .padding(.horizontal, 20.0)
-                                    Text(task.title)
-                                        .padding([.leading, .trailing], 20)
-                                    Divider()
-                                    Text("🗓️ Date")
-                                        .foregroundColor(Color.gray)
-                                        .padding(.top, 20)
-                                        .padding(.horizontal, 20.0)
-                                    Text(self.df.string(from: task.due))
-                                        .padding([.leading, .trailing], 20)
-                                    Divider()
-                                    Text("📖 Notes")
-                                        .foregroundColor(Color.gray)
-                                        .padding(.top, 20)
-                                        .padding(.horizontal, 20.0)
-                                    Text((task.summary.count > 0 ? task.summary : Helper.noDesc))
-                                        .padding([.leading, .trailing], 20)
+            ModalPresenter {
+                VStack {
+                    List {
+                        ForEach((userPrefs.showCompleted == true ? allTasks : incompleteTasks), id: \.id) { task in
+                            HStack {
+                                Image(systemName: task.done ? "checkmark.square" : "square")
+                                    .resizable()
+                                    .frame(width: 20, height: 20)
+                                .onTapGesture {
+                                    Helper.shared.changeTaskStatus(task: task, done: !task.done, ctx: self.context)
                                 }
-                                .onAppear { UITableView.appearance().separatorStyle = .none }
-                                .navigationBarTitle(Text("Details"))
-                            ) {
-                                HStack {
-                                    Text(task.title)
-                                        .padding(.trailing, 15)
-                                        .truncationMode(.tail)
-                                        .lineLimit(1)
-                                    Spacer()
-                                    if task.done {
-                                        Text(Helper.shared.timeBetweenDates(d1: task.due).0)
-                                        .foregroundColor(.green)
-                                        .bold()
-                                        .font(.system(size: 14))
-                                    }else{
-                                        Text(Helper.shared.timeBetweenDates(d1: task.due).0)
-                                        .foregroundColor((Helper.shared.timeBetweenDates(d1: task.due).1) ? .red : .blue)
-                                        .bold()
-                                        .font(.system(size: 14))
+                                .padding(.trailing, 15)
+                                ModalLink(destination:
+                                    List {
+                                        Text("✏ Title")
+                                            .foregroundColor(Color.gray)
+                                            .padding(.top, 50)
+                                            .padding(.horizontal, 20.0)
+                                        Text(task.title)
+                                            .padding([.leading, .trailing], 20)
+                                        Divider()
+                                        Text("🗓️ Date")
+                                            .foregroundColor(Color.gray)
+                                            .padding(.top, 20)
+                                            .padding(.horizontal, 20.0)
+                                        Text(self.df.string(from: task.due))
+                                            .padding([.leading, .trailing], 20)
+                                        Divider()
+                                        Text("📖 Notes")
+                                            .foregroundColor(Color.gray)
+                                            .padding(.top, 20)
+                                            .padding(.horizontal, 20.0)
+                                        Text((task.summary.count > 0 ? task.summary : Helper.noDesc))
+                                            .padding([.leading, .trailing], 20)
+                                    }
+                                    .onAppear { UITableView.appearance().separatorStyle = .none }
+                                    .navigationBarTitle(Text("Details"))
+                                ) {
+                                    HStack {
+                                        Text(task.title)
+                                            .padding(.trailing, 15)
+                                            .truncationMode(.tail)
+                                            .lineLimit(1)
+                                        Spacer()
+                                        if task.done {
+                                            Text(Helper.shared.timeBetweenDates(d1: task.due).0)
+                                            .foregroundColor(.green)
+                                            .bold()
+                                            .font(.system(size: 14))
+                                        }else{
+                                            Text(Helper.shared.timeBetweenDates(d1: task.due).0)
+                                            .foregroundColor((Helper.shared.timeBetweenDates(d1: task.due).1) ? .red : .blue)
+                                            .bold()
+                                            .font(.system(size: 14))
+                                        }
                                     }
                                 }
+                                .onDisappear { UITableView.appearance().separatorStyle = .singleLine }
                             }
-                            .onDisappear { UITableView.appearance().separatorStyle = .singleLine }
+                            .padding(.vertical, 14)
                         }
-                        .padding(.vertical, 14)
-                    }
-                    .onDelete { indexSet in
-                        let deleteItem = (self.userPrefs.showCompleted == true ? self.allTasks : self.incompleteTasks)[indexSet.first!]
-                        Helper.shared.deleteTask(id: deleteItem.id, ctx: self.context)
-                    }
-                }
-                .onPull(perform: {
-                    if self.userPrefs.icsURL.count > 0 {
-                        self.loadData(icsURL: self.userPrefs.icsURL)
-                    }else{
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                            self.isLoading = false
-                            self.showConfigAlert = true
+                        .onDelete { indexSet in
+                            let deleteItem = (self.userPrefs.showCompleted == true ? self.allTasks : self.incompleteTasks)[indexSet.first!]
+                            Helper.shared.deleteTask(id: deleteItem.id, ctx: self.context)
                         }
                     }
-                }, isLoading: self.isLoading)
-                .alert(isPresented: $showConfigAlert){
-                    Alert(title: Text("Please configure an ICS URL in settings"))
-                }
-                .sheet(isPresented: self.$showConfigMenu) {
-                    ZStack {
+                    .onPull(perform: {
+                        if self.userPrefs.icsURL.count > 0 {
+                            self.loadData(icsURL: self.userPrefs.icsURL)
+                        }else{
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                                self.isLoading = false
+                                self.showConfigAlert = true
+                            }
+                        }
+                    }, isLoading: self.isLoading)
+                    .alert(isPresented: $showConfigAlert){
+                        Alert(title: Text("Please configure an ICS URL in settings"))
+                    }
+                    .sheet(isPresented: self.$showConfigMenu) {
                         NavigationView {
-                            VStack(alignment: .leading) {
+                            Form {
                                 HStack {
-                                     NavigationLink(destination: icsURLView(delegate: self, showSelf: self.$showICSSettings), isActive: self.$showICSSettings){
-                                         VStack(alignment: .leading){
-                                            Button(action: {
-                                                self.showICSSettings = true
-                                            }){
-                                                Text("Configure ICS URL")
-                                                    .foregroundColor((self.userPrefs.icsURL.count > 0 ? Color.blue : Color.white))
-                                                    .colorMultiply(self.ICSTextColor)
-                                                    .animation(foreverAnimation)
-                                                    .onAppear(){
-                                                        if self.userPrefs.icsURL.count < 1 {
-                                                            self.ICSTextColor = Color.white
-                                                        }
-                                                    }
-                                            }
-                                             
-                                         }
-                                     }
-                                 }
-                                 .padding(.top, 100)
-                                 Divider().padding(.vertical, 20)
-                                 HStack {
-                                     Toggle(isOn: self.$userPrefs.showCompleted) {
-                                         Text("Show completed")
-                                     }
-                                 }
-                                Divider().padding(.vertical, 20)
-                                Button(action: {
-                                    self.showDeleteAlert = true
-                                }){
-                                    Text("Clear all cached tasks")
-                                        .padding(.vertical, 40)
-                                        .foregroundColor(Color.red)
-                                }
-                                .alert(isPresented: self.$showDeleteAlert) {
-                                    Alert(title: Text("Are you sure?"), message: Text("This will clear all cached tasks"), primaryButton: .destructive(Text("Delete")) {
-                                        Helper.shared.clearCoreData(ctx: self.context)
-                                    }, secondaryButton: .cancel())
-                                }
-                                Spacer()
-                                Text("Tasks: " + (self.userPrefs.showCompleted ? String(self.allTasks.count) : String(self.incompleteTasks.count)))
+                                    NavigationLink(destination: icsURLView(delegate: self, showSelf: self.$showICSSettings), isActive: self.$showICSSettings){
+                                        VStack(alignment: .leading){
+                                           Button(action: {
+                                               self.showICSSettings = true
+                                           }){
+                                               Text("Configure ICS URL")
+                                                   .foregroundColor((self.userPrefs.icsURL.count > 0 ? Color.blue : Color.white))
+                                                   .colorMultiply(self.ICSTextColor)
+                                                   .animation(foreverAnimation)
+                                                   .onAppear(){
+                                                       if self.userPrefs.icsURL.count < 1 {
+                                                           self.ICSTextColor = Color.white
+                                                       }
+                                                   }
+                                           }
+                                            
+                                        }
+                                    }
+                                }.padding(.vertical, 30)
+                                HStack {
+                                    Toggle(isOn: self.$userPrefs.showCompleted) {
+                                        Text("Show completed")
+                                    }
+                                }.padding(.vertical, 30)
+                                HStack {
+                                    Button(action: {
+                                        self.showDeleteAlert = true
+                                    }){
+                                        Text("Clear all cached tasks")
+                                            .foregroundColor(Color.red)
+                                    }
+                                    .alert(isPresented: self.$showDeleteAlert) {
+                                        Alert(title: Text("Are you sure?"), message: Text("This will clear all cached tasks"), primaryButton: .destructive(Text("Clear")) {
+                                            Helper.shared.clearCoreData(ctx: self.context)
+                                        }, secondaryButton: .cancel())
+                                    }
+                                }.padding(.vertical, 30)
+                                HStack {
+                                    Text("Tasks: " + (self.userPrefs.showCompleted ? String(self.allTasks.count) : String(self.incompleteTasks.count)))
                                     .foregroundColor(Color.gray)
-                                    .padding(.bottom, 30)
-                                    .padding(.top, 30)
+                                }.padding(.vertical, 30)
                             }
-                            .padding(.horizontal, 20)
-                            .navigationBarTitle("Config")
-                        }
-                        VStack {
-                            Capsule()
-                                .fill(Color.secondary)
-                                .frame(width: 50, height: 5)
-                                .padding(.top, 15)
-                            Spacer()
+                        .navigationBarItems(trailing: (
+                            Button(action: {
+                                self.showConfigMenu = false
+                            }) {
+                                ZStack {
+                                    Rectangle()
+                                        .fill(Color.init(hex: 000000, alpha: 0.0001))
+                                        .frame(width: 70, height: 35)
+                                    Text("Done")
+                                }
+                            }
+                        ))
+                            .navigationBarTitle("Config", displayMode: .inline)
                         }
                     }
+                    .navigationBarTitle("Tasks", displayMode: .inline)
+                    .navigationBarItems(leading: (
+                        Button(action: {
+                            self.showConfigMenu = true
+                        }) {
+                            ZStack {
+                                Rectangle()
+                                    .fill(Color.init(hex: 000000, alpha: 0.0001))
+                                    .frame(width: 35, height: 35)
+                                Image(systemName: "gear")
+                                    .imageScale(.large)
+                                    .foregroundColor(Color.gray)
+                            }
+                        }
+                    ), trailing: (
+                        Button(action: {
+                            //self.showConfigMenu = true
+                            print("Add")
+                        }) {
+                            ZStack {
+                                Rectangle()
+                                    .fill(Color.init(hex: 000000, alpha: 0.0001))
+                                    .frame(width: 35, height: 35)
+                                Image(systemName: "calendar.badge.plus")
+                                    .imageScale(.large)
+                                    .foregroundColor(Color.gray)
+                            }
+                        }
+                    ))
                 }
-                .navigationBarTitle("Tasks", displayMode: .inline)
-                .navigationBarItems(trailing: (
-                    Button(action: {
-                        self.showConfigMenu = true
-                    }) {
-                        ZStack {
-                            Rectangle()
-                                .fill(Color.init(hex: 000000, alpha: 0.0001))
-                                .frame(width: 35, height: 35)
-                            Image(systemName: "ellipsis")
-                                .imageScale(.large)
-                                .foregroundColor(Color.gray)
-                        }
-                    }
-                ))
             }
         }
         .onReceive(foregroundPublisher) { notification in
