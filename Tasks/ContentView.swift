@@ -46,8 +46,6 @@ struct ContentView: View {
     
     @ObservedObject var userPrefs = UserPrefs()
     
-    @State var ICSTextColor: Color = Color.blue
-    
     init() {
         UITabBar.appearance().barTintColor = UIColor.black
         UITabBar.appearance().isTranslucent = true
@@ -178,14 +176,8 @@ struct ContentView: View {
     }
     
     var body: some View {
-        
-        var foreverAnimation: Animation {
-               Animation.linear(duration: 0.7)
-               .repeatForever()
-        }
-        
-        return NavigationView {
-            ModalPresenter {
+
+        NavigationView {
                 VStack {
                     List {
                         ForEach((userPrefs.showCompleted == true ? allTasks : incompleteTasks), id: \.id) { task in
@@ -197,6 +189,7 @@ struct ContentView: View {
                                     Helper.shared.changeTaskStatus(task: task, done: !task.done, ctx: self.context)
                                 }
                                 .padding(.trailing, 15)
+                                ModalPresenter {
                                 ModalLink(destination:
                                     List {
                                         Text("✏ Title")
@@ -243,6 +236,7 @@ struct ContentView: View {
                                     }
                                 }
                                 .onDisappear { UITableView.appearance().separatorStyle = .singleLine }
+                                }
                             }
                             .padding(.vertical, 14)
                         }
@@ -264,72 +258,61 @@ struct ContentView: View {
                     .alert(isPresented: $showConfigAlert){
                         Alert(title: Text("Please configure an ICS URL in settings"))
                     }
-                    .sheet(isPresented: self.$showConfigMenu) {
-                        NavigationView {
-                            Form {
-                                HStack {
-                                    NavigationLink(destination: icsURLView(delegate: self, showSelf: self.$showICSSettings), isActive: self.$showICSSettings){
-                                        VStack(alignment: .leading){
-                                           Button(action: {
-                                               self.showICSSettings = true
-                                           }){
-                                               Text("Configure ICS URL")
-                                                   .foregroundColor((self.userPrefs.icsURL.count > 0 ? Color.blue : Color.white))
-                                                   .colorMultiply(self.ICSTextColor)
-                                                   .animation(foreverAnimation)
-                                                   .onAppear(){
-                                                       if self.userPrefs.icsURL.count < 1 {
-                                                           self.ICSTextColor = Color.white
-                                                       }
-                                                   }
-                                           }
-                                            
-                                        }
-                                    }
-                                }.padding(.vertical, 30)
-                                HStack {
-                                    Toggle(isOn: self.$userPrefs.showCompleted) {
-                                        Text("Show completed")
-                                    }
-                                }.padding(.vertical, 30)
-                                HStack {
-                                    Button(action: {
-                                        self.showDeleteAlert = true
-                                    }){
-                                        Text("Clear all cached tasks")
-                                            .foregroundColor(Color.red)
-                                    }
-                                    .alert(isPresented: self.$showDeleteAlert) {
-                                        Alert(title: Text("Are you sure?"), message: Text("This will clear all cached tasks"), primaryButton: .destructive(Text("Clear")) {
-                                            Helper.shared.clearCoreData(ctx: self.context)
-                                        }, secondaryButton: .cancel())
-                                    }
-                                }.padding(.vertical, 30)
-                                HStack {
-                                    Text("Tasks: " + (self.userPrefs.showCompleted ? String(self.allTasks.count) : String(self.incompleteTasks.count)))
-                                    .foregroundColor(Color.gray)
-                                }.padding(.vertical, 30)
-                            }
-                        .navigationBarItems(trailing: (
-                            Button(action: {
-                                self.showConfigMenu = false
-                            }) {
-                                ZStack {
-                                    Rectangle()
-                                        .fill(Color.init(hex: 000000, alpha: 0.0001))
-                                        .frame(width: 70, height: 35)
-                                    Text("Done")
-                                }
-                            }
-                        ))
-                            .navigationBarTitle("Config", displayMode: .inline)
-                        }
-                    }
                     .navigationBarTitle("Tasks", displayMode: .inline)
                     .navigationBarItems(leading: (
-                        Button(action: {
-                            self.showConfigMenu = true
-                        }) {
+                        ModalPresenter {
+                        ModalLink(destination: { dismiss in
+                            NavigationView {
+                                Form {
+                                    HStack {
+                                        NavigationLink(destination: icsURLView(delegate: self, showSelf: self.$showICSSettings)){
+                                            VStack(alignment: .leading){
+                                               Button(action: {
+                                                   self.showICSSettings = true
+                                               }){
+                                                   Text("Configure ICS URL")
+                                                    .foregroundColor(Color.blue)
+                                               }
+                                            }
+                                        }
+                                    }.padding(.vertical, 30)
+                                    HStack {
+                                        Toggle(isOn: self.$userPrefs.showCompleted) {
+                                            Text("Show completed")
+                                        }
+                                    }.padding(.vertical, 30)
+                                    HStack {
+                                        Button(action: {
+                                            self.showDeleteAlert = true
+                                        }){
+                                            Text("Clear all cached tasks")
+                                                .foregroundColor(Color.red)
+                                        }
+                                        .alert(isPresented: self.$showDeleteAlert) {
+                                            Alert(title: Text("Are you sure?"), message: Text("This will clear all cached tasks"), primaryButton: .destructive(Text("Clear")) {
+                                                Helper.shared.clearCoreData(ctx: self.context)
+                                            }, secondaryButton: .cancel())
+                                        }
+                                    }.padding(.vertical, 30)
+                                    HStack {
+                                        Text("Tasks: " + (self.userPrefs.showCompleted ? String(self.allTasks.count) : String(self.incompleteTasks.count)))
+                                        .foregroundColor(Color.gray)
+                                    }.padding(.vertical, 30)
+                                }
+                            .navigationBarItems(trailing: (
+                                Button(action: dismiss) {
+                                    ZStack {
+                                        Rectangle()
+                                            .fill(Color.init(hex: 000000, alpha: 0.0001))
+                                            .frame(width: 70, height: 35)
+                                        Text("Done")
+                                    }
+                                }
+                            ))
+                            .navigationBarTitle("Config", displayMode: .inline)
+                            }
+                        }
+                        ) {
                             ZStack {
                                 Rectangle()
                                     .fill(Color.init(hex: 000000, alpha: 0.0001))
@@ -338,6 +321,7 @@ struct ContentView: View {
                                     .imageScale(.large)
                                     .foregroundColor(Color.gray)
                             }
+                        }
                         }
                     ), trailing: (
                         Button(action: {
@@ -355,7 +339,6 @@ struct ContentView: View {
                         }
                     ))
                 }
-            }
         }
         .onReceive(foregroundPublisher) { notification in
             //TODO
