@@ -26,6 +26,8 @@ struct ContentView: View {
     
     @State var showConfigMenu: Bool = false
     
+    @State var showTaskDetails: Bool = false
+    
     private let foregroundPublisher = NotificationCenter.default.publisher(for: UIScene.willEnterForegroundNotification)
     
     @FetchRequest(
@@ -189,9 +191,9 @@ struct ContentView: View {
                                 Helper.shared.changeTaskStatus(task: task, done: !task.done, ctx: self.context)
                             }
                             .padding(.trailing, 15)
-                            NavigationLink(destination:
-                                TaskDetailsView(task: task, df: self.df)
-                            ) {
+                            Button(action: {
+                                self.showTaskDetails = true
+                            }) {
                                 HStack {
                                     Text(task.title)
                                         .padding(.trailing, 15)
@@ -210,6 +212,9 @@ struct ContentView: View {
                                         .font(.system(size: 14))
                                     }
                                 }
+                            }
+                            .sheet(isPresented: self.$showTaskDetails) {
+                                TaskDetailsView(cv: self, task: task)
                             }
                             .onDisappear { UITableView.appearance().separatorStyle = .singleLine }
                         }
