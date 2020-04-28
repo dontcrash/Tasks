@@ -26,6 +26,9 @@
 		012E4BA5244C2CE200B5C554 /* Task.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 010CA92C244424B900BE993E /* Task.xcdatamodeld */; };
 		012E4BA6244C2CE700B5C554 /* Task+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010CA93E2444512000BE993E /* Task+CoreDataClass.swift */; };
 		012E4BA7244C2CE900B5C554 /* Task+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010CA93D2444512000BE993E /* Task+CoreDataProperties.swift */; };
+		0136D1BC245868090063D524 /* TaskDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0136D1BB245868090063D524 /* TaskDetailsView.swift */; };
+		0136D1BE245869010063D524 /* ICSURLView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0136D1BD245869010063D524 /* ICSURLView.swift */; };
+		0136D1C0245869E00063D524 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0136D1BF245869E00063D524 /* SettingsView.swift */; };
 		01A95B15244F06DB00171995 /* taskModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01A95B14244F06DB00171995 /* taskModel.swift */; };
 		01A95B16244F06DF00171995 /* taskModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01A95B14244F06DB00171995 /* taskModel.swift */; };
 		01B4117D243F34A300D2FB4C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01B4117C243F34A300D2FB4C /* AppDelegate.swift */; };
@@ -103,6 +106,9 @@
 		012E4B9D244C18A300B5C554 /* Tasks Widget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Tasks Widget.entitlements"; sourceTree = "<group>"; };
 		012E4B9E244C199500B5C554 /* SharedData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedData.swift; sourceTree = "<group>"; };
 		012E4BA1244C2BB500B5C554 /* Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
+		0136D1BB245868090063D524 /* TaskDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDetailsView.swift; sourceTree = "<group>"; };
+		0136D1BD245869010063D524 /* ICSURLView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICSURLView.swift; sourceTree = "<group>"; };
+		0136D1BF245869E00063D524 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		01A95B14244F06DB00171995 /* taskModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = taskModel.swift; sourceTree = "<group>"; };
 		01B41179243F34A300D2FB4C /* Tasks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tasks.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		01B4117C243F34A300D2FB4C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -205,6 +211,9 @@
 				012E4BA1244C2BB500B5C554 /* Helper.swift */,
 				01A95B14244F06DB00171995 /* taskModel.swift */,
 				01B41180243F34A300D2FB4C /* ContentView.swift */,
+				0136D1BF245869E00063D524 /* SettingsView.swift */,
+				0136D1BD245869010063D524 /* ICSURLView.swift */,
+				0136D1BB245868090063D524 /* TaskDetailsView.swift */,
 				010CA94424457A6B00BE993E /* pullToRefresh.swift */,
 				010CA94624457AB600BE993E /* uiScope.swift */,
 				010CA92C244424B900BE993E /* Task.xcdatamodeld */,
@@ -437,6 +446,9 @@
 				010CA8B72441D6FB00BE993E /* UserPrefs.swift in Sources */,
 				01B4117D243F34A300D2FB4C /* AppDelegate.swift in Sources */,
 				01B4117F243F34A300D2FB4C /* SceneDelegate.swift in Sources */,
+				0136D1BC245868090063D524 /* TaskDetailsView.swift in Sources */,
+				0136D1C0245869E00063D524 /* SettingsView.swift in Sources */,
+				0136D1BE245869010063D524 /* ICSURLView.swift in Sources */,
 				010CA9402444512000BE993E /* Task+CoreDataClass.swift in Sources */,
 				012E4BA2244C2BB500B5C554 /* Helper.swift in Sources */,
 				01B41181243F34A300D2FB4C /* ContentView.swift in Sources */,
