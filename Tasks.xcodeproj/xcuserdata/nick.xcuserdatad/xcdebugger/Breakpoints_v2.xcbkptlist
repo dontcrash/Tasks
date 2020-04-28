@@ -14,8 +14,13 @@
             filePath = "Tasks/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+<<<<<<< HEAD
             startingLineNumber = "398"
             endingLineNumber = "398">
+=======
+            startingLineNumber = "400"
+            endingLineNumber = "400">
+>>>>>>> parent of efa4233... Updated to new ModalView
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
