@@ -10,6 +10,7 @@ import SwiftUI
 
 struct TaskDetailsView: View {
     
+    let padding: CGFloat = 10
     var cv: ContentView
     var task: Task
     
@@ -19,23 +20,23 @@ struct TaskDetailsView: View {
                 Text("✏ Title")
                     .foregroundColor(Color.gray)
                     .padding(.top, 50)
-                    .padding(.horizontal, 20.0)
+                    .padding(.horizontal, padding)
                 Text(task.title)
-                    .padding([.leading, .trailing], 20)
-                Divider()
+                    .padding(.horizontal, 20)
+                Divider().padding(.horizontal, 20)
                 Text("🗓️ Date")
                     .foregroundColor(Color.gray)
-                    .padding(.top, 20)
-                    .padding(.horizontal, 20.0)
+                    .padding(.top, padding)
+                    .padding(.horizontal, 20)
                 Text(self.cv.df.string(from: task.due))
-                    .padding([.leading, .trailing], 20)
-                Divider()
+                    .padding(.horizontal, 20)
+                Divider().padding(.horizontal, 20)
                 Text("📖 Notes")
                     .foregroundColor(Color.gray)
-                    .padding(.top, 20)
-                    .padding(.horizontal, 20.0)
+                    .padding(.top, padding)
+                    .padding(.horizontal, 20)
                 Text((task.summary.count > 0 ? task.summary : Helper.noDesc))
-                    .padding([.leading, .trailing], 20)
+                    .padding(.horizontal, 20)
             }
             .onAppear { UITableView.appearance().separatorStyle = .none }
             .navigationBarItems(trailing: (

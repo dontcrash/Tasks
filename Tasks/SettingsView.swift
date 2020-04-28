@@ -11,6 +11,7 @@ import SwiftUI
 struct SettingsView: View {
     
     var cv: ContentView
+    let padding: CGFloat = 20
     
     var body: some View {
         
@@ -28,12 +29,12 @@ struct SettingsView: View {
                             
                         }
                     }
-                }.padding(.vertical, 30)
+                }.padding(.vertical, padding)
                 HStack {
                     Toggle(isOn: cv.$userPrefs.showCompleted) {
                         Text("Show completed")
                     }
-                }.padding(.vertical, 30)
+                }.padding(.vertical, padding)
                 HStack {
                     Button(action: {
                         self.cv.showDeleteAlert = true
@@ -46,11 +47,11 @@ struct SettingsView: View {
                             Helper.shared.clearCoreData(ctx: self.cv.context)
                         }, secondaryButton: .cancel())
                     }
-                }.padding(.vertical, 30)
+                }.padding(.vertical, padding)
                 HStack {
                     Text("Tasks: " + (self.cv.userPrefs.showCompleted ? String(self.cv.allTasks.count) : String(self.cv.incompleteTasks.count)))
                     .foregroundColor(Color.gray)
-                }.padding(.vertical, 30)
+                }.padding(.vertical, padding)
             }
             .navigationBarItems(trailing: (
                 Button(action: {
@@ -64,7 +65,7 @@ struct SettingsView: View {
                     }
                 }
             ))
-            .navigationBarTitle("Config", displayMode: .inline)
+            .navigationBarTitle("Settings", displayMode: .inline)
         }
         
     }
