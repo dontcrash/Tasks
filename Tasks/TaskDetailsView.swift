@@ -17,26 +17,48 @@ struct TaskDetailsView: View {
     var body: some View {
         NavigationView {
             List {
-                Text("✏ Title")
-                    .foregroundColor(Color.gray)
-                    .padding(.top, 50)
-                    .padding(.horizontal, padding)
-                Text(task.title)
-                    .padding(.horizontal, 20)
-                Divider().padding(.horizontal, 20)
-                Text("🗓️ Date")
-                    .foregroundColor(Color.gray)
-                    .padding(.top, padding)
-                    .padding(.horizontal, 20)
-                Text(self.cv.df.string(from: task.due))
-                    .padding(.horizontal, 20)
-                Divider().padding(.horizontal, 20)
-                Text("📖 Notes")
-                    .foregroundColor(Color.gray)
-                    .padding(.top, padding)
-                    .padding(.horizontal, 20)
-                Text((task.summary.count > 0 ? task.summary : Helper.noDesc))
-                    .padding(.horizontal, 20)
+                VStack(alignment: .leading) {
+                    HStack {
+                        //pencil
+                        //info
+                        //textformat
+                        //doc.text
+                        Image(systemName: "doc.text")
+                                .foregroundColor(Color.gray)
+                        Text("Title")
+                            .foregroundColor(Color.gray)
+                    }
+                    .padding(.bottom, padding/2)
+                    Text(task.title)
+                }
+                .padding(.horizontal, padding*2)
+                .padding(.top, padding*4.5)
+                Divider().padding(.horizontal, padding*2)
+                VStack(alignment: .leading) {
+                    HStack {
+                        Image(systemName: "calendar")
+                                .foregroundColor(Color.gray)
+                        Text("Date")
+                            .foregroundColor(Color.gray)
+                    }
+                    .padding(.bottom, padding/2)
+                    Text(self.cv.df.string(from: task.due))
+                }
+                .padding(.horizontal, padding*2)
+                .padding(.top, padding)
+                Divider().padding(.horizontal, padding*2)
+                VStack(alignment: .leading) {
+                    HStack {
+                        Image(systemName: "book")
+                                .foregroundColor(Color.gray)
+                        Text("Notes")
+                            .foregroundColor(Color.gray)
+                    }
+                    .padding(.bottom, padding/2)
+                    Text((task.summary.count > 0 ? task.summary : Helper.noDesc))
+                }
+                .padding(.horizontal, padding*2)
+                .padding(.top, padding)
             }
             .onAppear { UITableView.appearance().separatorStyle = .none }
             .navigationBarItems(trailing: (

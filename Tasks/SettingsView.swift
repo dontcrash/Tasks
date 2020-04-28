@@ -36,6 +36,13 @@ struct SettingsView: View {
                     }
                 }.padding(.vertical, padding)
                 HStack {
+                    Text("Tasks: " + (self.cv.userPrefs.showCompleted ? String(self.cv.allTasks.count) : String(self.cv.incompleteTasks.count)))
+                    .foregroundColor(Color.gray)
+                }.padding(.vertical, padding)
+                Section(header: Text("")) {
+                    EmptyView()
+                }
+                HStack {
                     Button(action: {
                         self.cv.showDeleteAlert = true
                     }){
@@ -47,10 +54,6 @@ struct SettingsView: View {
                             Helper.shared.clearCoreData(ctx: self.cv.context)
                         }, secondaryButton: .cancel())
                     }
-                }.padding(.vertical, padding)
-                HStack {
-                    Text("Tasks: " + (self.cv.userPrefs.showCompleted ? String(self.cv.allTasks.count) : String(self.cv.incompleteTasks.count)))
-                    .foregroundColor(Color.gray)
                 }.padding(.vertical, padding)
             }
             .navigationBarItems(trailing: (
@@ -67,6 +70,7 @@ struct SettingsView: View {
             ))
             .navigationBarTitle("Settings", displayMode: .inline)
         }
+        .onAppear { UITableView.appearance().separatorStyle = .singleLine }
         
     }
     

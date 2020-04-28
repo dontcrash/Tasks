@@ -270,6 +270,8 @@ struct ContentView: View {
                     }
                 ))
             }
+            //Spacer to not overlap home nav bar
+            .padding(.bottom, 10)
         }
         .onReceive(foregroundPublisher) { notification in
             //TODO
