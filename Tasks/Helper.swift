@@ -66,6 +66,7 @@ class Helper {
     
     func clearCoreData(ctx: NSManagedObjectContext){
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Task")
+        fetchRequest.predicate = NSPredicate(format: "manual == %@", NSNumber(value: false))
         var results: [NSManagedObject] = []
         do {
             results = try ctx.fetch(fetchRequest)
@@ -109,13 +110,14 @@ class Helper {
         setNextTask(ctx: ctx)
     }
     
-    func addTask(id: String, title: String, description: String, due: Date, ctx: NSManagedObjectContext){
+    func addTask(id: String, title: String, description: String, due: Date, manual: Bool, ctx: NSManagedObjectContext){
         let newTask = Task(context: ctx)
         newTask.id = id
         newTask.title = title
         newTask.summary = description
         newTask.due = due
         newTask.done = false
+        newTask.manual = manual
         do {
             try ctx.save()
         } catch {

@@ -142,7 +142,7 @@ struct ContentView: View {
                         if Helper.shared.taskExists(id: id, ctx: self.context) {
                             Helper.shared.updateTask(id: id, due: (dateFormatter.date(from: date) ?? date.detectDates?.first!.toLocalTime())!, title: title, desc: description, ctx: self.context)
                         }else{
-                            Helper.shared.addTask(id: id, title: title, description: description, due: (dateFormatter.date(from: date) ?? date.detectDates?.first!.toLocalTime())!, ctx: self.context)
+                            Helper.shared.addTask(id: id, title: title, description: description, due: (dateFormatter.date(from: date) ?? date.detectDates?.first!.toLocalTime())!, manual: false, ctx: self.context)
                         }
                     }else{
                         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
