@@ -45,7 +45,6 @@ struct TaskDetailsView: View {
                     Text(self.cv.df.string(from: task.due))
                 }
                 .padding(.horizontal, padding*2)
-                .padding(.top, padding)
                 Divider().padding(.horizontal, padding*2)
                 VStack(alignment: .leading) {
                     HStack {
@@ -57,8 +56,8 @@ struct TaskDetailsView: View {
                     .padding(.bottom, padding/2)
                     Text((task.summary.count > 0 ? task.summary : Helper.noDesc))
                 }
+                .padding(.bottom, padding*2)
                 .padding(.horizontal, padding*2)
-                .padding(.top, padding)
             }
             .onAppear { UITableView.appearance().separatorStyle = .none }
             .navigationBarItems(trailing: (
@@ -77,4 +76,14 @@ struct TaskDetailsView: View {
         }
     }
     
+}
+
+struct TaskDetailsView_Previews: PreviewProvider {
+    static var previews: some View {
+        let task: Task = Task()
+        task.title = "Title"
+        task.due = Date()
+        task.summary = "Title"
+        return TaskDetailsView(cv: ContentView(), task: task)
+    }
 }

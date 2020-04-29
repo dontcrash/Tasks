@@ -18,7 +18,7 @@ struct SettingsView: View {
         NavigationView {
             Form {
                 HStack {
-                    NavigationLink(destination: ICSURLView(delegate: cv, showSelf: cv.$showICSSettings), isActive: cv.$showICSSettings) {
+                    NavigationLink(destination: ICSURLView(delegate: self.cv, showSelf: self.cv.$showICSSettings), isActive: self.cv.$showICSSettings) {
                         VStack(alignment: .leading){
                            Button(action: {
                             self.cv.showICSSettings = true
@@ -31,7 +31,7 @@ struct SettingsView: View {
                     }
                 }.padding(.vertical, padding)
                 HStack {
-                    Toggle(isOn: cv.$userPrefs.showCompleted) {
+                    Toggle(isOn: self.cv.$userPrefs.showCompleted) {
                         Text("Show completed")
                     }
                 }.padding(.vertical, padding)
@@ -49,7 +49,7 @@ struct SettingsView: View {
                         Text("Clear all cached tasks")
                             .foregroundColor(Color.red)
                     }
-                    .alert(isPresented: cv.$showDeleteAlert) {
+                    .alert(isPresented: self.cv.$showDeleteAlert) {
                         Alert(title: Text("Are you sure?"), message: Text("This will clear all cached tasks"), primaryButton: .destructive(Text("Clear")) {
                             Helper.shared.clearCoreData(ctx: self.cv.context)
                         }, secondaryButton: .cancel())
@@ -74,4 +74,10 @@ struct SettingsView: View {
         
     }
     
+}
+
+struct SettingsView_Previews: PreviewProvider {
+    static var previews: some View {
+        return SettingsView(cv: ContentView())
+    }
 }

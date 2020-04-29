@@ -13,12 +13,14 @@ import CoreData
 struct ContentView: View {
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-    
+
     @State var showDeleteAlert = false
     
     @State var showConfigAlert = false
     
     @State var showICSSettings = false
+    
+    @State var showNewTask = false
     
     @State var lastTask: Task = Task()
     
@@ -49,6 +51,7 @@ struct ContentView: View {
     @ObservedObject var userPrefs = UserPrefs()
     
     init() {
+        UITableView.appearance().backgroundColor = UIColor.systemGray6
         UITabBar.appearance().barTintColor = UIColor.black
         UITabBar.appearance().isTranslucent = true
         //UITableView.appearance().separatorStyle = .none
@@ -178,6 +181,7 @@ struct ContentView: View {
     }
     
     var body: some View {
+        
         NavigationView {
             VStack {
                 List {
@@ -217,6 +221,7 @@ struct ContentView: View {
                             }
                             .onDisappear { UITableView.appearance().separatorStyle = .singleLine }
                         }
+                        .listRowBackground(Color(UIColor.systemGray6))
                         .padding(.vertical, 14)
                     }
                     .onDelete { indexSet in
@@ -256,8 +261,7 @@ struct ContentView: View {
                     }
                 ), trailing: (
                     Button(action: {
-                        //self.showConfigMenu = true
-                        print("Add")
+                        self.showNewTask = true
                     }) {
                         ZStack {
                             Rectangle()
@@ -266,12 +270,12 @@ struct ContentView: View {
                             Image(systemName: "calendar.badge.plus")
                                 .imageScale(.large)
                                 .foregroundColor(Color.gray)
+                        }.sheet(isPresented: self.$showNewTask) {
+                            NewTaskView(cv: self)
                         }
                     }
                 ))
             }
-            //Spacer to not overlap home nav bar
-            .padding(.bottom, 10)
         }
         .onReceive(foregroundPublisher) { notification in
             //TODO

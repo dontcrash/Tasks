@@ -29,7 +29,7 @@ struct ICSURLView: View {
                  .textFieldStyle(RoundedBorderTextFieldStyle())
             }
             Section {
-                Text("Please paste your iCalendar/ICS feed URL above, this will be the URL that the app updates your task list from")
+                Text("The Tasks app can automagically sync tasks from an iCalendar .ics feed, if you have one please paste it above.")
             }
         }
         .navigationBarTitle(Text("ICS URL"), displayMode: .inline)
@@ -39,5 +39,12 @@ struct ICSURLView: View {
                 self.delegate.loadData(icsURL: self.delegate.userPrefs.icsURL)
             }
         })
+    }
+}
+
+struct ICSURLView_Previews: PreviewProvider {
+    static var previews: some View {
+        let cv: ContentView = ContentView()
+        return ICSURLView(delegate: cv, showSelf: cv.$showICSSettings, userPrefs: UserPrefs())
     }
 }
