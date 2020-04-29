@@ -4,10 +4,11 @@
         <attribute name="done" optional="YES" attributeType="Boolean" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="due" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" optional="YES" attributeType="String"/>
+        <attribute name="manual" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="summary" optional="YES" attributeType="String"/>
         <attribute name="title" optional="YES" attributeType="String"/>
     </entity>
     <elements>
-        <element name="Task" positionX="-63" positionY="-18" width="128" height="118"/>
+        <element name="Task" positionX="-63" positionY="-18" width="128" height="133"/>
     </elements>
 </model>

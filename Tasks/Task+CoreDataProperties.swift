@@ -20,5 +20,6 @@ extension Task: Identifiable {
     @NSManaged public var summary: String
     @NSManaged public var due: Date
     @NSManaged public var done: Bool
+    @NSManaged public var manual: Bool
 
 }
