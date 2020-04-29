@@ -17,7 +17,7 @@
 		012E4B8F244C189600B5C554 /* NotificationCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 012E4B3C244B1D0C00B5C554 /* NotificationCenter.framework */; };
 		012E4B92244C189600B5C554 /* TodayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 012E4B91244C189600B5C554 /* TodayViewController.swift */; };
 		012E4B95244C189600B5C554 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 012E4B93244C189600B5C554 /* MainInterface.storyboard */; };
-		012E4B99244C189600B5C554 /* Next Tasks.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 012E4B8E244C189600B5C554 /* Next Tasks.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		012E4B99244C189600B5C554 /* Tasks .appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 012E4B8E244C189600B5C554 /* Tasks .appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		012E4B9F244C199500B5C554 /* SharedData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 012E4B9E244C199500B5C554 /* SharedData.swift */; };
 		012E4BA0244C19E800B5C554 /* SharedData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 012E4B9E244C199500B5C554 /* SharedData.swift */; };
 		012E4BA2244C2BB500B5C554 /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 012E4BA1244C2BB500B5C554 /* Helper.swift */; };
@@ -73,7 +73,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				012E4B99244C189600B5C554 /* Next Tasks.appex in Embed App Extensions */,
+				012E4B99244C189600B5C554 /* Tasks .appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -100,7 +100,7 @@
 		010CA94624457AB600BE993E /* uiScope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = uiScope.swift; sourceTree = "<group>"; };
 		012E4B3C244B1D0C00B5C554 /* NotificationCenter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NotificationCenter.framework; path = System/Library/Frameworks/NotificationCenter.framework; sourceTree = SDKROOT; };
 		012E4B89244C17B700B5C554 /* Tasks.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Tasks.entitlements; sourceTree = "<group>"; };
-		012E4B8E244C189600B5C554 /* Next Tasks.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Next Tasks.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		012E4B8E244C189600B5C554 /* Tasks .appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Tasks .appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		012E4B91244C189600B5C554 /* TodayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayViewController.swift; sourceTree = "<group>"; };
 		012E4B94244C189600B5C554 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		012E4B96244C189600B5C554 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -198,7 +198,7 @@
 				01B41179243F34A300D2FB4C /* Tasks.app */,
 				01B4118F243F34A700D2FB4C /* TasksTests.xctest */,
 				01B4119A243F34A700D2FB4C /* TasksUITests.xctest */,
-				012E4B8E244C189600B5C554 /* Next Tasks.appex */,
+				012E4B8E244C189600B5C554 /* Tasks .appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -275,7 +275,7 @@
 			);
 			name = "Tasks Widget";
 			productName = "Tasks Widget";
-			productReference = 012E4B8E244C189600B5C554 /* Next Tasks.appex */;
+			productReference = 012E4B8E244C189600B5C554 /* Tasks .appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 		01B41178243F34A300D2FB4C /* Tasks */ = {
@@ -533,10 +533,10 @@
 				);
 				MARKETING_VERSION = 1.3.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nick.Tasks.widget;
-				PRODUCT_NAME = "Next Tasks";
+				PRODUCT_NAME = "Tasks ";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -556,10 +556,10 @@
 				);
 				MARKETING_VERSION = 1.3.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nick.Tasks.widget;
-				PRODUCT_NAME = "Next Tasks";
+				PRODUCT_NAME = "Tasks ";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -703,7 +703,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -732,7 +732,7 @@
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};

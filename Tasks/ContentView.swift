@@ -10,13 +10,18 @@ import UIKit
 import SwiftUI
 import CoreData
 
+enum AlertPresent {
+    case invalidurl, nourl
+}
+
 struct ContentView: View {
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 
-    @State var showDeleteAlert = false
+    @State var showAlert = false
+    @State var activeAlert: AlertPresent = .nourl
     
-    @State var showConfigAlert = false
+    @State var showDeleteAlert = false
     
     @State var showICSSettings = false
     
@@ -46,12 +51,12 @@ struct ContentView: View {
     var df = DateFormatter()
     
     @State var currentItem: String = ""
-    @State var invalidURL = false
     
     @ObservedObject var userPrefs = UserPrefs()
     
     init() {
         UITableView.appearance().backgroundColor = UIColor.systemGray6
+        UITableViewCell.appearance().backgroundColor = UIColor.systemGray6
         UITabBar.appearance().barTintColor = UIColor.black
         UITabBar.appearance().isTranslucent = true
         //UITableView.appearance().separatorStyle = .none
@@ -71,7 +76,8 @@ struct ContentView: View {
             print("Error, is the ICS file empty?")
             //Small delay to not glitch loading UI
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                self.invalidURL = true
+                self.activeAlert = .invalidurl
+                self.showAlert = true
             }
         }else{
             //Loop through array of events
@@ -140,7 +146,8 @@ struct ContentView: View {
                         }
                     }else{
                         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                            self.invalidURL = true
+                            self.activeAlert = .invalidurl
+                            self.showAlert = true
                         }
                     }
                 }
@@ -159,7 +166,7 @@ struct ContentView: View {
             return
         }
         
-        let url = URL(string: icsURL)!
+        let url: URL = (URL(string: icsURL) ?? URL(string:"https://www.google.com"))!
     
         URLSession.shared.dataTask(with: url) {(data,response,error) in
             do {
@@ -172,7 +179,8 @@ struct ContentView: View {
                     //Small delay to not glitch loading UI
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                         self.isLoading = false
-                        self.invalidURL = true
+                        self.activeAlert = .invalidurl
+                        self.showAlert = true
                     }
                     print("No ICS data found")
                 }
@@ -187,9 +195,14 @@ struct ContentView: View {
                 List {
                     ForEach((userPrefs.showCompleted == true ? allTasks : incompleteTasks), id: \.id) { task in
                         HStack {
-                            Image(systemName: task.done ? "checkmark.square" : "square")
-                                .resizable()
-                                .frame(width: 20, height: 20)
+                            ZStack {
+                                Image(systemName: task.done ? "checkmark.square" : "square")
+                                    .resizable()
+                                    .frame(width: 20, height: 20)
+                                Rectangle()
+                                    .fill(Color.init(hex: 000000, alpha: 0.0001))
+                                    .frame(width: 30, height: 30)
+                            }
                             .onTapGesture {
                                 Helper.shared.changeTaskStatus(task: task, done: !task.done, ctx: self.context)
                             }
@@ -235,13 +248,11 @@ struct ContentView: View {
                     }else{
                         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                             self.isLoading = false
-                            self.showConfigAlert = true
+                            self.activeAlert = .nourl
+                            self.showAlert = true
                         }
                     }
                 }, isLoading: self.isLoading)
-                .alert(isPresented: $showConfigAlert){
-                    Alert(title: Text("Please configure an ICS URL in settings"))
-                }
                 .sheet(isPresented: self.$showConfigMenu) {
                     SettingsView(cv: self)
                 }
@@ -276,6 +287,14 @@ struct ContentView: View {
                     }
                 ))
             }
+            .alert(isPresented: self.$showAlert){
+                switch activeAlert {
+                    case .invalidurl:
+                        return Alert(title: Text("Error getting data from the server, please ensure you entered a valid ICS feed URL"))
+                    case .nourl:
+                        return Alert(title: Text("Please configure an ICS URL in settings"))
+                }
+            }
         }
         .onReceive(foregroundPublisher) { notification in
             //TODO
@@ -283,10 +302,8 @@ struct ContentView: View {
             self.userPrefs.showCompleted = !self.userPrefs.showCompleted
             self.userPrefs.showCompleted = !self.userPrefs.showCompleted
         }
+        .navigationViewStyle(StackNavigationViewStyle())
         .accentColor(.blue)
-        .alert(isPresented: $invalidURL){
-            Alert(title: Text("Error getting data from the server, please ensure you entered a valid ICS feed URL"))
-        }
     }
 }
 

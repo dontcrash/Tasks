@@ -74,6 +74,7 @@ struct TaskDetailsView: View {
             ))
             .navigationBarTitle("Details", displayMode: .inline)
         }
+        .navigationViewStyle(StackNavigationViewStyle())
     }
     
 }

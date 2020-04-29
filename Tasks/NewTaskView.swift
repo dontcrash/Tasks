@@ -33,6 +33,7 @@ struct NewTaskView: View {
             ))
             .navigationBarTitle("New Task", displayMode: .inline)
         }
+        .navigationViewStyle(StackNavigationViewStyle())
     }
     
 }

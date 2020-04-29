@@ -70,7 +70,15 @@ struct SettingsView: View {
             ))
             .navigationBarTitle("Settings", displayMode: .inline)
         }
-        .onAppear { UITableView.appearance().separatorStyle = .singleLine }
+        .navigationViewStyle(StackNavigationViewStyle())
+        .onAppear {
+            UITableView.appearance().separatorStyle = .singleLine
+            UITableViewCell.appearance().backgroundColor = UIColor.systemGray5
+        }
+        .onDisappear {
+            UITableView.appearance().separatorStyle = .none
+            UITableViewCell.appearance().backgroundColor = UIColor.systemGray6
+        }
         
     }
     
