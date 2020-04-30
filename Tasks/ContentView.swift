@@ -45,6 +45,11 @@ struct ContentView: View {
           sortDescriptors: [NSSortDescriptor(keyPath: \Task.due, ascending: true)]
     ) var allTasks: FetchedResults<Task>
     
+    @FetchRequest(
+          entity: Task.entity(),
+          sortDescriptors: [NSSortDescriptor(keyPath: \Task.due, ascending: false)]
+    ) var allTasksReverse: FetchedResults<Task>
+    
     var df = DateFormatter()
     
     @State var currentItem: String = ""
@@ -212,7 +217,7 @@ struct ContentView: View {
                     }
                     if self.userPrefs.hideCompleted == false {
                         Section(header: Text("Completed")) {
-                            ForEach(allTasks.filter { task in
+                            ForEach(allTasksReverse.filter { task in
                                 return (self.searchText.isEmpty ? task.done == true : (task.title.lowercased().contains(self.searchText.lowercased()) && task.done == true || task.summary.lowercased().contains(self.searchText.lowercased()) && task.done == true))
                             }, id: \.id) { task in
                                 TaskRowModel(task: task, cv: self)
