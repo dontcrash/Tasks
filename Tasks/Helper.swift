@@ -110,7 +110,7 @@ class Helper {
         setNextTask(ctx: ctx)
     }
     
-    func addTask(id: String, title: String, description: String, due: Date, manual: Bool, ctx: NSManagedObjectContext){
+    func addTask(id: String, title: String, description: String, due: Date, manual: Bool, ctx: NSManagedObjectContext) {
         let newTask = Task(context: ctx)
         newTask.id = id
         newTask.title = title
@@ -124,7 +124,15 @@ class Helper {
             print(error)
             print(error.localizedDescription)
         }
-        setNextTask(ctx: ctx)
+    }
+    
+    func saveContext(ctx: NSManagedObjectContext) {
+        do {
+            try ctx.save()
+        } catch {
+            print(error)
+            print(error.localizedDescription)
+        }
     }
     
     func taskExists(id: String, ctx: NSManagedObjectContext) -> Bool {
