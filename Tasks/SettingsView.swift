@@ -64,7 +64,7 @@ struct SettingsView: View {
                         Rectangle()
                             .fill(Color.init(hex: 000000, alpha: 0.0001))
                             .frame(width: 70, height: 35)
-                        Text("Done")
+                        Text("Close")
                     }
                 }
             ))
