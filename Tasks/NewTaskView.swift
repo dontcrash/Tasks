@@ -35,6 +35,7 @@ struct NewTaskView: View {
                 Button(action: {
                     if self.title.count > 0 {
                         Helper.shared.addTask(id: String(Date().timeIntervalSince1970), title: self.title, description: self.notes, due: self.date, manual: true, ctx: self.cv.context)
+                        Helper.shared.saveContext(ctx: self.cv.context)
                     }
                     self.cv.showNewTask = false
                 }) {

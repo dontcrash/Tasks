@@ -71,7 +71,6 @@ struct ContentView: View {
     
     func parseICS(data: String) {
         let arr = data.components(separatedBy: "BEGIN:VEVENT")
-        print(arr.count)
         if arr.count == 1{
             print("Error, is the ICS file empty?")
             //Small delay to not glitch loading UI
@@ -83,7 +82,7 @@ struct ContentView: View {
             //Loop through array of events
             for temp in arr {
                 //Check if the event is valid ICS
-                if temp.contains("DTEND") && temp.contains("SUMMARY:") {
+                if temp.contains("DTEND") && temp.contains("SUMMARY") {
                     var id: String = ""
                     var date: String = ""
                     var title: String = ""
@@ -106,7 +105,10 @@ struct ContentView: View {
                         }
                     }
                     if description.count > 0 {
-                        description.removeFirst(12)
+                        if let index = description.index(of: ":") {
+                            let sub = description[..<index] + ":"
+                            description = description.replacingOccurrences(of: sub, with: "")
+                        }
                         description = description.replacingOccurrences(of: "\\n\\n", with: "\n\n")
                         description = description.replacingOccurrences(of: "\\n", with: "\n")
                         description = description.replacingOccurrences(of: "\\", with: "")
@@ -114,20 +116,23 @@ struct ContentView: View {
                     
                     let parts = temp.components(separatedBy: "\r\n")
                     for part in parts {
-                        if part.starts(with: "DTSTART:") {
-                            date = String(part).replacingOccurrences(of: "DTSTART:", with: "")
+                        if part.starts(with: "DTSTART") {
+                            if let index = part.index(of: ":") {
+                                let sub = part[..<index] + ":"
+                                date = part.replacingOccurrences(of: sub, with: "")
+                            }
                         }
-                        if part.starts(with: "DTSTART;TZID=") {
-                            date = String(part).replacingOccurrences(of: "DTSTART;TZID=", with: "")
+                        if part.starts(with: "SUMMARY") {
+                            if let index = part.index(of: ":") {
+                                let sub = part[..<index] + ":"
+                                title = part.replacingOccurrences(of: sub, with: "")
+                            }
                         }
-                        if part.starts(with: "DTSTART;VALUE=DATE:") {
-                            date = String(part).replacingOccurrences(of: "DTSTART;VALUE=DATE:", with: "")
-                        }
-                        if part.starts(with: "SUMMARY:") {
-                            title = String(part).replacingOccurrences(of: "SUMMARY:", with: "")
-                        }
-                        if part.starts(with: "UID:") {
-                            id = String(part).replacingOccurrences(of: "UID:", with: "")
+                        if part.starts(with: "UID") {
+                            if let index = part.index(of: ":") {
+                                let sub = part[..<index] + ":"
+                                id = part.replacingOccurrences(of: sub, with: "")
+                            }
                         }
                     }
                     let dateFormatter = DateFormatter()
@@ -153,6 +158,7 @@ struct ContentView: View {
                 }
             }
         }
+        Helper.shared.saveContext(ctx: self.context)
         Helper.shared.setNextTask(ctx: self.context)
         Helper.shared.refreshControl?.endRefreshing()
     }
