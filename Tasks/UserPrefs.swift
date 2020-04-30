@@ -17,9 +17,9 @@ class UserPrefs : ObservableObject {
         }
     }
     
-    @Published var showCompleted = UserDefaults.standard.bool(forKey: "showCompleted") {
+    @Published var hideCompleted = UserDefaults.standard.bool(forKey: "hideCompleted") {
         didSet {
-            UserDefaults.standard.set(showCompleted, forKey: "showCompleted")
+            UserDefaults.standard.set(hideCompleted, forKey: "hideCompleted")
         }
     }
     
@@ -30,8 +30,8 @@ class UserPrefs : ObservableObject {
         canc = $icsURL.debounce(for: 0.2, scheduler: DispatchQueue.main).sink { newText in
             UserDefaults.standard.set(newText, forKey: "icsURL")
         }
-        canc2 = $showCompleted.debounce(for: 0.2, scheduler: DispatchQueue.main).sink { newText in
-            UserDefaults.standard.set(newText, forKey: "showCompleted")
+        canc2 = $hideCompleted.debounce(for: 0.2, scheduler: DispatchQueue.main).sink { newText in
+            UserDefaults.standard.set(newText, forKey: "hideCompleted")
         }
     }
 

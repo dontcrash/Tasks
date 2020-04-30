@@ -16,6 +16,7 @@ struct NewTaskView: View {
     @State var date: Date = Date()
     @State var notes: String = ""
     
+    
     func endEditing() {
         let keyWindow = UIApplication.shared.connectedScenes
         .filter({$0.activationState == .foregroundActive})
@@ -25,6 +26,7 @@ struct NewTaskView: View {
         .filter({$0.isKeyWindow}).first
         keyWindow?.endEditing(true)
     }
+    
     
     var body: some View {
         

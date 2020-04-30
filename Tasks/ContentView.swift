@@ -18,7 +18,10 @@ struct ContentView: View {
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 
+    @State var searchText: String = ""
+    
     @State var showAlert = false
+    
     @State var activeAlert: AlertPresent = .nourl
     
     @State var showDeleteAlert = false
@@ -42,12 +45,6 @@ struct ContentView: View {
           sortDescriptors: [NSSortDescriptor(keyPath: \Task.due, ascending: true)]
     ) var allTasks: FetchedResults<Task>
     
-    @FetchRequest(
-           entity: Task.entity(),
-           sortDescriptors: [NSSortDescriptor(keyPath: \Task.due, ascending: true)],
-           predicate: NSPredicate(format: "done == %@", NSNumber(value: false))
-    ) var incompleteTasks: FetchedResults<Task>
-    
     var df = DateFormatter()
     
     @State var currentItem: String = ""
@@ -68,6 +65,8 @@ struct ContentView: View {
         Helper.shared.setNextTask(ctx: self.context)
         df.dateFormat = "EEEE, d MMM h:mm a"
     }
+    
+    
     
     func parseICS(data: String) {
         let arr = data.components(separatedBy: "BEGIN:VEVENT")
@@ -199,53 +198,30 @@ struct ContentView: View {
         NavigationView {
             VStack {
                 List {
-                    ForEach((userPrefs.showCompleted == true ? allTasks : incompleteTasks), id: \.id) { task in
-                        HStack {
-                            ZStack {
-                                Image(systemName: task.done ? "checkmark.square" : "square")
-                                    .resizable()
-                                    .frame(width: 20, height: 20)
-                                Rectangle()
-                                    .fill(Color.init(hex: 000000, alpha: 0.0001))
-                                    .frame(width: 30, height: 30)
-                            }
-                            .onTapGesture {
-                                Helper.shared.changeTaskStatus(task: task, done: !task.done, ctx: self.context)
-                            }
-                            .padding(.trailing, 15)
-                            Button(action: {
-                                self.showTaskDetails = true
-                            }) {
-                                HStack {
-                                    Text(task.title)
-                                        .padding(.trailing, 15)
-                                        .truncationMode(.tail)
-                                        .lineLimit(1)
-                                    Spacer()
-                                    if task.done {
-                                        Text(Helper.shared.timeBetweenDates(d1: task.due).0)
-                                        .foregroundColor(.green)
-                                        .bold()
-                                        .font(.system(size: 14))
-                                    }else{
-                                        Text(Helper.shared.timeBetweenDates(d1: task.due).0)
-                                        .foregroundColor((Helper.shared.timeBetweenDates(d1: task.due).1) ? .red : .blue)
-                                        .bold()
-                                        .font(.system(size: 14))
-                                    }
-                                }
-                            }
-                            .sheet(isPresented: self.$showTaskDetails) {
-                                TaskDetailsView(cv: self, task: task)
-                            }
-                            .onDisappear { UITableView.appearance().separatorStyle = .singleLine }
-                        }
-                        .listRowBackground(Color(UIColor.systemGray6))
-                        .padding(.vertical, 14)
+                    Section {
+                        SearchBar(text: $searchText)
+                    }
+                    ForEach(allTasks.filter { task in
+                        return (self.searchText.isEmpty ? task.done == false : (task.title.lowercased().contains(self.searchText.lowercased()) && task.done == false || task.summary.lowercased().contains(self.searchText.lowercased()) && task.done == false))
+                    }, id: \.id) { task in
+                        TaskRowModel(task: task, cv: self)
                     }
                     .onDelete { indexSet in
-                        let deleteItem = (self.userPrefs.showCompleted == true ? self.allTasks : self.incompleteTasks)[indexSet.first!]
+                        let deleteItem = self.allTasks[indexSet.first!]
                         Helper.shared.deleteTask(id: deleteItem.id, ctx: self.context)
+                    }
+                    if self.userPrefs.hideCompleted == false {
+                        Section(header: Text("Completed")) {
+                            ForEach(allTasks.filter { task in
+                                return (self.searchText.isEmpty ? task.done == true : (task.title.lowercased().contains(self.searchText.lowercased()) && task.done == true || task.summary.lowercased().contains(self.searchText.lowercased()) && task.done == true))
+                            }, id: \.id) { task in
+                                TaskRowModel(task: task, cv: self)
+                            }
+                            .onDelete { indexSet in
+                                let deleteItem = self.allTasks[indexSet.first!]
+                                Helper.shared.deleteTask(id: deleteItem.id, ctx: self.context)
+                            }
+                        }
                     }
                 }
                 .onPull(perform: {
@@ -305,8 +281,8 @@ struct ContentView: View {
         .onReceive(foregroundPublisher) { notification in
             //TODO
             //Find a non hackish way to refresh the list view
-            self.userPrefs.showCompleted = !self.userPrefs.showCompleted
-            self.userPrefs.showCompleted = !self.userPrefs.showCompleted
+            self.userPrefs.hideCompleted.toggle()
+            self.userPrefs.hideCompleted.toggle()
         }
         .navigationViewStyle(StackNavigationViewStyle())
         .accentColor(.blue)

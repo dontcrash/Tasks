@@ -16,6 +16,8 @@
 		010CA94724457AB600BE993E /* uiScope.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010CA94624457AB600BE993E /* uiScope.swift */; };
 		012B09A4245ACF5E00D2214A /* TextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 012B09A3245ACF5E00D2214A /* TextView.swift */; };
 		012B09A8245AF91400D2214A /* AdaptiveKeyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 012B09A7245AF91400D2214A /* AdaptiveKeyboard.swift */; };
+		012B09AA245AFE0100D2214A /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 012B09A9245AFE0100D2214A /* SearchBar.swift */; };
+		012B09AC245B0E3C00D2214A /* TaskRowModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 012B09AB245B0E3C00D2214A /* TaskRowModel.swift */; };
 		012E4B8F244C189600B5C554 /* NotificationCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 012E4B3C244B1D0C00B5C554 /* NotificationCenter.framework */; };
 		012E4B92244C189600B5C554 /* TodayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 012E4B91244C189600B5C554 /* TodayViewController.swift */; };
 		012E4B95244C189600B5C554 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 012E4B93244C189600B5C554 /* MainInterface.storyboard */; };
@@ -102,6 +104,8 @@
 		010CA94624457AB600BE993E /* uiScope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = uiScope.swift; sourceTree = "<group>"; };
 		012B09A3245ACF5E00D2214A /* TextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextView.swift; sourceTree = "<group>"; };
 		012B09A7245AF91400D2214A /* AdaptiveKeyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdaptiveKeyboard.swift; sourceTree = "<group>"; };
+		012B09A9245AFE0100D2214A /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
+		012B09AB245B0E3C00D2214A /* TaskRowModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskRowModel.swift; sourceTree = "<group>"; };
 		012E4B3C244B1D0C00B5C554 /* NotificationCenter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NotificationCenter.framework; path = System/Library/Frameworks/NotificationCenter.framework; sourceTree = SDKROOT; };
 		012E4B89244C17B700B5C554 /* Tasks.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Tasks.entitlements; sourceTree = "<group>"; };
 		012E4B8E244C189600B5C554 /* Tasks.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = Tasks.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -217,7 +221,9 @@
 				012E4BA1244C2BB500B5C554 /* Helper.swift */,
 				01A95B14244F06DB00171995 /* taskModel.swift */,
 				01B41180243F34A300D2FB4C /* ContentView.swift */,
+				012B09AB245B0E3C00D2214A /* TaskRowModel.swift */,
 				01A1367A245953C5003B6352 /* NewTaskView.swift */,
+				012B09A9245AFE0100D2214A /* SearchBar.swift */,
 				012B09A7245AF91400D2214A /* AdaptiveKeyboard.swift */,
 				012B09A3245ACF5E00D2214A /* TextView.swift */,
 				0136D1BF245869E00063D524 /* SettingsView.swift */,
@@ -463,7 +469,9 @@
 				01A1367B245953C5003B6352 /* NewTaskView.swift in Sources */,
 				01B41181243F34A300D2FB4C /* ContentView.swift in Sources */,
 				012B09A4245ACF5E00D2214A /* TextView.swift in Sources */,
+				012B09AC245B0E3C00D2214A /* TaskRowModel.swift in Sources */,
 				01A95B15244F06DB00171995 /* taskModel.swift in Sources */,
+				012B09AA245AFE0100D2214A /* SearchBar.swift in Sources */,
 				012B09A8245AF91400D2214A /* AdaptiveKeyboard.swift in Sources */,
 				010CA94524457A6C00BE993E /* pullToRefresh.swift in Sources */,
 			);

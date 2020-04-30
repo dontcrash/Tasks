@@ -31,12 +31,12 @@ struct SettingsView: View {
                     }
                 }.padding(.vertical, padding)
                 HStack {
-                    Toggle(isOn: self.cv.$userPrefs.showCompleted) {
-                        Text("Show completed")
+                    Toggle(isOn: self.cv.$userPrefs.hideCompleted) {
+                        Text("Hide completed")
                     }
                 }.padding(.vertical, padding)
                 HStack {
-                    Text("Tasks: " + (self.cv.userPrefs.showCompleted ? String(self.cv.allTasks.count) : String(self.cv.incompleteTasks.count)))
+                    Text("Tasks: " + String(self.cv.allTasks.count))
                     .foregroundColor(Color.gray)
                 }.padding(.vertical, padding)
                 Section(header: Text("")) {
