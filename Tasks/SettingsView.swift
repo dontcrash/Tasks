@@ -13,6 +13,8 @@ struct SettingsView: View {
     var cv: ContentView
     let padding: CGFloat = 20
     
+    let lastRefresh = UserDefaults.standard.object(forKey: "lastRefresh") as? Date ?? Date()
+    
     var body: some View {
         
         NavigationView {
@@ -35,10 +37,27 @@ struct SettingsView: View {
                         Text("Hide completed")
                     }
                 }.padding(.vertical, padding)
-                HStack {
-                    Text("Tasks: " + String(self.cv.allTasks.count))
-                    .foregroundColor(Color.gray)
-                }.padding(.vertical, padding)
+                Section(header: Text("")) {
+                    EmptyView()
+                }
+                VStack(alignment: .leading) {
+                    HStack {
+                        Text("Tasks ")
+                            .foregroundColor(Color.gray)
+                        Spacer()
+                        Text(String(self.cv.allTasks.count))
+                            .foregroundColor(Color.gray)
+                    }.padding(.vertical, padding)
+                    if !self.cv.userPrefs.icsURL.isEmpty {
+                        HStack {
+                            Text("Last update ")
+                                .foregroundColor(Color.gray)
+                            Spacer()
+                            Text(self.cv.df.string(from: lastRefresh))
+                                .foregroundColor(Color.gray)
+                        }.padding(.vertical, padding)
+                    }
+                }
                 Section(header: Text("")) {
                     EmptyView()
                 }
@@ -52,6 +71,7 @@ struct SettingsView: View {
                     .alert(isPresented: self.cv.$showDeleteAlert) {
                         Alert(title: Text("Are you sure?"), message: Text("This will clear all cached ICS tasks"), primaryButton: .destructive(Text("Clear")) {
                             Helper.shared.clearCoreData(ctx: self.cv.context)
+                            self.cv.loadData(icsURL: self.cv.userPrefs.icsURL)
                         }, secondaryButton: .cancel())
                     }
                 }.padding(.vertical, padding)

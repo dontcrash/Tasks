@@ -18,6 +18,7 @@ struct ICSURLView: View {
     
     var body: some View {
         Form {
+            //TextView()
             Section {
                 TextField("website.com/file.ics", text: $userPrefs.icsURL, onEditingChanged: {_ in
                     self.delegate.userPrefs.icsURL = self.userPrefs.icsURL
@@ -43,8 +44,10 @@ struct ICSURLView: View {
 }
 
 struct ICSURLView_Previews: PreviewProvider {
+    
     static var previews: some View {
         let cv: ContentView = ContentView()
         return ICSURLView(delegate: cv, showSelf: cv.$showICSSettings, userPrefs: UserPrefs())
     }
+    
 }

@@ -32,8 +32,6 @@ struct ContentView: View {
     
     @State var lastTask: Task = Task()
     
-    @State var isLoading: Bool = false
-    
     @State var showConfigMenu: Bool = false
     
     @State var showTaskDetails: Bool = false
@@ -45,11 +43,6 @@ struct ContentView: View {
           sortDescriptors: [NSSortDescriptor(keyPath: \Task.due, ascending: true)]
     ) var allTasks: FetchedResults<Task>
     
-    @FetchRequest(
-          entity: Task.entity(),
-          sortDescriptors: [NSSortDescriptor(keyPath: \Task.due, ascending: false)]
-    ) var allTasksReverse: FetchedResults<Task>
-    
     var df = DateFormatter()
     
     @State var currentItem: String = ""
@@ -59,15 +52,12 @@ struct ContentView: View {
     init() {
         UITableView.appearance().backgroundColor = UIColor.systemGray6
         UITableViewCell.appearance().backgroundColor = UIColor.systemGray6
-        UITabBar.appearance().barTintColor = UIColor.black
-        UITabBar.appearance().isTranslucent = true
         //UITableView.appearance().separatorStyle = .none
         let lastRefresh = UserDefaults.standard.object(forKey: "lastRefresh") as? Date ?? Date()
-        //If the data is > 24 hours old, refresh automatically
-        if Helper.shared.hoursBetweenDates(d1: lastRefresh) >= 24 {
+        //If the data is >= 3 hours old, refresh automatically
+        if Helper.shared.hoursBetweenDates(d1: lastRefresh) >= 3 {
             loadData(icsURL: self.userPrefs.icsURL)
         }
-        Helper.shared.setNextTask(ctx: self.context)
         df.dateFormat = "EEEE, d MMM h:mm a"
     }
     
@@ -164,7 +154,6 @@ struct ContentView: View {
         }
         Helper.shared.saveContext(ctx: self.context)
         Helper.shared.setNextTask(ctx: self.context)
-        Helper.shared.refreshControl?.endRefreshing()
     }
     
     func loadData(icsURL: String) {
@@ -188,7 +177,6 @@ struct ContentView: View {
                     //Invalid url
                     //Small delay to not glitch loading UI
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                        self.isLoading = false
                         self.activeAlert = .invalidurl
                         self.showAlert = true
                     }
@@ -200,49 +188,72 @@ struct ContentView: View {
     
     var body: some View {
         
-        NavigationView {
-            VStack {
+        let today = allTasks.filter { task in
+            return (self.searchText.isEmpty ? task.done == false && Helper.shared.isDueToday(d1: task.due) : (task.title.lowercased().contains(self.searchText.lowercased()) && task.done == false  && Helper.shared.isDueToday(d1: task.due) || task.summary.lowercased().contains(self.searchText.lowercased()) && task.done == false && Helper.shared.isDueToday(d1: task.due)))
+        }
+        
+        let thisWeek = allTasks.filter { task in
+            return (self.searchText.isEmpty ? task.done == false && Helper.shared.isDueThisWeek(d1: task.due) : (task.title.lowercased().contains(self.searchText.lowercased()) && task.done == false  && Helper.shared.isDueThisWeek(d1: task.due) || task.summary.lowercased().contains(self.searchText.lowercased()) && task.done == false && Helper.shared.isDueThisWeek(d1: task.due)))
+        }
+        
+        let later = allTasks.filter { task in
+            return (self.searchText.isEmpty ? task.done == false && Helper.shared.isDueLater(d1: task.due) : (task.title.lowercased().contains(self.searchText.lowercased()) && task.done == false  && Helper.shared.isDueLater(d1: task.due) || task.summary.lowercased().contains(self.searchText.lowercased()) && task.done == false && Helper.shared.isDueLater(d1: task.due)))
+        }
+        
+        let completed = allTasks.filter { task in
+            return (self.searchText.isEmpty ? task.done == true : (task.title.lowercased().contains(self.searchText.lowercased()) && task.done == true || task.summary.lowercased().contains(self.searchText.lowercased()) && task.done == true))
+        }.sorted(by: { $0.due.timeIntervalSince1970 > $1.due.timeIntervalSince1970} )
+        
+        return NavigationView {
+            VStack(spacing: 0) {
+                SearchBar(text: $searchText)
                 List {
-                    Section {
-                        SearchBar(text: $searchText)
-                    }
-                    ForEach(allTasks.filter { task in
-                        return (self.searchText.isEmpty ? task.done == false : (task.title.lowercased().contains(self.searchText.lowercased()) && task.done == false || task.summary.lowercased().contains(self.searchText.lowercased()) && task.done == false))
-                    }, id: \.id) { task in
-                        TaskRowModel(task: task, cv: self)
-                    }
-                    .onDelete { indexSet in
-                        let deleteItem = self.allTasks[indexSet.first!]
-                        Helper.shared.deleteTask(id: deleteItem.id, ctx: self.context)
-                    }
-                    if self.userPrefs.hideCompleted == false {
-                        Section(header: Text("Completed")) {
-                            ForEach(allTasksReverse.filter { task in
-                                return (self.searchText.isEmpty ? task.done == true : (task.title.lowercased().contains(self.searchText.lowercased()) && task.done == true || task.summary.lowercased().contains(self.searchText.lowercased()) && task.done == true))
-                            }, id: \.id) { task in
+                    if today.count > 0 {
+                        Section(header: Text("Today")){
+                            ForEach(today, id: \.id) { task in
                                 TaskRowModel(task: task, cv: self)
                             }
-                            .onDelete { indexSet in
-                                let deleteItem = self.allTasks[indexSet.first!]
-                                Helper.shared.deleteTask(id: deleteItem.id, ctx: self.context)
+                        }
+                    }
+                    if thisWeek.count > 0 {
+                        Section(header: Text("This Week")){
+                            ForEach(thisWeek, id: \.id) { task in
+                                TaskRowModel(task: task, cv: self)
                             }
+                        }
+                    }
+                    if later.count > 0 {
+                        Section(header: Text("Later")){
+                            ForEach(later, id: \.id) { task in
+                                TaskRowModel(task: task, cv: self)
+                            }
+                        }
+                    }
+                    if self.userPrefs.hideCompleted == false {
+                        if completed.count > 0 {
+                            Section(header: Text("Completed")) {
+                                ForEach(completed, id: \.id) { task in
+                                    TaskRowModel(task: task, cv: self)
+                                }
+                                .onDelete { indexSet in
+                                    let deleteItem = self.allTasks[indexSet.first!]
+                                    Helper.shared.deleteTask(id: deleteItem.id, ctx: self.context)
+                                }
+                            }
+                        }
+                    }
+                    if today.isEmpty && thisWeek.isEmpty && later.isEmpty && completed.isEmpty {
+                        if self.searchText.isEmpty {
+                            Text(Helper.allCompleted)
+                        } else {
+                            Text("No results 😱")
                         }
                     }
                 }
-                .onPull(perform: {
-                    if self.userPrefs.icsURL.count > 0 {
-                        self.loadData(icsURL: self.userPrefs.icsURL)
-                    }else{
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                            self.isLoading = false
-                            self.activeAlert = .nourl
-                            self.showAlert = true
-                        }
-                    }
-                }, isLoading: self.isLoading)
                 .sheet(isPresented: self.$showConfigMenu) {
                     SettingsView(cv: self)
                 }
+                .resignKeyboardOnDragGesture()
                 .navigationBarTitle("Tasks", displayMode: .inline)
                 .navigationBarItems(leading: (
                     Button(action: {
@@ -274,6 +285,7 @@ struct ContentView: View {
                     }
                 ))
             }
+            .background(Color.init(UIColor.systemGray6))
             .alert(isPresented: self.$showAlert){
                 switch activeAlert {
                     case .invalidurl:
@@ -301,4 +313,19 @@ struct ContentView_Previews: PreviewProvider {
         return ContentView().environment(\.managedObjectContext, context)
     }
     
+}
+
+struct ResignKeyboardOnDragGesture: ViewModifier {
+    var gesture = DragGesture().onChanged{_ in
+        UIApplication.shared.endEditing(true)
+    }
+    func body(content: Content) -> some View {
+        content.gesture(gesture)
+    }
+}
+
+extension View {
+    func resignKeyboardOnDragGesture() -> some View {
+        return modifier(ResignKeyboardOnDragGesture())
+    }
 }

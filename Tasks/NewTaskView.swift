@@ -15,8 +15,7 @@ struct NewTaskView: View {
     @State var title: String = ""
     @State var date: Date = Date()
     @State var notes: String = ""
-    
-    
+
     func endEditing() {
         let keyWindow = UIApplication.shared.connectedScenes
         .filter({$0.activationState == .foregroundActive})
@@ -27,10 +26,9 @@ struct NewTaskView: View {
         keyWindow?.endEditing(true)
     }
     
-    
     var body: some View {
-        
-        NavigationView {
+
+        return NavigationView {
             VStack{
                 Form {
                     VStack(alignment: .leading) {
@@ -42,7 +40,7 @@ struct NewTaskView: View {
                         .padding(.vertical, padding*2)
                         .onAppear{self.endEditing()}
                     VStack(alignment: .leading) {
-                        NavigationLink(destination: NotesView(ntv: self)){
+                        NavigationLink(destination: NotesView(notes: self.$notes)){
                             Text((self.notes.count > 0 ? self.notes : "Notes"))
                                 .foregroundColor(Color.gray)
                         }
@@ -55,6 +53,7 @@ struct NewTaskView: View {
                     if self.title.count > 0 {
                         Helper.shared.addTask(id: String(Date().timeIntervalSince1970), title: self.title, description: self.notes, due: self.date, manual: true, ctx: self.cv.context)
                         Helper.shared.saveContext(ctx: self.cv.context)
+                        Helper.shared.setNextTask(ctx: self.cv.context)
                     }
                     self.cv.showNewTask = false
                 }) {
@@ -85,17 +84,4 @@ struct NewTaskView_Previews: PreviewProvider {
     static var previews: some View {
         NewTaskView(cv: ContentView())
     }
-}
-
-struct NotesView: View {
-    
-    var ntv: NewTaskView
-    @State var isEditing: Bool = false
-    
-    var body: some View {
-        TextView(text: self.ntv.$notes, isEditing: self.$isEditing, placeholder: "Notes", backgroundColor: UIColor.clear)
-            .padding(.leading, ntv.padding * 2)
-            .modifier(AdaptsToKeyboard())
-    }
-    
 }

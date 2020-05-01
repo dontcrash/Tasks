@@ -16,9 +16,10 @@ struct TaskRowModel: View {
     var body: some View {
         HStack {
             ZStack {
-                Image(systemName: task.done ? "checkmark.square" : "square")
+                Image(systemName: self.task.done ? "checkmark.circle.fill" : "circle")
                     .resizable()
                     .frame(width: 20, height: 20)
+                    .foregroundColor(Color.gray)
                 Rectangle()
                     .fill(Color.init(hex: 000000, alpha: 0.0001))
                     .frame(width: 30, height: 30)
@@ -26,24 +27,24 @@ struct TaskRowModel: View {
             .onTapGesture {
                 Helper.shared.changeTaskStatus(task: self.task, done: !self.task.done, ctx: self.cv.context)
             }
-            .padding(.trailing, 15)
+            .padding(.trailing, 5)
             Button(action: {
                 self.cv.showTaskDetails = true
             }) {
                 HStack {
-                    Text(task.title)
+                    Text(self.task.title)
                         .padding(.trailing, 15)
                         .truncationMode(.tail)
                         .lineLimit(1)
                     Spacer()
-                    if task.done {
-                        Text(Helper.shared.timeBetweenDates(d1: task.due).0)
+                    if self.task.done {
+                        Text(Helper.shared.timeBetweenDates(d1: self.task.due).0)
                         .foregroundColor(.green)
                         .bold()
                         .font(.system(size: 14))
                     }else{
                         Text(Helper.shared.timeBetweenDates(d1: task.due).0)
-                        .foregroundColor((Helper.shared.timeBetweenDates(d1: task.due).1) ? .red : .blue)
+                        .foregroundColor((Helper.shared.timeBetweenDates(d1: self.task.due).1) ? .red : .blue)
                         .bold()
                         .font(.system(size: 14))
                     }
@@ -54,6 +55,7 @@ struct TaskRowModel: View {
             }
             .onDisappear { UITableView.appearance().separatorStyle = .singleLine }
         }
+        //.listRowInsets(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 15))
         .listRowBackground(Color(UIColor.systemGray6))
         .padding(.vertical, 14)
     }

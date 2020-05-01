@@ -20,12 +20,29 @@ class Helper {
     static let noDesc: String = "No description provided 😢"
     
     var allTasksComplete: Bool = false
-    var refreshControl: UIRefreshControl?
   
     func hoursBetweenDates(d1: Date) -> Int {
         let cal = Calendar.current
         let components = cal.dateComponents([.hour], from: Date().toLocalTime(), to: d1.toLocalTime())
         return components.hour!
+    }
+    
+    func isDueToday(d1: Date) -> Bool {
+        let cal = Calendar.current
+        let components = cal.dateComponents([.hour], from: Date().toLocalTime(), to: d1.toLocalTime())
+        return components.hour! < 24
+    }
+    
+    func isDueThisWeek(d1: Date) -> Bool {
+        let cal = Calendar.current
+        let components = cal.dateComponents([.day], from: Date().toLocalTime(), to: d1.toLocalTime())
+        return components.day! <= 7 && components.day! >= 1
+    }
+    
+    func isDueLater(d1: Date) -> Bool {
+        let cal = Calendar.current
+        let components = cal.dateComponents([.day], from: Date().toLocalTime(), to: d1.toLocalTime())
+        return components.day! > 7
     }
     
     func secondsBetweenDates(d1: Date) -> Int {
@@ -87,7 +104,23 @@ class Helper {
         setNextTask(ctx: ctx)
     }
     
+    func deleteIndex(allTasks: FetchedResults<Task>, at offsets: IndexSet) {
+        for offset in offsets {
+            // find this book in our fetch request
+            //print(offset)
+            let task = allTasks[offset]
+            print(task.title)
+
+            // delete it from the context
+            //moc.delete(book)
+        }
+
+        // save the context
+        //try? moc.save()
+    }
+    
     func deleteTask(id: String, ctx: NSManagedObjectContext) {
+        return
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Task")
         fetchRequest.predicate = NSPredicate(format: "id == %@", id)
         var results: [NSManagedObject] = []
