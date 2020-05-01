@@ -55,7 +55,7 @@ struct ContentView: View {
         //UITableView.appearance().separatorStyle = .none
         let lastRefresh = UserDefaults.standard.object(forKey: "lastRefresh") as? Date ?? Date()
         //If the data is >= 3 hours old, refresh automatically
-        if Helper.shared.hoursBetweenDates(d1: lastRefresh) >= 3 {
+        if Helper.shared.hoursBetweenDates(d1: lastRefresh) <= -3 {
             loadData(icsURL: self.userPrefs.icsURL)
         }
         df.dateFormat = "EEEE, d MMM h:mm a"
@@ -186,6 +186,12 @@ struct ContentView: View {
         }.resume()
     }
     
+    func removeItems(at offsets: IndexSet, list: [FetchedResults<Task>.Element]) {
+        offsets.forEach{ offset in
+            Helper.shared.deleteTask(id: list[offset].id, ctx: self.context)
+        }
+    }
+    
     var body: some View {
         
         let today = allTasks.filter { task in
@@ -213,6 +219,9 @@ struct ContentView: View {
                             ForEach(today, id: \.id) { task in
                                 TaskRowModel(task: task, cv: self)
                             }
+                            .onDelete(perform: { offsets in
+                                self.removeItems(at: offsets, list: today)
+                            })
                         }
                     }
                     if thisWeek.count > 0 {
@@ -220,6 +229,9 @@ struct ContentView: View {
                             ForEach(thisWeek, id: \.id) { task in
                                 TaskRowModel(task: task, cv: self)
                             }
+                            .onDelete(perform: { offsets in
+                                self.removeItems(at: offsets, list: thisWeek)
+                            })
                         }
                     }
                     if later.count > 0 {
@@ -227,6 +239,9 @@ struct ContentView: View {
                             ForEach(later, id: \.id) { task in
                                 TaskRowModel(task: task, cv: self)
                             }
+                            .onDelete(perform: { offsets in
+                                self.removeItems(at: offsets, list: later)
+                            })
                         }
                     }
                     if self.userPrefs.hideCompleted == false {
@@ -235,10 +250,9 @@ struct ContentView: View {
                                 ForEach(completed, id: \.id) { task in
                                     TaskRowModel(task: task, cv: self)
                                 }
-                                .onDelete { indexSet in
-                                    let deleteItem = self.allTasks[indexSet.first!]
-                                    Helper.shared.deleteTask(id: deleteItem.id, ctx: self.context)
-                                }
+                                .onDelete(perform: { offsets in
+                                    self.removeItems(at: offsets, list: completed)
+                                })
                             }
                         }
                     }
@@ -253,7 +267,7 @@ struct ContentView: View {
                 .sheet(isPresented: self.$showConfigMenu) {
                     SettingsView(cv: self)
                 }
-                .resignKeyboardOnDragGesture()
+                //.resignKeyboardOnDragGesture()
                 .navigationBarTitle("Tasks", displayMode: .inline)
                 .navigationBarItems(leading: (
                     Button(action: {

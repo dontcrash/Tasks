@@ -15,6 +15,7 @@ struct NewTaskView: View {
     @State var title: String = ""
     @State var date: Date = Date()
     @State var notes: String = ""
+    @State var isEditing: Bool = false
 
     func endEditing() {
         let keyWindow = UIApplication.shared.connectedScenes
@@ -36,13 +37,12 @@ struct NewTaskView: View {
                             .frame(width: UIScreen.main.bounds.width-20, height: 60)
                     }
                     DatePicker(selection: self.$date, label: { /*@START_MENU_TOKEN@*/Text("Date")/*@END_MENU_TOKEN@*/ })
-                        .foregroundColor(Color.gray)
                         .padding(.vertical, padding*2)
                         .onAppear{self.endEditing()}
                     VStack(alignment: .leading) {
-                        NavigationLink(destination: NotesView(notes: self.$notes)){
-                            Text((self.notes.count > 0 ? self.notes : "Notes"))
-                                .foregroundColor(Color.gray)
+                        AdaptiveKeyboard {
+                            TextView(text: self.$notes, isEditing: self.$isEditing, placeholder: "Notes", backgroundColor: UIColor.clear)
+                            .frame(width: UIScreen.main.bounds.width - 25, height: 230)
                         }
                     }
                     .padding(.vertical, padding*2)
@@ -50,18 +50,27 @@ struct NewTaskView: View {
             }
             .navigationBarItems(trailing: (
                 Button(action: {
-                    if self.title.count > 0 {
-                        Helper.shared.addTask(id: String(Date().timeIntervalSince1970), title: self.title, description: self.notes, due: self.date, manual: true, ctx: self.cv.context)
-                        Helper.shared.saveContext(ctx: self.cv.context)
-                        Helper.shared.setNextTask(ctx: self.cv.context)
+                    if self.isEditing {
+                        self.isEditing = false
+                        self.endEditing()
+                    } else {
+                        if self.title.count > 0 {
+                            Helper.shared.addTask(id: String(Date().timeIntervalSince1970), title: self.title, description: self.notes, due: self.date, manual: true, ctx: self.cv.context)
+                            Helper.shared.saveContext(ctx: self.cv.context)
+                            Helper.shared.setNextTask(ctx: self.cv.context)
+                        }
+                        self.cv.showNewTask = false
                     }
-                    self.cv.showNewTask = false
                 }) {
                     ZStack {
                         Rectangle()
                             .fill(Color.init(hex: 000000, alpha: 0.0001))
                             .frame(width: 70, height: 35)
-                        Text((self.title.count > 0 ? "Add" : "Close"))
+                        if self.isEditing {
+                            Text("Done")
+                        } else {
+                            Text((self.title.count > 0 ? "Add" : "Close"))
+                        }
                     }
                 }
             ))

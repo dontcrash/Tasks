@@ -51,10 +51,11 @@ struct TaskRowModel: View {
                 }
             }
             .sheet(isPresented: self.cv.$showTaskDetails) {
-                TaskDetailsView(cv: self.cv, task: self.task)
+                TaskDetailsView(cv: self.cv, task: self.task, dismiss: { self.cv.showTaskDetails = false })
             }
             .onDisappear { UITableView.appearance().separatorStyle = .singleLine }
         }
+        .deleteDisabled(!self.task.manual)
         //.listRowInsets(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 15))
         .listRowBackground(Color(UIColor.systemGray6))
         .padding(.vertical, 14)

@@ -29,6 +29,10 @@ struct SearchBar: UIViewRepresentable {
             searchBar.resignFirstResponder()
         }
         
+        func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+            searchBar.showsCancelButton = true
+        }
+        
         func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
             text = ""
             searchBar.showsCancelButton = false

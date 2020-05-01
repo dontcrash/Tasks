@@ -54,7 +54,7 @@ struct AdaptiveKeyboard<Content: View>: View {
         VStack {
             view
                 .padding(.bottom, keyboardHeight)
-                .animation(.default)
+                .animation(.none)
             
         } .onReceive(showPublisher.merge(with: hidePublisher)) {
             (height) in self.keyboardHeight = height

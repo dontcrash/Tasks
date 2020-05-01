@@ -120,7 +120,6 @@ class Helper {
     }
     
     func deleteTask(id: String, ctx: NSManagedObjectContext) {
-        return
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Task")
         fetchRequest.predicate = NSPredicate(format: "id == %@", id)
         var results: [NSManagedObject] = []

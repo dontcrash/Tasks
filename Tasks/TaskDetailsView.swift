@@ -16,6 +16,7 @@ struct TaskDetailsView: View {
     @State var title: String = ""
     @State var date: Date = Date()
     @State var notes: String = ""
+    @State var isEditing: Bool = false
     
     func endEditing() {
         let keyWindow = UIApplication.shared.connectedScenes
@@ -27,39 +28,45 @@ struct TaskDetailsView: View {
         keyWindow?.endEditing(true)
     }
     
+    var dismiss: () -> ()
+    
     var body: some View {
 
         return NavigationView {
-            VStack{
+            VStack {
                 Form {
                     VStack(alignment: .leading) {
-                        TextField("Title", text: self.$title)
-                            .frame(width: UIScreen.main.bounds.width-20, height: 60)
-                    }
-                    DatePicker(selection: self.$date, label: { /*@START_MENU_TOKEN@*/Text("Date")/*@END_MENU_TOKEN@*/ })
-                        .foregroundColor(Color.gray)
-                        .padding(.vertical, padding*2)
-                        .onAppear{self.endEditing()}
-                    VStack(alignment: .leading) {
-                        NavigationLink(destination: NotesView(notes: self.$notes)){
-                            Text((self.notes.count > 0 ? self.notes : "Notes"))
+                        if self.task.manual {
+                            TextField("Title", text: self.$title)
+                                .frame(width: UIScreen.main.bounds.width-20, height: 60)
+                        } else {
+                            Text(self.title)
+                                .padding(.vertical, padding*2)
                                 .foregroundColor(Color.gray)
                         }
                     }
-                    .padding(.vertical, padding*2)
-                    if self.task.title.isEmpty {
-                        //
-                    }else{
-                        Section {
-                            EmptyView()
-                        }
-                        Button(action: {
-                            print("Delete")
-                        }) {
-                            Text("Delete")
-                                .foregroundColor(Color.red)
+                    DatePicker(selection: self.$date, label: { /*@START_MENU_TOKEN@*/Text("Date")/*@END_MENU_TOKEN@*/ })
+                        .foregroundColor((self.task.manual ? Color.primary : Color.gray))
+                        .padding(.vertical, padding*2)
+                        .onAppear{self.endEditing()}
+                        .disabled(!self.task.manual)
+                    VStack(alignment: .leading) {
+                        if self.task.manual {
+                            AdaptiveKeyboard {
+                                TextView(text: self.$notes, isEditing: self.$isEditing, placeholder: "Notes", backgroundColor: UIColor.clear)
+                                .frame(width: UIScreen.main.bounds.width - 25, height: 230)
+                            }
+                        } else {
+                            if self.notes.isEmpty {
+                                Text(Helper.noDesc)
+                                    .foregroundColor(Color.gray)
+                            } else {
+                                Text(self.notes)
+                                    .foregroundColor(Color.gray)
+                            }
                         }
                     }
+                    .padding(.vertical, padding*2)
                 }
             }
             .onAppear(perform: {
@@ -69,34 +76,35 @@ struct TaskDetailsView: View {
             })
             .navigationBarItems(trailing: (
                 Button(action: {
-                    if self.task.title.isEmpty {
-                        if self.title.count > 0 {
-                            Helper.shared.addTask(id: String(Date().timeIntervalSince1970), title: self.title, description: self.notes, due: self.date, manual: true, ctx: self.cv.context)
-                            Helper.shared.saveContext(ctx: self.cv.context)
-                            Helper.shared.setNextTask(ctx: self.cv.context)
-                        }
+                    if self.isEditing {
+                        self.isEditing = false
+                        self.endEditing()
                     } else {
-                        //TODO
-                        //Show a warning if the title is blank
-                        if self.title.count > 0 {
-                            Helper.shared.updateTask(id: self.task.id, due: self.date, title: self.title, desc: self.notes, ctx: self.cv.context)
+                        if self.task.manual {
+                            if self.title.count > 0 {
+                                Helper.shared.updateTask(id: self.task.id, due: self.date, title: self.title, desc: self.notes, ctx: self.cv.context)
+                            }
                         }
+                        self.cv.showTaskDetails = false
                     }
-                    self.cv.showTaskDetails = false
                 }) {
                     ZStack {
                         Rectangle()
                             .fill(Color.init(hex: 000000, alpha: 0.0001))
                             .frame(width: 70, height: 35)
-                        if self.task.title.isEmpty || !self.task.manual {
-                            Text((self.title.count > 0 ? "Add" : "Close"))
+                        if self.isEditing {
+                            Text("Done")
                         } else {
-                            Text("Save")
+                            if self.task.manual {
+                                Text((self.title.count > 0 ? "Save" : "Close"))
+                            } else {
+                                Text("Close")
+                            }
                         }
                     }
                 }
             ))
-            .navigationBarTitle((self.task.title.isEmpty ? "New Task" : "Details"), displayMode: .inline)
+            .navigationBarTitle((self.task.manual ? "Details" : "ICS Details"), displayMode: .inline)
         }
         .navigationViewStyle(StackNavigationViewStyle())
         .onAppear {
@@ -107,19 +115,6 @@ struct TaskDetailsView: View {
             UITableView.appearance().separatorStyle = .none
             UITableViewCell.appearance().backgroundColor = UIColor.systemGray6
         }
-    }
-    
-}
-
-struct NotesView: View {
-    
-    @Binding var notes: String
-    @State var isEditing: Bool = false
-    
-    var body: some View {
-        TextView(text: self.$notes, isEditing: self.$isEditing, placeholder: "Notes", backgroundColor: UIColor.clear)
-            .padding(.leading, 20)
-            .modifier(AdaptsToKeyboard())
     }
     
 }

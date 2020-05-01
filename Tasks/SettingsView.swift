@@ -50,7 +50,7 @@ struct SettingsView: View {
                     }.padding(.vertical, padding)
                     if !self.cv.userPrefs.icsURL.isEmpty {
                         HStack {
-                            Text("Last update ")
+                            Text("Last ICS update ")
                                 .foregroundColor(Color.gray)
                             Spacer()
                             Text(self.cv.df.string(from: lastRefresh))

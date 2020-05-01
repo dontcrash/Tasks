@@ -95,7 +95,7 @@ public struct TextView: View {
         public func makeUIView(context: Context) -> UITextView {
             let textView = UITextView()
             textView.delegate = context.coordinator
-            textView.becomeFirstResponder()
+            //textView.becomeFirstResponder()
             return textView
         }
         
