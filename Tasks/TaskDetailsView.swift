@@ -18,6 +18,8 @@ struct TaskDetailsView: View {
     @State var notes: String = ""
     @State var isEditing: Bool = false
     
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    
     func endEditing() {
         let keyWindow = UIApplication.shared.connectedScenes
         .filter({$0.activationState == .foregroundActive})
@@ -37,7 +39,7 @@ struct TaskDetailsView: View {
                 Form {
                     VStack(alignment: .leading) {
                         if self.task.manual {
-                            TextField("Title", text: self.$title)
+                            CTextField(text: self.$title, placeholder: "Title")
                                 .frame(width: UIScreen.main.bounds.width-20, height: 60)
                         } else {
                             Text(self.title)
@@ -54,7 +56,7 @@ struct TaskDetailsView: View {
                         if self.task.manual {
                             AdaptiveKeyboard {
                                 TextView(text: self.$notes, isEditing: self.$isEditing, placeholder: "Notes", backgroundColor: UIColor.clear)
-                                .frame(width: UIScreen.main.bounds.width - 30, height: 230)
+                                .frame(width: UIScreen.main.bounds.width - (horizontalSizeClass == .compact ? 25 : 50), height: 230)
                             }
                         } else {
                             if self.notes.isEmpty {

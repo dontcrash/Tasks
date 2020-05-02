@@ -17,6 +17,8 @@ enum AlertPresent {
 struct ContentView: View {
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
 
     @State var searchText: String = ""
     
@@ -155,7 +157,7 @@ struct ContentView: View {
             }
         }
         Helper.shared.saveContext(ctx: self.context)
-        Helper.shared.setNextTask(ctx: self.context)
+        //Helper.shared.setNextTask(ctx: self.context)
     }
     
     func loadData(icsURL: String) {
@@ -318,7 +320,8 @@ struct ContentView: View {
                     }
                     if today.isEmpty && thisWeek.isEmpty && later.isEmpty && completed.isEmpty {
                         if self.searchText.isEmpty {
-                            Text(Helper.allCompleted)
+                            //Text(Helper.allCompleted)
+                                //.padding(.vertical, 14)
                         } else {
                             Text("No results 😱")
                                 .padding(.vertical, 14)

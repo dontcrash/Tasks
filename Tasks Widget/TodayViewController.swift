@@ -8,6 +8,7 @@
 
 import UIKit
 import SwiftUI
+import CoreData
 import NotificationCenter
 
 class widgetData : UIViewController, ObservableObject {
@@ -34,6 +35,7 @@ class TodayViewController: UIViewController, NCWidgetProviding {
         @ObservedObject var model = widgetData()
 
         var body: some View {
+            
             HStack {
                 if model.tasks.count > 0 {
                     List(model.tasks) { task in
@@ -70,9 +72,9 @@ class TodayViewController: UIViewController, NCWidgetProviding {
     @IBSegueAction func addSwiftUIView(_ coder: NSCoder) -> UIViewController? {
         uiview = UIHostingController(coder: coder, rootView: shared)!
         uiview?.view.backgroundColor = .clear
-        shared.body.onTapGesture {
-            self.openMainApp()
-        }
+        //shared.body.onTapGesture {
+        //    self.openMainApp()
+        //}
         return uiview
     }
     
@@ -95,9 +97,31 @@ class TodayViewController: UIViewController, NCWidgetProviding {
         return nil
     }
     
+    func getResults() {
+        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Task")
+        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Task.due, ascending: true)]
+        fetchRequest.predicate = NSPredicate(format: "done == %@", NSNumber(value: false))
+        fetchRequest.fetchLimit = 5
+        shared.model.tasks.removeAll()
+        var results: [NSManagedObject] = []
+        do {
+            results = try CoreDataStack.persistentContainer.viewContext.fetch(fetchRequest)
+            for task in results  {
+                let t: taskModel = taskModel()
+                t.title = task.value(forKey: "title") as! String
+                t.due = task.value(forKey: "due") as! Date
+                shared.model.tasks.append(t)
+            }
+        }
+        catch {
+            print("error executing fetch request: \(error)")
+        }
+    }
+    
     func refreshData(){
         shared.model.lastUpdate = Date()
-        shared.model.tasks = getTasks() ?? [taskModel]()
+        getResults()
+        //shared.model.tasks = getTasks() ?? [taskModel]()
     }
     
     func widgetPerformUpdate(completionHandler: (@escaping (NCUpdateResult) -> Void)) {

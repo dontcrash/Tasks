@@ -101,22 +101,7 @@ class Helper {
             print(error)
             print(error.localizedDescription)
         }
-        setNextTask(ctx: ctx)
-    }
-    
-    func deleteIndex(allTasks: FetchedResults<Task>, at offsets: IndexSet) {
-        for offset in offsets {
-            // find this book in our fetch request
-            //print(offset)
-            let task = allTasks[offset]
-            print(task.title)
-
-            // delete it from the context
-            //moc.delete(book)
-        }
-
-        // save the context
-        //try? moc.save()
+        //setNextTask(ctx: ctx)
     }
     
     func deleteTask(id: String, ctx: NSManagedObjectContext) {
@@ -139,7 +124,7 @@ class Helper {
             print(error)
             print(error.localizedDescription)
         }
-        setNextTask(ctx: ctx)
+        //setNextTask(ctx: ctx)
     }
     
     func addTask(id: String, title: String, description: String, due: Date, manual: Bool, ctx: NSManagedObjectContext) {
@@ -180,6 +165,7 @@ class Helper {
         return results.count > 0
     }
     
+    /*
     func setNextTask(ctx: NSManagedObjectContext){
         let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Task")
         fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Task.due, ascending: true)]
@@ -213,6 +199,7 @@ class Helper {
         //SharedData.shared.saveData(value: nextTask, key: "nextTask")
         //SharedData.shared.saveData(value: nextDue, key: "nextDue")
     }
+    */
     
     func changeTaskStatus(task: Task, done: Bool, ctx: NSManagedObjectContext){
         let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Task")
@@ -226,7 +213,7 @@ class Helper {
         } catch let error as NSError {
             print(error.localizedDescription)
         }
-        Helper.shared.setNextTask(ctx: ctx)
+        //Helper.shared.setNextTask(ctx: ctx)
     }
     
     func updateTask(id: String, due: Date, title: String, desc: String, ctx: NSManagedObjectContext){
@@ -243,7 +230,7 @@ class Helper {
         } catch let error as NSError {
             print(error.localizedDescription)
         }
-        Helper.shared.setNextTask(ctx: ctx)
+        //Helper.shared.setNextTask(ctx: ctx)
     }
     
 }

@@ -16,6 +16,8 @@ struct NewTaskView: View {
     @State var date: Date = Date()
     @State var notes: String = ""
     @State var isEditing: Bool = false
+    
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
 
     func endEditing() {
         let keyWindow = UIApplication.shared.connectedScenes
@@ -33,7 +35,7 @@ struct NewTaskView: View {
             VStack{
                 Form {
                     VStack(alignment: .leading) {
-                        TextField("Title", text: self.$title)
+                        CTextField(text: self.$title, placeholder: "Title")
                             .frame(width: UIScreen.main.bounds.width-20, height: 60)
                     }
                     DatePicker(selection: self.$date, label: { /*@START_MENU_TOKEN@*/Text("Date")/*@END_MENU_TOKEN@*/ })
@@ -42,7 +44,7 @@ struct NewTaskView: View {
                     VStack(alignment: .leading) {
                         AdaptiveKeyboard {
                             TextView(text: self.$notes, isEditing: self.$isEditing, placeholder: "Notes", backgroundColor: UIColor.clear)
-                            .frame(width: UIScreen.main.bounds.width - 30, height: 230)
+                                .frame(width: UIScreen.main.bounds.width - (horizontalSizeClass == .compact ? 25 : 50), height: 230)
                         }
                     }
                     .padding(.vertical, padding*2)
@@ -57,7 +59,7 @@ struct NewTaskView: View {
                         if self.title.count > 0 {
                             Helper.shared.addTask(id: String(Date().timeIntervalSince1970), title: self.title, description: self.notes, due: self.date, manual: true, ctx: self.cv.context)
                             Helper.shared.saveContext(ctx: self.cv.context)
-                            Helper.shared.setNextTask(ctx: self.cv.context)
+                            //Helper.shared.setNextTask(ctx: self.cv.context)
                         }
                         self.cv.showNewTask = false
                     }
