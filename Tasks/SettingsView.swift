@@ -65,13 +65,15 @@ struct SettingsView: View {
                     Button(action: {
                         self.cv.showDeleteAlert = true
                     }){
-                        Text("Clear all cached ICS tasks")
+                        Text("Reset all cached ICS tasks")
                             .foregroundColor(Color.red)
                     }
                     .alert(isPresented: self.cv.$showDeleteAlert) {
-                        Alert(title: Text("Are you sure?"), message: Text("This will clear all cached ICS tasks"), primaryButton: .destructive(Text("Clear")) {
+                        Alert(title: Text("Are you sure?"), message: Text("This will reset all cached ICS tasks"), primaryButton: .destructive(Text("Reset")) {
                             Helper.shared.clearCoreData(ctx: self.cv.context)
-                            self.cv.loadData(icsURL: self.cv.userPrefs.icsURL)
+                            if !self.cv.userPrefs.icsURL.isEmpty {
+                                self.cv.loadData(icsURL: self.cv.userPrefs.icsURL)
+                            }
                         }, secondaryButton: .cancel())
                     }
                 }.padding(.vertical, padding)
