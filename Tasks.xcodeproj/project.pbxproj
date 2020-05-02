@@ -44,6 +44,7 @@
 		01B41189243F34A700D2FB4C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 01B41187243F34A700D2FB4C /* LaunchScreen.storyboard */; };
 		01B41194243F34A700D2FB4C /* TasksTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01B41193243F34A700D2FB4C /* TasksTests.swift */; };
 		01B4119F243F34A700D2FB4C /* TasksUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01B4119E243F34A700D2FB4C /* TasksUITests.swift */; };
+		01F0D161245D4A2300BB5F5D /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01F0D160245D4A2300BB5F5D /* CloudKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -133,6 +134,7 @@
 		01B4119A243F34A700D2FB4C /* TasksUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TasksUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		01B4119E243F34A700D2FB4C /* TasksUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasksUITests.swift; sourceTree = "<group>"; };
 		01B411A0243F34A700D2FB4C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		01F0D160245D4A2300BB5F5D /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -148,6 +150,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				01F0D161245D4A2300BB5F5D /* CloudKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -171,6 +174,7 @@
 		010CA8DB244421CD00BE993E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				01F0D160245D4A2300BB5F5D /* CloudKit.framework */,
 				012E4B3C244B1D0C00B5C554 /* NotificationCenter.framework */,
 			);
 			name = Frameworks;

@@ -65,7 +65,7 @@ struct SettingsView: View {
                     Button(action: {
                         self.cv.showDeleteAlert = true
                     }){
-                        Text("Reset all cached ICS tasks")
+                        Text("Reset cached ICS tasks")
                             .foregroundColor(Color.red)
                     }
                     .alert(isPresented: self.cv.$showDeleteAlert) {

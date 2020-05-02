@@ -54,7 +54,7 @@ struct TaskDetailsView: View {
                         if self.task.manual {
                             AdaptiveKeyboard {
                                 TextView(text: self.$notes, isEditing: self.$isEditing, placeholder: "Notes", backgroundColor: UIColor.clear)
-                                .frame(width: UIScreen.main.bounds.width - 25, height: 230)
+                                .frame(width: UIScreen.main.bounds.width - 30, height: 230)
                             }
                         } else {
                             if self.notes.isEmpty {

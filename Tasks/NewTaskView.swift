@@ -42,7 +42,7 @@ struct NewTaskView: View {
                     VStack(alignment: .leading) {
                         AdaptiveKeyboard {
                             TextView(text: self.$notes, isEditing: self.$isEditing, placeholder: "Notes", backgroundColor: UIColor.clear)
-                            .frame(width: UIScreen.main.bounds.width - 25, height: 230)
+                            .frame(width: UIScreen.main.bounds.width - 30, height: 230)
                         }
                     }
                     .padding(.vertical, padding*2)
