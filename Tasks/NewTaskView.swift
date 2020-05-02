@@ -32,22 +32,24 @@ struct NewTaskView: View {
     var body: some View {
 
         return NavigationView {
-            VStack{
-                Form {
-                    VStack(alignment: .leading) {
-                        CTextField(text: self.$title, placeholder: "Title")
-                            .frame(width: UIScreen.main.bounds.width-20, height: 60)
-                    }
-                    DatePicker(selection: self.$date, label: { /*@START_MENU_TOKEN@*/Text("Date")/*@END_MENU_TOKEN@*/ })
-                        .padding(.vertical, padding*2)
-                        .onAppear{self.endEditing()}
-                    VStack(alignment: .leading) {
-                        AdaptiveKeyboard {
-                            TextView(text: self.$notes, isEditing: self.$isEditing, placeholder: "Notes", backgroundColor: UIColor.clear)
-                                .frame(width: UIScreen.main.bounds.width - (horizontalSizeClass == .compact ? 25 : 50), height: 230)
+            GeometryReader { geometry in
+                VStack {
+                    Form {
+                        VStack(alignment: .leading) {
+                            CTextField(text: self.$title, placeholder: "Title")
+                                .frame(width: UIScreen.main.bounds.width-20, height: 60)
                         }
+                        DatePicker(selection: self.$date, label: { /*@START_MENU_TOKEN@*/Text("Date")/*@END_MENU_TOKEN@*/ })
+                            .padding(.vertical, self.padding*2)
+                            .onAppear{self.endEditing()}
+                        VStack(alignment: .leading) {
+                            AdaptiveKeyboard {
+                                TextView(text: self.$notes, isEditing: self.$isEditing, placeholder: "Notes", backgroundColor: UIColor.clear)
+                                    .frame(width: (self.horizontalSizeClass == .compact ? geometry.size.width - 30 : geometry.size.width - 60), height: 230)
+                            }
+                        }
+                        .padding(.vertical, self.padding*2)
                     }
-                    .padding(.vertical, padding*2)
                 }
             }
             .navigationBarItems(trailing: (

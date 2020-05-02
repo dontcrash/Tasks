@@ -35,40 +35,42 @@ struct TaskDetailsView: View {
     var body: some View {
 
         return NavigationView {
-            VStack {
-                Form {
-                    VStack(alignment: .leading) {
-                        if self.task.manual {
-                            CTextField(text: self.$title, placeholder: "Title")
-                                .frame(width: UIScreen.main.bounds.width-20, height: 60)
-                        } else {
-                            Text(self.title)
-                                .padding(.vertical, padding*2)
-                                .foregroundColor(Color.gray)
-                        }
-                    }
-                    DatePicker(selection: self.$date, label: { /*@START_MENU_TOKEN@*/Text("Date")/*@END_MENU_TOKEN@*/ })
-                        .foregroundColor((self.task.manual ? Color.primary : Color.gray))
-                        .padding(.vertical, padding*2)
-                        .onAppear{self.endEditing()}
-                        .disabled(!self.task.manual)
-                    VStack(alignment: .leading) {
-                        if self.task.manual {
-                            AdaptiveKeyboard {
-                                TextView(text: self.$notes, isEditing: self.$isEditing, placeholder: "Notes", backgroundColor: UIColor.clear)
-                                .frame(width: UIScreen.main.bounds.width - (horizontalSizeClass == .compact ? 25 : 50), height: 230)
-                            }
-                        } else {
-                            if self.notes.isEmpty {
-                                Text(Helper.noDesc)
-                                    .foregroundColor(Color.gray)
+            GeometryReader { geometry in
+                VStack {
+                    Form {
+                        VStack(alignment: .leading) {
+                            if self.task.manual {
+                                CTextField(text: self.$title, placeholder: "Title")
+                                    .frame(width: UIScreen.main.bounds.width-20, height: 60)
                             } else {
-                                Text(self.notes)
+                                Text(self.title)
+                                    .padding(.vertical, self.padding*2)
                                     .foregroundColor(Color.gray)
                             }
                         }
+                        DatePicker(selection: self.$date, label: { /*@START_MENU_TOKEN@*/Text("Date")/*@END_MENU_TOKEN@*/ })
+                            .foregroundColor((self.task.manual ? Color.primary : Color.gray))
+                            .padding(.vertical, self.padding*2)
+                            .onAppear{self.endEditing()}
+                            .disabled(!self.task.manual)
+                        VStack(alignment: .leading) {
+                            if self.task.manual {
+                                AdaptiveKeyboard {
+                                    TextView(text: self.$notes, isEditing: self.$isEditing, placeholder: "Notes", backgroundColor: UIColor.clear)
+                                        .frame(width: (self.horizontalSizeClass == .compact ? geometry.size.width - 30 : geometry.size.width - 60), height: 230)
+                                }
+                            } else {
+                                if self.notes.isEmpty {
+                                    Text(Helper.noDesc)
+                                        .foregroundColor(Color.gray)
+                                } else {
+                                    Text(self.notes)
+                                        .foregroundColor(Color.gray)
+                                }
+                            }
+                        }
+                        .padding(.vertical, self.padding*2)
                     }
-                    .padding(.vertical, padding*2)
                 }
             }
             .onAppear(perform: {
