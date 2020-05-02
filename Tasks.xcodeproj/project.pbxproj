@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -21,7 +21,7 @@
 		012E4B8F244C189600B5C554 /* NotificationCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 012E4B3C244B1D0C00B5C554 /* NotificationCenter.framework */; };
 		012E4B92244C189600B5C554 /* TodayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 012E4B91244C189600B5C554 /* TodayViewController.swift */; };
 		012E4B95244C189600B5C554 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 012E4B93244C189600B5C554 /* MainInterface.storyboard */; };
-		012E4B99244C189600B5C554 /* Tasks.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 012E4B8E244C189600B5C554 /* Tasks.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		012E4B99244C189600B5C554 /* Tasks.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 012E4B8E244C189600B5C554 /* Tasks.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		012E4B9F244C199500B5C554 /* SharedData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 012E4B9E244C199500B5C554 /* SharedData.swift */; };
 		012E4BA0244C19E800B5C554 /* SharedData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 012E4B9E244C199500B5C554 /* SharedData.swift */; };
 		012E4BA2244C2BB500B5C554 /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 012E4BA1244C2BB500B5C554 /* Helper.swift */; };
@@ -508,6 +508,7 @@
 /* Begin PBXTargetDependency section */
 		012E4B98244C189600B5C554 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilter = ios;
 			target = 012E4B8D244C189600B5C554 /* Tasks Widget */;
 			targetProxy = 012E4B97244C189600B5C554 /* PBXContainerItemProxy */;
 		};
@@ -563,6 +564,7 @@
 				PRODUCT_MODULE_NAME = "$(PRODUCT_NAME:c99extidentifier)Widget";
 				PRODUCT_NAME = Tasks;
 				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -588,6 +590,7 @@
 				PRODUCT_MODULE_NAME = "$(PRODUCT_NAME:c99extidentifier)Widget";
 				PRODUCT_NAME = Tasks;
 				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -730,6 +733,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.nick.Tasks;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
@@ -761,6 +765,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.nick.Tasks;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
 				SWIFT_VERSION = 5.0;
