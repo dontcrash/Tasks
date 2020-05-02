@@ -1,0 +1,3 @@
+xcrun simctl status_bar "iPhone 7" override --time "9:41" --batteryState charged --batteryLevel 100 --dataNetwork wifi --cellularBars 4 --operatorName ''
+xcrun simctl status_bar "iPhone 11" override --time "9:41" --batteryState charged --batteryLevel 100 --dataNetwork wifi --cellularBars 4 --operatorName ''
+xcrun simctl status_bar "iPad Pro (11-inch) (2nd generation)" override --time "9:41" --batteryState charged --batteryLevel 100 --dataNetwork wifi

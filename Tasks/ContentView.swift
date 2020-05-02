@@ -36,6 +36,8 @@ struct ContentView: View {
     
     @State var showTaskDetails: Bool = false
     
+    @State var showCancelButton: Bool = false
+    
     private let foregroundPublisher = NotificationCenter.default.publisher(for: UIScene.willEnterForegroundNotification)
     
     @FetchRequest(
@@ -212,10 +214,47 @@ struct ContentView: View {
         
         return NavigationView {
             VStack(spacing: 0) {
-                SearchBar(text: $searchText)
+                //SearchBar(text: $searchText)
+                HStack {
+                    HStack {
+                        Image(systemName: "magnifyingglass")
+                        TextField("Search", text: $searchText, onEditingChanged: { isEditing in
+                            self.showCancelButton = true
+                        }, onCommit: {
+                            print("onCommit")
+                        }).foregroundColor(.primary)
+
+                        Button(action: {
+                            self.searchText = ""
+                        }) {
+                            Image(systemName: "xmark.circle.fill").opacity(searchText == "" ? 0 : 1)
+                        }
+                    }
+                    .padding(EdgeInsets(top: 8, leading: 6, bottom: 8, trailing: 6))
+                    .foregroundColor(.secondary)
+                    .background(Color(.systemGray4))
+                    .cornerRadius(10.0)
+                    if showCancelButton  {
+                        Button("Cancel") {
+                                UIApplication.shared.endEditing(true)
+                                self.searchText = ""
+                                self.showCancelButton = false
+                        }
+                        .foregroundColor(Color(.systemBlue))
+                    }
+                }
+                .padding(.vertical, 10)
+                .padding(.horizontal, 10)
                 List {
                     if today.count > 0 {
-                        Section(header: Text("Today")){
+                        Section(header:
+                            HStack {
+                                Text("Today")
+                                Spacer()
+                                Text(String(today.count))
+                                    .foregroundColor(Color.gray)
+                            }
+                        ){
                             ForEach(today, id: \.id) { task in
                                 TaskRowModel(task: task, cv: self)
                             }
@@ -225,7 +264,14 @@ struct ContentView: View {
                         }
                     }
                     if thisWeek.count > 0 {
-                        Section(header: Text("This Week")){
+                        Section(header:
+                            HStack {
+                                Text("This Week")
+                                Spacer()
+                                Text(String(thisWeek.count))
+                                    .foregroundColor(Color.gray)
+                            }
+                        ){
                             ForEach(thisWeek, id: \.id) { task in
                                 TaskRowModel(task: task, cv: self)
                             }
@@ -235,7 +281,14 @@ struct ContentView: View {
                         }
                     }
                     if later.count > 0 {
-                        Section(header: Text("Later")){
+                        Section(header:
+                            HStack {
+                                Text("Later")
+                                Spacer()
+                                Text(String(later.count))
+                                    .foregroundColor(Color.gray)
+                            }
+                        ){
                             ForEach(later, id: \.id) { task in
                                 TaskRowModel(task: task, cv: self)
                             }
@@ -246,7 +299,14 @@ struct ContentView: View {
                     }
                     if self.userPrefs.hideCompleted == false {
                         if completed.count > 0 {
-                            Section(header: Text("Completed")) {
+                            Section(header:
+                                HStack {
+                                    Text("Completed")
+                                    Spacer()
+                                    Text(String(completed.count))
+                                        .foregroundColor(Color.gray)
+                                }
+                            ){
                                 ForEach(completed, id: \.id) { task in
                                     TaskRowModel(task: task, cv: self)
                                 }
@@ -261,12 +321,14 @@ struct ContentView: View {
                             Text(Helper.allCompleted)
                         } else {
                             Text("No results 😱")
+                                .padding(.vertical, 14)
                         }
                     }
                 }
                 .sheet(isPresented: self.$showConfigMenu) {
                     SettingsView(cv: self)
                 }
+                //Causes issues with deleting rows
                 //.resignKeyboardOnDragGesture()
                 .navigationBarTitle("Tasks", displayMode: .inline)
                 .navigationBarItems(leading: (
