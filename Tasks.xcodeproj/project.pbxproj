@@ -32,6 +32,7 @@
 		0136D1BE245869010063D524 /* ICSURLView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0136D1BD245869010063D524 /* ICSURLView.swift */; };
 		0136D1C0245869E00063D524 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0136D1BF245869E00063D524 /* SettingsView.swift */; };
 		015315A7245D9EFD001F5082 /* TextEdit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 015315A6245D9EFD001F5082 /* TextEdit.swift */; };
+		017C7F92245E89E60026A629 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 017C7F91245E89E60026A629 /* SearchBar.swift */; };
 		017F9266245D7E0B005A77D0 /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 017F9265245D7E0B005A77D0 /* CoreDataStack.swift */; };
 		017F9267245D7E2B005A77D0 /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 017F9265245D7E0B005A77D0 /* CoreDataStack.swift */; };
 		017F9269245D8EED005A77D0 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01F0D160245D4A2300BB5F5D /* CloudKit.framework */; };
@@ -120,6 +121,7 @@
 		0136D1BD245869010063D524 /* ICSURLView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICSURLView.swift; sourceTree = "<group>"; };
 		0136D1BF245869E00063D524 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		015315A6245D9EFD001F5082 /* TextEdit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextEdit.swift; sourceTree = "<group>"; };
+		017C7F91245E89E60026A629 /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
 		017F9265245D7E0B005A77D0 /* CoreDataStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStack.swift; sourceTree = "<group>"; };
 		01A1367A245953C5003B6352 /* NewTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTaskView.swift; sourceTree = "<group>"; };
 		01A95B14244F06DB00171995 /* taskModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = taskModel.swift; sourceTree = "<group>"; };
@@ -187,11 +189,12 @@
 		012B09AD245C56F400D2214A /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				017F9265245D7E0B005A77D0 /* CoreDataStack.swift */,
-				010CA8B42441D6C100BE993E /* Extensions.swift */,
-				012E4B9E244C199500B5C554 /* SharedData.swift */,
-				012B09A3245ACF5E00D2214A /* TextView.swift */,
 				012B09A7245AF91400D2214A /* AdaptiveKeyboard.swift */,
+				017F9265245D7E0B005A77D0 /* CoreDataStack.swift */,
+				012E4B9E244C199500B5C554 /* SharedData.swift */,
+				010CA8B42441D6C100BE993E /* Extensions.swift */,
+				017C7F91245E89E60026A629 /* SearchBar.swift */,
+				012B09A3245ACF5E00D2214A /* TextView.swift */,
 				015315A6245D9EFD001F5082 /* TextEdit.swift */,
 			);
 			path = Helpers;
@@ -478,6 +481,7 @@
 				010CA92E244424B900BE993E /* Task.xcdatamodeld in Sources */,
 				010CA8B72441D6FB00BE993E /* UserPrefs.swift in Sources */,
 				01B4117D243F34A300D2FB4C /* AppDelegate.swift in Sources */,
+				017C7F92245E89E60026A629 /* SearchBar.swift in Sources */,
 				01B4117F243F34A300D2FB4C /* SceneDelegate.swift in Sources */,
 				0136D1BC245868090063D524 /* TaskDetailsView.swift in Sources */,
 				0136D1C0245869E00063D524 /* SettingsView.swift in Sources */,

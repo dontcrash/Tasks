@@ -196,6 +196,16 @@ struct ContentView: View {
         }
     }
     
+    func endEditing() {
+        let keyWindow = UIApplication.shared.connectedScenes
+        .filter({$0.activationState == .foregroundActive})
+        .map({$0 as? UIWindowScene})
+        .compactMap({$0})
+        .first?.windows
+        .filter({$0.isKeyWindow}).first
+        keyWindow?.endEditing(true)
+    }
+    
     var body: some View {
         
         let today = allTasks.filter { task in
@@ -216,37 +226,7 @@ struct ContentView: View {
         
         return NavigationView {
             VStack(spacing: 0) {
-                //SearchBar(text: $searchText)
-                HStack {
-                    HStack {
-                        Image(systemName: "magnifyingglass")
-                        TextField("Search", text: $searchText, onEditingChanged: { isEditing in
-                            self.showCancelButton = true
-                        }, onCommit: {
-                            print("onCommit")
-                        }).foregroundColor(.primary)
-
-                        Button(action: {
-                            self.searchText = ""
-                        }) {
-                            Image(systemName: "xmark.circle.fill").opacity(searchText == "" ? 0 : 1)
-                        }
-                    }
-                    .padding(EdgeInsets(top: 8, leading: 6, bottom: 8, trailing: 6))
-                    .foregroundColor(.secondary)
-                    .background(Color(.systemGray4))
-                    .cornerRadius(10.0)
-                    if showCancelButton  {
-                        Button("Cancel") {
-                                UIApplication.shared.endEditing(true)
-                                self.searchText = ""
-                                self.showCancelButton = false
-                        }
-                        .foregroundColor(Color(.systemBlue))
-                    }
-                }
-                .padding(.vertical, 10)
-                .padding(.horizontal, 10)
+                SearchBar(showCancelButton: self.$showCancelButton, searchText: self.$searchText)
                 List {
                     if today.count > 0 {
                         Section(header:
@@ -336,6 +316,8 @@ struct ContentView: View {
                 .navigationBarTitle("Tasks", displayMode: .inline)
                 .navigationBarItems(leading: (
                     Button(action: {
+                        self.endEditing()
+                        self.showCancelButton = false
                         self.showConfigMenu = true
                     }) {
                         ZStack {
@@ -349,6 +331,8 @@ struct ContentView: View {
                     }
                 ), trailing: (
                     Button(action: {
+                        self.endEditing()
+                        self.showCancelButton = false
                         self.showNewTask = true
                     }) {
                         ZStack {
