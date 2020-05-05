@@ -14,6 +14,7 @@ struct TaskRowModel: View {
     var cv: ContentView
     
     var body: some View {
+        
         HStack {
             ZStack {
                 Image(systemName: self.task.done ? "checkmark.circle.fill" : "circle")
@@ -25,7 +26,21 @@ struct TaskRowModel: View {
                     .frame(width: 30, height: 30)
             }
             .onTapGesture {
-                Helper.shared.changeTaskStatus(task: self.task, done: !self.task.done, ctx: self.cv.context)
+                let status: Bool = !self.task.done
+                Helper.shared.changeTaskStatus(task: self.task, done: status, ctx: self.cv.context)
+                Helper.lastTask = self.task
+                withAnimation {
+                    self.cv.showUndo = true
+                    Helper.lastShownUndo = Date()
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 5.5) {
+                    if Helper.shared.secondsBetweenDates(d1: Helper.lastShownUndo) <= -5 {
+                        withAnimation {
+                            self.cv.showUndo = false
+                        }
+                    }
+                }
+                self.cv.generator.notificationOccurred(.success)
             }
             .padding(.trailing, 5)
             Button(action: {

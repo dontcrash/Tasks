@@ -25,12 +25,12 @@ struct ICSURLView: View {
                     self.changed = true
                 }, onCommit: {
                     self.showSelf = false
-                    
                 })
-                 .textFieldStyle(RoundedBorderTextFieldStyle())
+                    //.textFieldStyle(RoundedBorderTextFieldStyle())
             }
             Section {
                 Text("The Tasks app can automagically sync tasks from an iCalendar .ics feed, if you have one please paste it above.")
+                    .padding(.vertical, 10)
             }
         }
         .navigationBarTitle(Text("ICS URL"), displayMode: .inline)

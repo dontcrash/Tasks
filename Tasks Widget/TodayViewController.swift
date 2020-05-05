@@ -15,7 +15,7 @@ class widgetData : UIViewController, ObservableObject {
 
     @Published var lastUpdate: Date = Date()
     @Published var due: Date = Date()
-    @Published var tasks: [taskModel] = [taskModel]()
+    @Published var tasks: [Task] = []
     @Published var isExpanded: Bool = false
     
 }
@@ -85,52 +85,26 @@ class TodayViewController: UIViewController, NCWidgetProviding {
         refreshData()
     }
     
-    func getTasks() -> [taskModel]? {
-        do {
-            if let data = UserDefaults(suiteName: "group.com.nick.tasks")?.value(forKey:"taskList") as? Data {
-                let decodedList = try PropertyListDecoder().decode([taskModel].self, from: data)
-                return decodedList
-            }
-        } catch let error as NSError {
-            print(error.localizedDescription)
-        }
-        return nil
-    }
-    
     func getResults() {
-        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Task")
+        let fetchRequest = NSFetchRequest<Task>(entityName: "Task")
         fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Task.due, ascending: true)]
         fetchRequest.predicate = NSPredicate(format: "done == %@", NSNumber(value: false))
         fetchRequest.fetchLimit = 5
-        shared.model.tasks.removeAll()
-        var results: [NSManagedObject] = []
         do {
-            results = try CoreDataStack.persistentContainer.viewContext.fetch(fetchRequest)
-            for task in results  {
-                let t: taskModel = taskModel()
-                t.title = task.value(forKey: "title") as! String
-                t.due = task.value(forKey: "due") as! Date
-                shared.model.tasks.append(t)
-            }
+            shared.model.tasks = try CoreDataStack.persistentContainer.viewContext.fetch(fetchRequest)
         }
         catch {
             print("error executing fetch request: \(error)")
         }
+    
     }
     
     func refreshData(){
         shared.model.lastUpdate = Date()
         getResults()
-        //shared.model.tasks = getTasks() ?? [taskModel]()
     }
     
     func widgetPerformUpdate(completionHandler: (@escaping (NCUpdateResult) -> Void)) {
-        // Perform any setup necessary in order to update the view.
-        
-        // If an error is encountered, use NCUpdateResult.Failed
-        // If there's no update required, use NCUpdateResult.NoData
-        // If there's an update, use NCUpdateResult.NewData
-        
         let secondsSinceUpdate = Helper.shared.secondsBetweenDates(d1: shared.model.lastUpdate)
         if secondsSinceUpdate >= 600 {
             refreshData()

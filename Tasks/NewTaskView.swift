@@ -63,7 +63,7 @@ struct NewTaskView: View {
                             Helper.shared.saveContext(ctx: self.cv.context)
                             //Helper.shared.setNextTask(ctx: self.cv.context)
                         }
-                        self.cv.showNewTask = false
+                        self.cv.showNewTask.toggle()
                     }
                 }) {
                     ZStack {
@@ -93,8 +93,11 @@ struct NewTaskView: View {
     
 }
 
+
 struct NewTaskView_Previews: PreviewProvider {
+    
     static var previews: some View {
         NewTaskView(cv: ContentView())
     }
+    
 }

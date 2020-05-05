@@ -19,7 +19,8 @@ class Helper {
     static let allCompleted: String = "No tasks due 😊"
     static let noDesc: String = "No description provided 😢"
     
-    var allTasksComplete: Bool = false
+    static var lastTask: Task = Task()
+    static var lastShownUndo: Date = Date()
   
     func hoursBetweenDates(d1: Date) -> Int {
         let cal = Calendar.current

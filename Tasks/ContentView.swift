@@ -40,6 +40,10 @@ struct ContentView: View {
     
     @State var showCancelButton: Bool = false
     
+    @State var showUndo: Bool = false
+    
+    let generator = UINotificationFeedbackGenerator()
+    
     private let foregroundPublisher = NotificationCenter.default.publisher(for: UIScene.willEnterForegroundNotification)
     
     @FetchRequest(
@@ -64,8 +68,6 @@ struct ContentView: View {
         }
         df.dateFormat = "EEEE, d MMM h:mm a"
     }
-    
-    
     
     func parseICS(data: String) {
         let arr = data.components(separatedBy: "BEGIN:VEVENT")
@@ -225,128 +227,160 @@ struct ContentView: View {
         }.sorted(by: { $0.due.timeIntervalSince1970 > $1.due.timeIntervalSince1970} )
         
         return NavigationView {
-            VStack(spacing: 0) {
-                SearchBar(showCancelButton: self.$showCancelButton, searchText: self.$searchText)
-                List {
-                    if today.count > 0 {
-                        Section(header:
-                            HStack {
-                                Text("Today")
-                                Spacer()
-                                Text(String(today.count))
-                                    .foregroundColor(Color.gray)
+            GeometryReader { geometry in
+                ZStack {
+                    VStack(spacing: 0) {
+                        SearchBar(showCancelButton: self.$showCancelButton, searchText: self.$searchText)
+                        List {
+                            if today.count > 0 {
+                                Section(header:
+                                    HStack {
+                                        Text("Today")
+                                        Spacer()
+                                        Text(String(today.count))
+                                            .foregroundColor(Color.gray)
+                                    }
+                                ){
+                                    ForEach(today, id: \.id) { task in
+                                        TaskRowModel(task: task, cv: self)
+                                    }
+                                    .onDelete(perform: { offsets in
+                                        self.removeItems(at: offsets, list: today)
+                                    })
+                                }
                             }
-                        ){
-                            ForEach(today, id: \.id) { task in
-                                TaskRowModel(task: task, cv: self)
+                            if thisWeek.count > 0 {
+                                Section(header:
+                                    HStack {
+                                        Text("This Week")
+                                        Spacer()
+                                        Text(String(thisWeek.count))
+                                            .foregroundColor(Color.gray)
+                                    }
+                                ){
+                                    ForEach(thisWeek, id: \.id) { task in
+                                        TaskRowModel(task: task, cv: self)
+                                    }
+                                    .onDelete(perform: { offsets in
+                                        self.removeItems(at: offsets, list: thisWeek)
+                                    })
+                                }
                             }
-                            .onDelete(perform: { offsets in
-                                self.removeItems(at: offsets, list: today)
-                            })
+                            if later.count > 0 {
+                                Section(header:
+                                    HStack {
+                                        Text("Later")
+                                        Spacer()
+                                        Text(String(later.count))
+                                            .foregroundColor(Color.gray)
+                                    }
+                                ){
+                                    ForEach(later, id: \.id) { task in
+                                        TaskRowModel(task: task, cv: self)
+                                    }
+                                    .onDelete(perform: { offsets in
+                                        self.removeItems(at: offsets, list: later)
+                                    })
+                                }
+                            }
+                            if self.userPrefs.hideCompleted == false {
+                                if completed.count > 0 {
+                                    Section(header:
+                                        HStack {
+                                            Text("Completed")
+                                            Spacer()
+                                            Text(String(completed.count))
+                                                .foregroundColor(Color.gray)
+                                        }
+                                    ){
+                                        ForEach(completed, id: \.id) { task in
+                                            TaskRowModel(task: task, cv: self)
+                                        }
+                                        .onDelete(perform: { offsets in
+                                            self.removeItems(at: offsets, list: completed)
+                                        })
+                                    }
+                                }
+                            }
+                            if today.isEmpty && thisWeek.isEmpty && later.isEmpty && completed.isEmpty {
+                                if self.searchText.isEmpty {
+                                    //Text(Helper.allCompleted)
+                                        //.padding(.vertical, 14)
+                                } else {
+                                    Text("No results 😱")
+                                        .padding(.vertical, 14)
+                                }
+                            }
                         }
-                    }
-                    if thisWeek.count > 0 {
-                        Section(header:
-                            HStack {
-                                Text("This Week")
-                                Spacer()
-                                Text(String(thisWeek.count))
-                                    .foregroundColor(Color.gray)
-                            }
-                        ){
-                            ForEach(thisWeek, id: \.id) { task in
-                                TaskRowModel(task: task, cv: self)
-                            }
-                            .onDelete(perform: { offsets in
-                                self.removeItems(at: offsets, list: thisWeek)
-                            })
+                        .sheet(isPresented: self.$showConfigMenu) {
+                            SettingsView(cv: self)
                         }
-                    }
-                    if later.count > 0 {
-                        Section(header:
-                            HStack {
-                                Text("Later")
-                                Spacer()
-                                Text(String(later.count))
-                                    .foregroundColor(Color.gray)
-                            }
-                        ){
-                            ForEach(later, id: \.id) { task in
-                                TaskRowModel(task: task, cv: self)
-                            }
-                            .onDelete(perform: { offsets in
-                                self.removeItems(at: offsets, list: later)
-                            })
-                        }
-                    }
-                    if self.userPrefs.hideCompleted == false {
-                        if completed.count > 0 {
-                            Section(header:
-                                HStack {
-                                    Text("Completed")
-                                    Spacer()
-                                    Text(String(completed.count))
+                        //Causes issues with deleting rows
+                        //.resignKeyboardOnDragGesture()
+                        .navigationBarTitle("Tasks", displayMode: .inline)
+                        .navigationBarItems(leading: (
+                            Button(action: {
+                                self.endEditing()
+                                self.showCancelButton = false
+                                self.showConfigMenu = true
+                            }) {
+                                ZStack {
+                                    Rectangle()
+                                        .fill(Color.init(hex: 000000, alpha: 0.0001))
+                                        .frame(width: 35, height: 35)
+                                    Image(systemName: "gear")
+                                        .imageScale(.large)
                                         .foregroundColor(Color.gray)
                                 }
-                            ){
-                                ForEach(completed, id: \.id) { task in
-                                    TaskRowModel(task: task, cv: self)
-                                }
-                                .onDelete(perform: { offsets in
-                                    self.removeItems(at: offsets, list: completed)
-                                })
                             }
-                        }
+                        ), trailing: (
+                            Button(action: {
+                                self.endEditing()
+                                self.showCancelButton = false
+                                self.showNewTask = true
+                            }) {
+                                ZStack {
+                                    Rectangle()
+                                        .fill(Color.init(hex: 000000, alpha: 0.0001))
+                                        .frame(width: 35, height: 35)
+                                    Image(systemName: "calendar.badge.plus")
+                                        .imageScale(.large)
+                                        .foregroundColor(Color.gray)
+                                }.sheet(isPresented: self.$showNewTask) {
+                                    NewTaskView(cv: self)
+                                }
+                            }
+                        ))
                     }
-                    if today.isEmpty && thisWeek.isEmpty && later.isEmpty && completed.isEmpty {
-                        if self.searchText.isEmpty {
-                            //Text(Helper.allCompleted)
-                                //.padding(.vertical, 14)
-                        } else {
-                            Text("No results 😱")
-                                .padding(.vertical, 14)
+                    VStack {
+                        Spacer()
+                        if self.showUndo {
+                            VStack(alignment: .leading) {
+                                HStack {
+                                    Text("Task status changed")
+                                    Spacer()
+                                    Button(action: {
+                                        Helper.shared.changeTaskStatus(task: Helper.lastTask, done: !Helper.lastTask.done, ctx: self.context)
+                                        self.generator.notificationOccurred(.success)
+                                        withAnimation {
+                                            self.showUndo = false
+                                        }
+                                    }){
+                                        Text("Undo")
+                                            .foregroundColor(Color.blue)
+                                    }
+                                }
+                                .padding(.top, 25)
+                                .padding(.horizontal, 25)
+                            }
+                            .transition(.opacity)
+                            .frame(width: geometry.size.width/1.2, height: 30)
+                            .padding(.bottom, 30)
+                            .background(Color.init(UIColor.systemGray4))
+                            .cornerRadius(10)
                         }
                     }
                 }
-                .sheet(isPresented: self.$showConfigMenu) {
-                    SettingsView(cv: self)
-                }
-                //Causes issues with deleting rows
-                //.resignKeyboardOnDragGesture()
-                .navigationBarTitle("Tasks", displayMode: .inline)
-                .navigationBarItems(leading: (
-                    Button(action: {
-                        self.endEditing()
-                        self.showCancelButton = false
-                        self.showConfigMenu = true
-                    }) {
-                        ZStack {
-                            Rectangle()
-                                .fill(Color.init(hex: 000000, alpha: 0.0001))
-                                .frame(width: 35, height: 35)
-                            Image(systemName: "gear")
-                                .imageScale(.large)
-                                .foregroundColor(Color.gray)
-                        }
-                    }
-                ), trailing: (
-                    Button(action: {
-                        self.endEditing()
-                        self.showCancelButton = false
-                        self.showNewTask = true
-                    }) {
-                        ZStack {
-                            Rectangle()
-                                .fill(Color.init(hex: 000000, alpha: 0.0001))
-                                .frame(width: 35, height: 35)
-                            Image(systemName: "calendar.badge.plus")
-                                .imageScale(.large)
-                                .foregroundColor(Color.gray)
-                        }.sheet(isPresented: self.$showNewTask) {
-                            NewTaskView(cv: self)
-                        }
-                    }
-                ))
             }
             .background(Color.init(UIColor.systemGray6))
             .alert(isPresented: self.$showAlert){
