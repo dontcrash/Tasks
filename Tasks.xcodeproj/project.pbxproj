@@ -32,6 +32,8 @@
 		0136D1BE245869010063D524 /* ICSURLView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0136D1BD245869010063D524 /* ICSURLView.swift */; };
 		0136D1C0245869E00063D524 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0136D1BF245869E00063D524 /* SettingsView.swift */; };
 		015315A7245D9EFD001F5082 /* TextEdit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 015315A6245D9EFD001F5082 /* TextEdit.swift */; };
+		01728A2D246BD9120002C219 /* TaskRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01728A2C246BD9120002C219 /* TaskRowView.swift */; };
+		01728A2E246BD9A40002C219 /* TaskRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01728A2C246BD9120002C219 /* TaskRowView.swift */; };
 		017C7F92245E89E60026A629 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 017C7F91245E89E60026A629 /* SearchBar.swift */; };
 		017F9266245D7E0B005A77D0 /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 017F9265245D7E0B005A77D0 /* CoreDataStack.swift */; };
 		017F9267245D7E2B005A77D0 /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 017F9265245D7E0B005A77D0 /* CoreDataStack.swift */; };
@@ -119,6 +121,7 @@
 		0136D1BD245869010063D524 /* ICSURLView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICSURLView.swift; sourceTree = "<group>"; };
 		0136D1BF245869E00063D524 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		015315A6245D9EFD001F5082 /* TextEdit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextEdit.swift; sourceTree = "<group>"; };
+		01728A2C246BD9120002C219 /* TaskRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskRowView.swift; sourceTree = "<group>"; };
 		017C7F91245E89E60026A629 /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
 		017F9265245D7E0B005A77D0 /* CoreDataStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStack.swift; sourceTree = "<group>"; };
 		01A1367A245953C5003B6352 /* NewTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTaskView.swift; sourceTree = "<group>"; };
@@ -241,6 +244,7 @@
 				01B41180243F34A300D2FB4C /* ContentView.swift */,
 				012E4BA1244C2BB500B5C554 /* Helper.swift */,
 				012B09AB245B0E3C00D2214A /* TaskRowModel.swift */,
+				01728A2C246BD9120002C219 /* TaskRowView.swift */,
 				01A1367A245953C5003B6352 /* NewTaskView.swift */,
 				0136D1BB245868090063D524 /* TaskDetailsView.swift */,
 				0136D1BF245869E00063D524 /* SettingsView.swift */,
@@ -453,6 +457,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				012E4BA0244C19E800B5C554 /* SharedData.swift in Sources */,
+				01728A2E246BD9A40002C219 /* TaskRowView.swift in Sources */,
 				012E4B92244C189600B5C554 /* TodayViewController.swift in Sources */,
 				012E4BA3244C2BB800B5C554 /* Helper.swift in Sources */,
 				012E4BA5244C2CE200B5C554 /* Task.xcdatamodeld in Sources */,
@@ -469,6 +474,7 @@
 			files = (
 				015315A7245D9EFD001F5082 /* TextEdit.swift in Sources */,
 				017F9267245D7E2B005A77D0 /* CoreDataStack.swift in Sources */,
+				01728A2D246BD9120002C219 /* TaskRowView.swift in Sources */,
 				012E4B9F244C199500B5C554 /* SharedData.swift in Sources */,
 				010CA93F2444512000BE993E /* Task+CoreDataProperties.swift in Sources */,
 				010CA94724457AB600BE993E /* uiScope.swift in Sources */,
@@ -554,7 +560,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Tasks Widget/Tasks Widget.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 26;
+				CURRENT_PROJECT_VERSION = 27;
 				DEVELOPMENT_TEAM = 9DQQ9A7A6S;
 				INFOPLIST_FILE = "Tasks Widget/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -563,7 +569,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.6.3;
+				MARKETING_VERSION = 1.7;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nick.Tasks.widget;
 				PRODUCT_MODULE_NAME = "$(PRODUCT_NAME:c99extidentifier)Widget";
 				PRODUCT_NAME = Tasks;
@@ -580,7 +586,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Tasks Widget/Tasks Widget.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 26;
+				CURRENT_PROJECT_VERSION = 27;
 				DEVELOPMENT_TEAM = 9DQQ9A7A6S;
 				INFOPLIST_FILE = "Tasks Widget/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -589,7 +595,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.6.3;
+				MARKETING_VERSION = 1.7;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nick.Tasks.widget;
 				PRODUCT_MODULE_NAME = "$(PRODUCT_NAME:c99extidentifier)Widget";
 				PRODUCT_NAME = Tasks;
@@ -723,7 +729,7 @@
 				CODE_SIGN_ENTITLEMENTS = Tasks/Tasks.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 26;
+				CURRENT_PROJECT_VERSION = 27;
 				DEVELOPMENT_ASSET_PATHS = "\"Tasks/Preview Content\"";
 				DEVELOPMENT_TEAM = 9DQQ9A7A6S;
 				ENABLE_PREVIEWS = YES;
@@ -733,7 +739,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.6.3;
+				MARKETING_VERSION = 1.7;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nick.Tasks;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -755,7 +761,7 @@
 				CODE_SIGN_ENTITLEMENTS = Tasks/Tasks.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 26;
+				CURRENT_PROJECT_VERSION = 27;
 				DEVELOPMENT_ASSET_PATHS = "\"Tasks/Preview Content\"";
 				DEVELOPMENT_TEAM = 9DQQ9A7A6S;
 				ENABLE_PREVIEWS = YES;
@@ -765,7 +771,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.6.3;
+				MARKETING_VERSION = 1.7;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nick.Tasks;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

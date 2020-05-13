@@ -59,9 +59,11 @@ struct NewTaskView: View {
                         self.endEditing()
                     } else {
                         if self.title.count > 0 {
-                            Helper.shared.addTask(id: String(Date().timeIntervalSince1970), title: self.title, description: self.notes, due: self.date, manual: true, ctx: self.cv.context)
-                            Helper.shared.saveContext(ctx: self.cv.context)
-                            //Helper.shared.setNextTask(ctx: self.cv.context)
+                            //Delay to allow the sheet to dismiss
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                Helper.shared.addTask(id: String(Date().timeIntervalSince1970), title: self.title, description: self.notes, due: self.date, manual: true, ctx: self.cv.context)
+                                Helper.shared.saveContext(ctx: self.cv.context)
+                            }
                         }
                         self.cv.showNewTask.toggle()
                     }

@@ -10,7 +10,7 @@ import SwiftUI
 
 struct TaskRowModel: View {
     
-    var task: Task
+    @State var task: Task
     var cv: ContentView
     
     var body: some View {
@@ -46,24 +46,7 @@ struct TaskRowModel: View {
             Button(action: {
                 self.cv.showTaskDetails = true
             }) {
-                HStack {
-                    Text(self.task.title)
-                        .padding(.trailing, 15)
-                        .truncationMode(.tail)
-                        .lineLimit(1)
-                    Spacer()
-                    if self.task.done {
-                        Text(Helper.shared.timeBetweenDates(d1: self.task.due).0)
-                        .foregroundColor(.green)
-                        .bold()
-                        .font(.system(size: 14))
-                    }else{
-                        Text(Helper.shared.timeBetweenDates(d1: task.due).0)
-                        .foregroundColor((Helper.shared.timeBetweenDates(d1: self.task.due).1) ? .red : .blue)
-                        .bold()
-                        .font(.system(size: 14))
-                    }
-                }
+                TaskRowView(task: task)
             }
             .sheet(isPresented: self.cv.$showTaskDetails) {
                 TaskDetailsView(cv: self.cv, task: self.task, dismiss: { self.cv.showTaskDetails = false })

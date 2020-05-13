@@ -210,6 +210,10 @@ struct ContentView: View {
     
     var body: some View {
         
+        let late = allTasks.filter { task in
+            return (self.searchText.isEmpty ? task.done == false && Helper.shared.isLate(d1: task.due) : (task.title.lowercased().contains(self.searchText.lowercased()) && task.done == false  && Helper.shared.isLate(d1: task.due) || task.summary.lowercased().contains(self.searchText.lowercased()) && task.done == false && Helper.shared.isLate(d1: task.due)))
+        }
+        
         let today = allTasks.filter { task in
             return (self.searchText.isEmpty ? task.done == false && Helper.shared.isDueToday(d1: task.due) : (task.title.lowercased().contains(self.searchText.lowercased()) && task.done == false  && Helper.shared.isDueToday(d1: task.due) || task.summary.lowercased().contains(self.searchText.lowercased()) && task.done == false && Helper.shared.isDueToday(d1: task.due)))
         }
@@ -232,10 +236,29 @@ struct ContentView: View {
                     VStack(spacing: 0) {
                         SearchBar(showCancelButton: self.$showCancelButton, searchText: self.$searchText)
                         List {
+                            if late.count > 0 {
+                                Section(header:
+                                    HStack {
+                                        Text("Late")
+                                            .foregroundColor(Color.gray)
+                                        Spacer()
+                                        Text(String(late.count))
+                                            .foregroundColor(Color.gray)
+                                    }
+                                ){
+                                    ForEach(late, id: \.id) { task in
+                                        TaskRowModel(task: task, cv: self)
+                                    }
+                                    .onDelete(perform: { offsets in
+                                        self.removeItems(at: offsets, list: late)
+                                    })
+                                }
+                            }
                             if today.count > 0 {
                                 Section(header:
                                     HStack {
                                         Text("Today")
+                                            .foregroundColor(Color.gray)
                                         Spacer()
                                         Text(String(today.count))
                                             .foregroundColor(Color.gray)
@@ -253,6 +276,7 @@ struct ContentView: View {
                                 Section(header:
                                     HStack {
                                         Text("This Week")
+                                            .foregroundColor(Color.gray)
                                         Spacer()
                                         Text(String(thisWeek.count))
                                             .foregroundColor(Color.gray)
@@ -270,6 +294,7 @@ struct ContentView: View {
                                 Section(header:
                                     HStack {
                                         Text("Later")
+                                            .foregroundColor(Color.gray)
                                         Spacer()
                                         Text(String(later.count))
                                             .foregroundColor(Color.gray)
@@ -315,7 +340,9 @@ struct ContentView: View {
                         .sheet(isPresented: self.$showConfigMenu) {
                             SettingsView(cv: self)
                         }
+                        //TODO Find a fix for this
                         //Causes issues with deleting rows
+                        //Usually hides the search keyboard when you scroll
                         //.resignKeyboardOnDragGesture()
                         .navigationBarTitle("Tasks", displayMode: .inline)
                         .navigationBarItems(leading: (
@@ -374,7 +401,7 @@ struct ContentView: View {
                                 .padding(.horizontal, 25)
                             }
                             .transition(.opacity)
-                            .frame(width: geometry.size.width/1.2, height: 30)
+                            .frame(width: (self.horizontalSizeClass == .compact ? geometry.size.width/1.1 : geometry.size.width/2), height: 30)
                             .padding(.bottom, 30)
                             .background(Color.init(UIColor.systemGray4))
                             .cornerRadius(10)

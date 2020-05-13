@@ -21,6 +21,12 @@ class Helper {
     
     static var lastTask: Task = Task()
     static var lastShownUndo: Date = Date()
+    
+    let niceDateFormatter = DateFormatter()
+    
+    init(){
+        niceDateFormatter.dateFormat = "d MMM"
+    }
   
     func hoursBetweenDates(d1: Date) -> Int {
         let cal = Calendar.current
@@ -28,22 +34,28 @@ class Helper {
         return components.hour!
     }
     
+    func isLate(d1: Date) -> Bool {
+        let cal = Calendar.current
+        let components = cal.dateComponents([.minute], from: Date().toLocalTime(), to: d1.toLocalTime())
+        return components.minute! < 0
+    }
+    
     func isDueToday(d1: Date) -> Bool {
         let cal = Calendar.current
-        let components = cal.dateComponents([.hour], from: Date().toLocalTime(), to: d1.toLocalTime())
-        return components.hour! < 24
+        let components = cal.dateComponents([.minute], from: Date().toLocalTime(), to: d1.toLocalTime())
+        return cal.isDateInToday(d1) && components.minute! > 0
     }
     
     func isDueThisWeek(d1: Date) -> Bool {
         let cal = Calendar.current
-        let components = cal.dateComponents([.day], from: Date().toLocalTime(), to: d1.toLocalTime())
-        return components.day! <= 7 && components.day! >= 1
+        let components = cal.dateComponents([.hour], from: Date().toLocalTime(), to: d1.toLocalTime())
+        return components.hour! <= 168 && !isDueToday(d1: d1) && components.hour! > 0
     }
     
     func isDueLater(d1: Date) -> Bool {
         let cal = Calendar.current
-        let components = cal.dateComponents([.day], from: Date().toLocalTime(), to: d1.toLocalTime())
-        return components.day! > 7
+        let components = cal.dateComponents([.hour], from: Date().toLocalTime(), to: d1.toLocalTime())
+        return components.hour! > 168
     }
     
     func secondsBetweenDates(d1: Date) -> Int {
@@ -59,8 +71,9 @@ class Helper {
     }
     
     func timeBetweenDates(d1: Date) -> (String, Bool) {
-        var minutes: Int = minutesBetweenDates(d1: d1)
-        var hours: Int = minutes/60
+        var minutes: Float = Float(minutesBetweenDates(d1: d1))
+        var hours: Float = minutes/60
+        hours.round(FloatingPointRoundingRule.toNearestOrAwayFromZero)
         let late: Bool = (minutes < 0)
         if late {
             minutes = -minutes
@@ -70,10 +83,10 @@ class Helper {
             if minutes == 0 {
                 return ("Now", late)
             }
-            return (String(minutes) + " M", late)
+            return (String(Int(minutes)) + " M", late)
         }
         if hours < 24 {
-            return (String(hours) + " H", late)
+            return (String(Int(hours)) + " H", late)
         }else{
             var daysFloat: Float = Float(hours)/24.0
             daysFloat.round()
@@ -231,7 +244,6 @@ class Helper {
         } catch let error as NSError {
             print(error.localizedDescription)
         }
-        //Helper.shared.setNextTask(ctx: ctx)
     }
     
 }

@@ -86,7 +86,10 @@ struct TaskDetailsView: View {
                     } else {
                         if self.task.manual {
                             if self.title.count > 0 {
-                                Helper.shared.updateTask(id: self.task.id, due: self.date, title: self.title, desc: self.notes, ctx: self.cv.context)
+                                //Delay to allow the sheet to dismiss
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                    Helper.shared.updateTask(id: self.task.id, due: self.date, title: self.title, desc: self.notes, ctx: self.cv.context)
+                                }
                             }
                         }
                         self.cv.showTaskDetails = false

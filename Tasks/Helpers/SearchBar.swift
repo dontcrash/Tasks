@@ -17,6 +17,7 @@ struct SearchBar: View {
         HStack {
             HStack {
                 Image(systemName: "magnifyingglass")
+                    .padding(.leading, 5)
                 TextField("Search", text: $searchText, onEditingChanged: { isEditing in
                     self.showCancelButton = true
                 }, onCommit: {

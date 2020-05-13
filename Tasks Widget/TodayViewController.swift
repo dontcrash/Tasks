@@ -40,24 +40,7 @@ class TodayViewController: UIViewController, NCWidgetProviding {
                 if model.tasks.count > 0 {
                     List(model.tasks) { task in
                         HStack {
-                            //Image(systemName: task.done ? "checkmark.square" : "square")
-                            //.padding(.trailing, 15)
-                            Text(task.title)
-                            .padding(.trailing, 15)
-                            .truncationMode(.tail)
-                            .lineLimit(1)
-                            Spacer()
-                            if task.done {
-                                Text(Helper.shared.timeBetweenDates(d1: task.due).0)
-                                .foregroundColor(.green)
-                                .bold()
-                                .font(.system(size: 14))
-                            }else{
-                                Text(Helper.shared.timeBetweenDates(d1: task.due).0)
-                                .foregroundColor((Helper.shared.timeBetweenDates(d1: task.due).1) ? .red : .blue)
-                                .bold()
-                                .font(.system(size: 14))
-                            }
+                            TaskRowView(task: task)
                         }
                         .padding(.vertical, 8)
                     }
