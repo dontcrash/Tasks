@@ -313,6 +313,7 @@ struct ContentView: View {
                                     Section(header:
                                         HStack {
                                             Text("Completed")
+                                                .foregroundColor(Color.gray)
                                             Spacer()
                                             Text(String(completed.count))
                                                 .foregroundColor(Color.gray)
